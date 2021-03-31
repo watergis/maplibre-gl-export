@@ -1,48 +1,38 @@
-# mapbox-gl-export
-![](https://github.com/watergis/mapbox-gl-export/workflows/build/badge.svg)
-![](https://github.com/watergis/mapbox-gl-export/workflows/deploy%20gh-pages/badge.svg)
-![](https://github.com/watergis/mapbox-gl-export/workflows/Release%20Draft/badge.svg)
-![](https://github.com/watergis/mapbox-gl-export/workflows/Node.js%20Package/badge.svg)
-![GitHub](https://img.shields.io/github/license/watergis/mapbox-gl-export)
+# maplibre-gl-export
+![](https://github.com/watergis/maplibre-gl-export/workflows/build/badge.svg)
+![](https://github.com/watergis/maplibre-gl-export/workflows/deploy%20gh-pages/badge.svg)
+![](https://github.com/watergis/maplibre-gl-export/workflows/Release%20Draft/badge.svg)
+![](https://github.com/watergis/maplibre-gl-export/workflows/Node.js%20Package/badge.svg)
+![GitHub](https://img.shields.io/github/license/watergis/maplibre-gl-export)
 
-This module adds control which can export PDF and images.
+This module adds control which can export PDF and images. It was forked from [mapbox-gl-export](https://github.com/watergis/mapbox-gl-export).
 
 This module is using source code of [mpetroff/print-maps](https://github.com/mpetroff/print-maps). I just adopted this library to normal Mapbox GL Plugin. Thanks so much to develop this library!
 
 ## Installation:
 
-- for mapbox-gl-js v1 open source users
-
 ```bash
-npm i @watergis/mapbox-gl-export --save
+yarn add @watergis/maplibre-gl-export --save
 ```
-
-- for mapbox-gl-js v2 users
-
-```
-npm i git+https://github.com/watergis/mapbox-gl-export.git#mbgljs-v2
-```
-
-Note. `mbgljs-v2` branch is not being maintained actively although it has been upgraded to v2 library. This repository does not support anything for mapbox-gl-js v2.
 
 ## Demo:
 
-See [demo](https://watergis.github.io/mapbox-gl-export/#12/-1.08551/35.87063).
+See [demo](https://watergis.github.io/maplibre-gl-export/#12/-1.08551/35.87063).
 
 ![demo.gif](./demo.gif)
 
 ## Usage:
 
 ```ts
-import { MapboxExportControl, Size, PageOrientation, Format, DPI} from "@watergis/mapbox-gl-export";
+import { MaplibreExportControl, Size, PageOrientation, Format, DPI} from "@watergis/mapbox-gl-export";
 import '@watergis/mapbox-gl-export/css/styles.css';
-import mapboxgl from 'mapbox-gl';
+import { Map} from 'maplibre-gl';
 
-const map = new mapboxgl.Map();
+const map = new Map();
 // create control with default options
-map.addControl(new MapboxExportControl(), 'top-right');
+map.addControl(new MaplibreExportControl(), 'top-right');
 // create control with specified options
-map.addControl(new MapboxExportControl({
+map.addControl(new MaplibreExportControl({
     PageSize: Size.A3,
     PageOrientation: PageOrientation.Portrait,
     Format: Format.PNG,
@@ -92,9 +82,9 @@ Also, default example is using base map by United Nation Vector Tile Toolkit. Th
 ## Development:
 
 ```
-npm run lint # check styling of source code
-npm run lint:fix # fix styling by eslint
-npm run dev
+yarn run lint # check styling of source code
+yarn run lint:fix # fix styling by eslint
+yarn run dev
 ```
 
 open [http://localhost:8080](http://localhost:8080).
@@ -104,7 +94,7 @@ If there are any changes on source code, it will be reflected automatically.
 ## Build package:
 
 ```
-npm run build
+yarn run build
 ```
 
 The modules will be generated under `dist` folder.
@@ -112,7 +102,7 @@ The modules will be generated under `dist` folder.
 ## Deploy to Github pages
 
 ```
-npm run deploy
+yarn run deploy
 ```
 
 It will deploy files under `example` folder to gh-pages.
@@ -133,4 +123,4 @@ git push --tag
 
 ## Contribution
 
-This Mapbox GL Export Control is still under development. so most welcome any feedbacks and pull request to this repository.
+This Maplibre GL Export Control is still under development. so most welcome any feedbacks and pull request to this repository.

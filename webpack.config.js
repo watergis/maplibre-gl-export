@@ -40,6 +40,6 @@ module.exports = {
         contentBase: './example',
     },
     externals: {
-        'mapbox-gl': 'mapboxgl'
+        'maplibre-gl': 'maplibregl'
     }
 };

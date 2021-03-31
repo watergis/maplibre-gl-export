@@ -29,7 +29,7 @@
 
 import * as jsPDF from 'jspdf';
 import { saveAs } from 'file-saver';
-import { accessToken, Map as MapboxMap } from 'mapbox-gl';
+import { accessToken, Map as MaplibreMap } from 'maplibre-gl';
 import 'js-loading-overlay';
 import { fabric } from 'fabric';
 
@@ -84,7 +84,7 @@ export const DPI = {
 type DPI = typeof DPI[keyof typeof DPI];
 
 export default class MapGenerator {
-  private map: MapboxMap;
+  private map: MaplibreMap;
 
   private width: number;
 
@@ -98,14 +98,14 @@ export default class MapGenerator {
 
   /**
    * Constructor
-   * @param map MapboxMap object
+   * @param map MaplibreMap object
    * @param size layout size. default is A4
    * @param dpi dpi value. deafult is 300
    * @param format image format. default is PNG
    * @param unit length unit. default is mm
    */
   constructor(
-    map:MapboxMap,
+    map:MaplibreMap,
     size: Size = Size.A4,
     dpi: number = 300,
     format:string = Format.PNG.toString(),
@@ -159,7 +159,7 @@ export default class MapGenerator {
     hidden.appendChild(container);
 
     // Render map
-    const renderMap = new MapboxMap({
+    const renderMap = new MaplibreMap({
       accessToken,
       container,
       center: this.map.getCenter(),
@@ -255,10 +255,10 @@ export default class MapGenerator {
 
   /**
    * Convert Map object to PDF
-   * @param map mapboxgl.Map object
+   * @param map Map object
    * @param fileName file name
    */
-  private toPDF(map: mapboxgl.Map, fileName: string) {
+  private toPDF(map: MaplibreMap, fileName: string) {
     const canvas = map.getCanvas();
     const pdf = new jsPDF({
       orientation: this.width > this.height ? 'l' : 'p',

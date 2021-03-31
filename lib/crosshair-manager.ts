@@ -1,7 +1,7 @@
-import { Map as MapboxMap } from 'mapbox-gl';
+import { Map as MaplibreMap } from 'maplibre-gl';
 
 export default class CrosshairManager {
-    private map: MapboxMap | undefined;
+    private map: MaplibreMap | undefined;
 
     private width: number | undefined;
 
@@ -16,7 +16,7 @@ export default class CrosshairManager {
     private color = '#535353';
 
     constructor(
-      map: MapboxMap | undefined,
+      map: MaplibreMap | undefined,
     ) {
       this.map = map;
     }

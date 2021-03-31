@@ -1,4 +1,4 @@
-export { default as MapboxExportControl } from './export-control';
+export { default as MaplibreExportControl } from './export-control';
 export {
   Size, PageOrientation, Format, DPI,
 } from './map-generator';

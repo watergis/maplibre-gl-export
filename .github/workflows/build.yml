@@ -24,8 +24,8 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: 12.x
-    - run: npm ci
+    - run: yarn
     - name: build
       run: |
-        npm run lint
-        npm run build
+        yarn run lint
+        yarn run build

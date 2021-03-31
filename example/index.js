@@ -1,19 +1,18 @@
-import mapboxgl from 'mapbox-gl';
-import { MapboxExportControl, Size, PageOrientation, Format, DPI} from '../lib/index';
+import { Map, NavigationControl } from 'maplibre-gl';
+import 'maplibre-gl/dist/maplibre-gl.css';
+import { MaplibreExportControl, Size, PageOrientation, Format, DPI} from '../lib/index';
 import '../css/styles.css';
 
 (()=>{
-    // mapboxgl.accessToken='your mapbox access token'
-    const map = new mapboxgl.Map({
+    const map = new Map({
         container: 'map',
-        // style: 'mapbox://styles/mapbox/streets-v11',
         style:'https://narwassco.github.io/mapbox-stylefiles/unvt/style.json',
         center: [35.87063, -1.08551],
         zoom: 12,
         hash:true,
     });
-    map.addControl(new mapboxgl.NavigationControl(), 'top-right');
-    map.addControl(new MapboxExportControl({
+    map.addControl(new NavigationControl(), 'top-right');
+    map.addControl(new MaplibreExportControl({
         PageSize: Size.A3,
         PageOrientation: PageOrientation.Portrait,
         Format: Format.PNG,

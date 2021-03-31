@@ -19,11 +19,11 @@ jobs:
           registry-url: https://registry.npmjs.org/
           # Defaults to the user or organization that owns the workflow file
           scope: '@watergis'
-      - run: npm ci
+      - run: yarn
       - name: build
         run: |
-          npm run lint
-          npm run build
+          yarn run lint
+          yarn run build
       - run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}
@@ -39,13 +39,13 @@ jobs:
           registry-url: https://npm.pkg.github.com/
           # Defaults to the user or organization that owns the workflow file
           scope: '@watergis'
-      - run: npm ci
+      - run: yarn
         env:
           NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
       - name: build
         run: |
-          npm run lint
-          npm run build
+          yarn run lint
+          yarn run build
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}

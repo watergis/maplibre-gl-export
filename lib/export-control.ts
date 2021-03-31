@@ -1,4 +1,4 @@
-import { IControl, Map as MapboxMap } from 'mapbox-gl';
+import { IControl, Map as MaplibreMap } from 'maplibre-gl';
 import CrosshairManager from './crosshair-manager';
 import MapGenerator, {
   Size, Format, PageOrientation, DPI, Unit,
@@ -16,14 +16,14 @@ type Options = {
  * Mapbox GL Export Control.
  * @param {Object} targets - Object of layer.id and title
  */
-export default class MapboxExportControl implements IControl {
+export default class MaplibreExportControl implements IControl {
     private controlContainer: HTMLElement;
 
     private exportContainer: HTMLElement;
 
     private crosshair: CrosshairManager | undefined;
 
-    private map?: MapboxMap;
+    private map?: MaplibreMap;
 
     private exportButton: HTMLButtonElement;
 
@@ -47,16 +47,16 @@ export default class MapboxExportControl implements IControl {
       return defaultPosition;
     }
 
-    public onAdd(map: MapboxMap): HTMLElement {
+    public onAdd(map: MaplibreMap): HTMLElement {
       this.map = map;
       this.controlContainer = document.createElement('div');
       this.controlContainer.classList.add('mapboxgl-ctrl');
       this.controlContainer.classList.add('mapboxgl-ctrl-group');
       this.exportContainer = document.createElement('div');
-      this.exportContainer.classList.add('mapboxgl-export-list');
+      this.exportContainer.classList.add('maplibregl-export-list');
       this.exportButton = document.createElement('button');
-      this.exportButton.classList.add('mapboxgl-ctrl-icon');
-      this.exportButton.classList.add('mapboxgl-export-control');
+      this.exportButton.classList.add('maplibregl-ctrl-icon');
+      this.exportButton.classList.add('maplibregl-export-control');
       this.exportButton.addEventListener('click', () => {
         this.exportButton.style.display = 'none';
         this.exportContainer.style.display = 'block';
