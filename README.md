@@ -24,8 +24,8 @@ See [demo](https://watergis.github.io/maplibre-gl-export/#12/-1.08551/35.87063).
 ## Usage:
 
 ```ts
-import { MaplibreExportControl, Size, PageOrientation, Format, DPI} from "@watergis/mapbox-gl-export";
-import '@watergis/mapbox-gl-export/css/styles.css';
+import { MaplibreExportControl, Size, PageOrientation, Format, DPI} from "@watergis/maplibre-gl-export";
+import '@watergis/maplibre-gl-export/css/styles.css';
 import { Map} from 'maplibre-gl';
 
 const map = new Map();
