@@ -114,8 +114,8 @@ vi package.json
 # update version in package.json
 git add package.json
 git commit -m "v1.X.X"
-git push origin master
-git tag v1.X.X master
+git push origin main
+git tag v1.X.X main
 git push --tag
 # release CI will create draft release in Github pages, then publish it if it is ready.
 # publish CI will deploy npmjs and Github Packages.
