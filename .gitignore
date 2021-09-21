@@ -1,5 +1,5 @@
-example/bundle.js
-example/bundle.js.LICENSE.txt
+example/*bundle.js
+example/*bundle.js.LICENSE.txt
 
 # Logs
 logs
