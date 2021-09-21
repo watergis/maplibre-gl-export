@@ -18,5 +18,6 @@ import '../css/styles.css';
         Format: Format.PNG,
         DPI: DPI[96],
         Crosshair: true,
+        PrintableArea: true
     }), 'top-right');
 })()
