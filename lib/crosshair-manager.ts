@@ -19,12 +19,13 @@ export default class CrosshairManager {
       map: MaplibreMap | undefined,
     ) {
       this.map = map;
+      this.mapResize = this.mapResize.bind(this);
     }
 
     public create() {
       this.updateValues();
       if (this.map !== undefined) {
-        this.map.on('resize', this.mapResize.bind(this));
+        this.map.on('resize', this.mapResize);
         this.createCanvas(this.map.getCanvasContainer());
       } else {
         console.error('map object is null');

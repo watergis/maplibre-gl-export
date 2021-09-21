@@ -9,7 +9,9 @@ This module adds control which can export PDF and images. It was forked from [ma
 
 This module is using source code of [mpetroff/print-maps](https://github.com/mpetroff/print-maps). I just adopted this library to normal Mapbox GL Plugin. Thanks so much to develop this library!
 
-## Installation:
+## for Maplibre GL users
+
+Please consider to use [maplibre-gl-export](https://github.com/watergis/maplibre-gl-export) plugin for Maplibre GL.
 
 ```bash
 yarn add @watergis/maplibre-gl-export --save
@@ -21,7 +23,7 @@ See [demo](https://watergis.github.io/maplibre-gl-export/#12/-1.08551/35.87063).
 
 ![demo.gif](./demo.gif)
 
-## Usage:
+## Usage
 
 ```ts
 import { MaplibreExportControl, Size, PageOrientation, Format, DPI} from "@watergis/maplibre-gl-export";
@@ -37,11 +39,31 @@ map.addControl(new MaplibreExportControl({
     PageOrientation: PageOrientation.Portrait,
     Format: Format.PNG,
     DPI: DPI[96],
-    Crosshair: true
+    Crosshair: true,
+    PrintableArea: true
 }), 'top-right');
 ```
 
+### if you want to use a basemap from Mapbox
+
+- for mapbox v1 user
+
+```ts
+mapboxgl.accessToken='your mapbox access token'
+```
+
+- for mapbox v2 user
+
+```ts
+const map = new mapboxgl.Map({
+    container: 'map',
+    style: 'mapbox://styles/mapbox/streets-v11',
+    accessToken: 'your mapbox access token'
+});
+```
+
 ### Options
+
 You can specify default option as follows.
 
 - PageSize
@@ -60,17 +82,22 @@ You can specify default option as follows.
   - Display crosshair on the map. it helps to adjust the map center before printing.
   - accepts `true` and `false` value
   - default is `false`
-
+- PritableArea
+  - Display printable area on the map it helps to adjust pritable area before printing.
+  - accepts `true` and `false` value
+  - default is `false`
 ## Attribution
 
 When you use exported map, please includes attribution as follows.
 
 If you can include HTML, use this code snippet that includes links to Mapbox & OpenStreetMap:
+
 ```html
 © NARWASSCO, Ltd. © <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>Powered by the United Nations Vector Tile Toolkit
 ```
 
 For print output or if you can’t include links, use this text-only attribution:
+
 ```
 © NARWASSCO, Ltd. ©Mapbox ©OpenStreetMap contributors, Powered by the United Nations Vector Tile Toolkit
 ```
@@ -79,7 +106,7 @@ For print output or if you can’t include links, use this text-only attribution
 
 Also, default example is using base map by United Nation Vector Tile Toolkit. That is why `Powered by the United Nations Vector Tile Toolkit` is included in above.
 
-## Development:
+## Development
 
 ```
 yarn run lint # check styling of source code
@@ -91,7 +118,7 @@ open [http://localhost:8080](http://localhost:8080).
 
 If there are any changes on source code, it will be reflected automatically.
 
-## Build package:
+## Build package
 
 ```
 yarn run build
@@ -110,13 +137,10 @@ It will deploy files under `example` folder to gh-pages.
 ## How to release
 
 ```zsh
-vi package.json
-# update version in package.json
-git add package.json
-git commit -m "v1.X.X"
-git push origin main
-git tag v1.X.X main
-git push --tag
+npm version patch # it increase patch version 0.0.X
+npm version minor # it increase minor version 0.x.0
+npm version major # it increase major version x.0.0
+git push origin master --tag
 # release CI will create draft release in Github pages, then publish it if it is ready.
 # publish CI will deploy npmjs and Github Packages.
 ```

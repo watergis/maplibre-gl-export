@@ -27,7 +27,7 @@
  * THE SOFTWARE.
  */
 
-import * as jsPDF from 'jspdf';
+import { jsPDF } from 'jspdf';
 import { saveAs } from 'file-saver';
 import { accessToken, Map as MaplibreMap } from 'maplibre-gl';
 import 'js-loading-overlay';
@@ -96,6 +96,8 @@ export default class MapGenerator {
 
   private unit: Unit;
 
+  private accesstoken: string | undefined;
+
   /**
    * Constructor
    * @param map MaplibreMap object
@@ -110,6 +112,7 @@ export default class MapGenerator {
     dpi: number = 300,
     format:string = Format.PNG.toString(),
     unit: Unit = Unit.mm,
+    accesstoken?: string,
   ) {
     this.map = map;
     this.width = size[0];
@@ -117,6 +120,7 @@ export default class MapGenerator {
     this.dpi = dpi;
     this.format = format;
     this.unit = unit;
+    this.accesstoken = accesstoken;
   }
 
   /**
@@ -160,7 +164,7 @@ export default class MapGenerator {
 
     // Render map
     const renderMap = new MaplibreMap({
-      accessToken,
+      accessToken: this.accesstoken || accessToken,
       container,
       center: this.map.getCenter(),
       zoom: this.map.getZoom(),
@@ -227,6 +231,7 @@ export default class MapGenerator {
    */
   private toPNG(canvas: HTMLCanvasElement, fileName: string) {
     canvas.toBlob((blob) => {
+      // @ts-ignore
       saveAs(blob, fileName);
     });
   }
@@ -242,7 +247,7 @@ export default class MapGenerator {
     if (canvas.msToBlob) {
       // for IE11
       const blob = this.toBlob(uri);
-      window.navigator.msSaveBlob(blob, fileName);
+      (window.navigator as any).msSaveBlob(blob, fileName);
     } else {
       // for other browsers except IE11
       const a = document.createElement('a');
@@ -266,7 +271,7 @@ export default class MapGenerator {
       compress: true,
     });
 
-    pdf.addImage(canvas.toDataURL('image/png'), 'png', 0, 0, this.width, this.height, null, 'FAST');
+    pdf.addImage(canvas.toDataURL('image/png'), 'png', 0, 0, this.width, this.height, undefined, 'FAST');
 
     const { lng, lat } = map.getCenter();
     pdf.setProperties({
@@ -298,6 +303,7 @@ export default class MapGenerator {
 
       tmpCanvas.add(image);
       const svg = tmpCanvas.toSVG({
+        // @ts-ignore
         x: 0,
         y: 0,
         width: pxWidth,
