@@ -227,6 +227,7 @@ export default class MapGenerator {
    */
   private toPNG(canvas: HTMLCanvasElement, fileName: string) {
     canvas.toBlob((blob) => {
+      // @ts-ignore
       saveAs(blob, fileName);
     });
   }
@@ -242,7 +243,7 @@ export default class MapGenerator {
     if (canvas.msToBlob) {
       // for IE11
       const blob = this.toBlob(uri);
-      window.navigator.msSaveBlob(blob, fileName);
+      (window.navigator as any).msSaveBlob(blob, fileName);
     } else {
       // for other browsers except IE11
       const a = document.createElement('a');
@@ -298,6 +299,7 @@ export default class MapGenerator {
 
       tmpCanvas.add(image);
       const svg = tmpCanvas.toSVG({
+        // @ts-ignore
         x: 0,
         y: 0,
         width: pxWidth,
