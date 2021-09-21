@@ -27,7 +27,7 @@
  * THE SOFTWARE.
  */
 
-import * as jsPDF from 'jspdf';
+import { jsPDF } from 'jspdf';
 import { saveAs } from 'file-saver';
 import { accessToken, Map as MaplibreMap } from 'maplibre-gl';
 import 'js-loading-overlay';
@@ -227,6 +227,7 @@ export default class MapGenerator {
    */
   private toPNG(canvas: HTMLCanvasElement, fileName: string) {
     canvas.toBlob((blob) => {
+      // @ts-ignore
       saveAs(blob, fileName);
     });
   }
@@ -242,7 +243,7 @@ export default class MapGenerator {
     if (canvas.msToBlob) {
       // for IE11
       const blob = this.toBlob(uri);
-      window.navigator.msSaveBlob(blob, fileName);
+      (window.navigator as any).msSaveBlob(blob, fileName);
     } else {
       // for other browsers except IE11
       const a = document.createElement('a');
@@ -266,7 +267,7 @@ export default class MapGenerator {
       compress: true,
     });
 
-    pdf.addImage(canvas.toDataURL('image/png'), 'png', 0, 0, this.width, this.height, null, 'FAST');
+    pdf.addImage(canvas.toDataURL('image/png'), 'png', 0, 0, this.width, this.height, undefined, 'FAST');
 
     const { lng, lat } = map.getCenter();
     pdf.setProperties({
@@ -298,6 +299,7 @@ export default class MapGenerator {
 
       tmpCanvas.add(image);
       const svg = tmpCanvas.toSVG({
+        // @ts-ignore
         x: 0,
         y: 0,
         width: pxWidth,

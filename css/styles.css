@@ -14,6 +14,7 @@
     text-align: right;
     width: 100%;
     height: auto;
+    text-align: center;
 }
 
 .maplibregl-export-list button.active
