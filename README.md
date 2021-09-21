@@ -114,13 +114,10 @@ It will deploy files under `example` folder to gh-pages.
 ## How to release
 
 ```zsh
-vi package.json
-# update version in package.json
-git add package.json
-git commit -m "v1.X.X"
-git push origin main
-git tag v1.X.X main
-git push --tag
+npm version patch # it increase patch version 0.0.X
+npm version minor # it increase minor version 0.x.0
+npm version major # it increase major version x.0.0
+git push origin master --tag
 # release CI will create draft release in Github pages, then publish it if it is ready.
 # publish CI will deploy npmjs and Github Packages.
 ```
