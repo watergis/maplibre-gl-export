@@ -34,7 +34,6 @@
   },
   "homepage": "https://github.com/watergis/maplibre-gl-export#readme",
   "devDependencies": {
-    "@types/jspdf": "^1.3.3",
     "@types/maplibre-gl": "^1.13.1",
     "@typescript-eslint/eslint-plugin": "^4.18.0",
     "@typescript-eslint/parser": "^4.18.0",
