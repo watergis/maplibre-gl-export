@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Example</title>
+<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+<link href='https://unpkg.com/maplibre-gl@1.15.2/dist/maplibre-gl.css' rel='stylesheet' />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.3/gh-fork-ribbon.min.css" />
+<link href='./maplibre-gl-export.css' rel='stylesheet' />
+<style>
+    body { margin: 0; padding: 0; }
+    #map { position: absolute; top: 0; bottom: 0; width: 100%;z-index: 10;}
+</style>
+</head>
+    <body>
+        <a class="github-fork-ribbon left-top" href="https://github.com/watergis/mapbox-gl-export" data-ribbon="Fork me on GitHub" title="Fork me on GitHub">Fork me on GitHub</a>
+        <div id="map"></div>
+        <script src='https://unpkg.com/maplibre-gl@1.15.2/dist/maplibre-gl.js'></script>
+        <script src="./maplibre-gl-export.js"></script>
+        <script>
+            const map = new maplibregl.Map({
+                container: 'map',
+                style:'https://narwassco.github.io/mapbox-stylefiles/unvt/style.json',
+                center: [35.87063, -1.08551],
+                zoom: 12,
+                hash:true,
+            });
+            map.addControl(new maplibregl.NavigationControl(), 'top-right');
+            map.addControl(new watergis.MaplibreExportControl({
+                PageSize: watergis.Size.A3,
+                PageOrientation: watergis.PageOrientation.Portrait,
+                Format: watergis.Format.PNG,
+                DPI: watergis.DPI[96],
+                Crosshair: true,
+                PrintableArea: true,
+            }), 'top-right');
+        </script>
+    </body>
+</html>

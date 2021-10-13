@@ -15,6 +15,26 @@ This module is using source code of [mpetroff/print-maps](https://github.com/mpe
 yarn add @watergis/maplibre-gl-export --save
 ```
 
+## Use CDN
+
+```html
+<link href='https://watergis.github.io/maplibre-gl-export/maplibre-gl-export.css' rel='stylesheet' />
+<script src='https://unpkg.com/maplibre-gl@1.15.2/dist/maplibre-gl.js'></script>
+<script src="https://watergis.github.io/maplibre-gl-export/maplibre-gl-export.js"></script>
+<script>
+  map.addControl(new watergis.MaplibreExportControl({
+      PageSize: watergis.Size.A3,
+      PageOrientation: watergis.PageOrientation.Portrait,
+      Format: watergis.Format.PNG,
+      DPI: watergis.DPI[96],
+      Crosshair: true,
+      PrintableArea: true,
+  }), 'top-right');
+</script>
+```
+
+Furthermore, you may download specific version's scripts and css locally from [release](https://github.com/watergis/maplibre-gl-export/releases) page.
+
 ## Demo:
 
 See [demo](https://watergis.github.io/maplibre-gl-export/#12/-1.08551/35.87063).
