@@ -4,6 +4,7 @@
   "description": "This module adds control which can export PDF and images.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "browser": "dist/cdn/maplibre-gl-export.js",
   "files": [
     "dist",
     "css"
@@ -12,7 +13,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint lib/**/*.ts",
     "lint:fix": "eslint --fix lib/**/*.ts",
-    "build": "tsc && webpack --mode production --config webpack.config.js",
+    "build": "tsc && npm run build:cdn && npm run build:example",
+    "build:example": "webpack --mode production --config webpack.config.js",
+    "build:cdn": "webpack --mode production --config webpack.cdn.config.js && cp ./dist/cdn/maplibre-gl-export.js ./example/. && cp ./css/styles.css ./example/maplibre-gl-export.css",
     "dev": "webpack serve --mode development --open --hot --inline --config webpack.config.js",
     "deploy": "gh-pages -d example -m 'deploy to gh-pages'"
   },
