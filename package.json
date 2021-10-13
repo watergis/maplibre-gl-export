@@ -1,6 +1,6 @@
 {
   "name": "@watergis/maplibre-gl-export",
-  "version": "1.2.12",
+  "version": "1.2.13",
   "description": "This module adds control which can export PDF and images.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -37,9 +37,9 @@
   },
   "homepage": "https://github.com/watergis/maplibre-gl-export#readme",
   "devDependencies": {
+    "@types/geojson": "^7946.0.7",
     "@types/maplibre-gl": "^1.14.0",
     "@typescript-eslint/eslint-plugin": "^4.18.0",
-    "@types/geojson": "^7946.0.7",
     "@typescript-eslint/parser": "^4.18.0",
     "css-loader": "^5.2.4",
     "es6-promise": "^4.2.8",
