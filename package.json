@@ -4,7 +4,6 @@
   "description": "This module adds control which can export PDF and images.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "browser": "dist/cdn/maplibre-gl-export.js",
   "files": [
     "dist",
     "css"
