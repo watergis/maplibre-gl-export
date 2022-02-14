@@ -1,6 +1,7 @@
 import { IControl, Map as MaplibreMap } from 'maplibre-gl';
 import CrosshairManager from './crosshair-manager';
 import PrintableAreaManager from './printable-area-manager';
+import { english, french, Translation } from './local';
 import MapGenerator, {
   Size, Format, PageOrientation, DPI, Unit,
 } from './map-generator';
@@ -12,6 +13,7 @@ type Options = {
   DPI: number;
   Crosshair?: boolean;
   PrintableArea?: boolean;
+  Local?: 'en' | 'fr';
 }
 
 /**
@@ -38,6 +40,7 @@ export default class MaplibreExportControl implements IControl {
       DPI: DPI[300],
       Crosshair: false,
       PrintableArea: false,
+      Local: 'en',
     }
 
     constructor(options: Options) {
@@ -50,6 +53,17 @@ export default class MaplibreExportControl implements IControl {
     public getDefaultPosition(): string {
       const defaultPosition = 'top-right';
       return defaultPosition;
+    }
+
+    public getTranslation(): Translation {
+      switch (this.options.Local) {
+        case 'en':
+          return english;
+        case 'fr':
+          return french;
+        default:
+          return english;
+      }
     }
 
     public onAdd(map: MaplibreMap): HTMLElement {
@@ -77,22 +91,22 @@ export default class MaplibreExportControl implements IControl {
       table.className = 'print-table';
 
       const tr1 = this.createSelection(
-        Size, 'Page Size', 'page-size', this.options.PageSize, (data, key) => JSON.stringify(data[key]),
+        Size, this.getTranslation().PageSize, 'page-size', this.options.PageSize, (data, key) => JSON.stringify(data[key]),
       );
       table.appendChild(tr1);
 
       const tr2 = this.createSelection(
-        PageOrientation, 'Page Orientation', 'page-orientaiton', this.options.PageOrientation, (data, key) => data[key],
+        PageOrientation, this.getTranslation().PageOrientation, 'page-orientaiton', this.options.PageOrientation, (data, key) => data[key],
       );
       table.appendChild(tr2);
 
       const tr3 = this.createSelection(
-        Format, 'Format', 'format-type', this.options.Format, (data, key) => data[key],
+        Format, this.getTranslation().Format, 'format-type', this.options.Format, (data, key) => data[key],
       );
       table.appendChild(tr3);
 
       const tr4 = this.createSelection(
-        DPI, 'DPI', 'dpi-type', this.options.DPI, (data, key) => data[key],
+        DPI, this.getTranslation().DPI, 'dpi-type', this.options.DPI, (data, key) => data[key],
       );
       table.appendChild(tr4);
 
@@ -100,7 +114,7 @@ export default class MaplibreExportControl implements IControl {
 
       const generateButton = document.createElement('button');
       generateButton.type = 'button';
-      generateButton.textContent = 'Generate';
+      generateButton.textContent = this.getTranslation().Generate;
       generateButton.classList.add('generate-button');
       generateButton.addEventListener('click', () => {
         const pageSize: HTMLSelectElement = <HTMLSelectElement>document.getElementById('mapbox-gl-export-page-size');
