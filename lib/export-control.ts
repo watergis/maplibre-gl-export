@@ -1,7 +1,13 @@
 import { IControl, Map as MaplibreMap } from 'maplibre-gl';
 import CrosshairManager from './crosshair-manager';
 import PrintableAreaManager from './printable-area-manager';
-import { english, french, finnish, swedish, Translation } from './local';
+import {
+  english,
+  french,
+  finnish,
+  swedish,
+  Translation,
+} from './local';
 import MapGenerator, {
   Size, Format, PageOrientation, DPI, Unit,
 } from './map-generator';
@@ -62,7 +68,7 @@ export default class MaplibreExportControl implements IControl {
         case 'fr':
           return french;
         case 'fi':
-            return finnish;
+          return finnish;
         case 'sv':
           return swedish;
         default:
@@ -100,7 +106,7 @@ export default class MaplibreExportControl implements IControl {
       table.appendChild(tr1);
 
       const tr2 = this.createSelection(
-        PageOrientation, this.getTranslation().PageOrientation, 'page-orientation', this.options.PageOrientation, (data, key) => data[key],
+        PageOrientation, this.getTranslation().PageOrientation, 'page-orientaiton', this.options.PageOrientation, (data, key) => data[key],
       );
       table.appendChild(tr2);
 
