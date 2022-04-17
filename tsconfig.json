@@ -18,7 +18,8 @@
       "strictFunctionTypes": true,
       "strictNullChecks": true,
       "sourceMap": true,
-      "target": "es6"
+      "target": "es6",
+      "esModuleInterop": true,
   },
   "include" : ["lib/**/*"] 
 }
