@@ -1,4 +1,4 @@
-import { IControl, Map as MaplibreMap } from 'maplibre-gl';
+import { ControlPosition, IControl, Map as MaplibreMap } from 'maplibre-gl';
 import CrosshairManager from './crosshair-manager';
 import PrintableAreaManager from './printable-area-manager';
 import {
@@ -56,7 +56,7 @@ export default class MaplibreExportControl implements IControl {
       this.onDocumentClick = this.onDocumentClick.bind(this);
     }
 
-    public getDefaultPosition(): string {
+    public getDefaultPosition(): ControlPosition {
       const defaultPosition = 'top-right';
       return defaultPosition;
     }
