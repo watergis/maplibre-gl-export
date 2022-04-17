@@ -29,7 +29,7 @@
 
 import { jsPDF } from 'jspdf';
 import { saveAs } from 'file-saver';
-import { accessToken, Map as MaplibreMap } from 'maplibre-gl';
+import { Map as MaplibreMap } from 'maplibre-gl';
 import 'js-loading-overlay';
 import { fabric } from 'fabric';
 
@@ -158,21 +158,6 @@ export default class MapGenerator {
     container.style.height = this.toPixels(this.height);
     hidden.appendChild(container);
 
-    // Render map
-    const renderMap = new MaplibreMap({
-      accessToken,
-      container,
-      center: this.map.getCenter(),
-      zoom: this.map.getZoom(),
-      bearing: this.map.getBearing(),
-      pitch: this.map.getPitch(),
-      interactive: false,
-      preserveDrawingBuffer: true,
-      fadeDuration: 0,
-      attributionControl: false,
-      // hack to read transfrom request callback function
-      transformRequest: (this.map as any)._requestManager._transformRequestFn,
-    });
     const style = this.map.getStyle();
     if (style && style.sources) {
       const sources = style.sources;
@@ -186,7 +171,21 @@ export default class MapGenerator {
       });
     }
 
-    renderMap.setStyle(style);
+    // Render map
+    const renderMap = new MaplibreMap({
+      container,
+      style,
+      center: this.map.getCenter(),
+      zoom: this.map.getZoom(),
+      bearing: this.map.getBearing(),
+      pitch: this.map.getPitch(),
+      interactive: false,
+      preserveDrawingBuffer: true,
+      fadeDuration: 0,
+      attributionControl: false,
+      // hack to read transfrom request callback function
+      transformRequest: (this.map as any)._requestManager._transformRequestFn,
+    });
 
     renderMap.once('idle', () => {
       const canvas = renderMap.getCanvas();
