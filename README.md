@@ -29,6 +29,7 @@ yarn add @watergis/maplibre-gl-export --save
       DPI: watergis.DPI[96],
       Crosshair: true,
       PrintableArea: true,
+      Local: 'en'
   }), 'top-right');
 </script>
 ```
@@ -88,6 +89,8 @@ You can specify default option as follows.
 - Local
   - default `en` for english
   - `fr` french
+  - `fi` finnish
+  - `sv` swedish
 ## Attribution
 
 When you use exported map, please includes attribution as follows.
