@@ -21,7 +21,7 @@ type Options = {
   PrintableArea?: boolean;
   Local?: 'en' | 'fr' | 'fi' | 'sv';
   AllowedSizes?: ('A2'|'A3'|'A4'|'A5'|'A6'|'B2'|'B3'|'B4'|'B5'|'B6')[];
-  Filename?: 'map';
+  Filename?: string;
 }
 
 /**
@@ -50,7 +50,7 @@ export default class MaplibreExportControl implements IControl {
       PrintableArea: false,
       Local: 'en',
       AllowedSizes: Object.keys(Size) as ('A2'|'A3'|'A4'|'A5'|'A6'|'B2'|'B3'|'B4'|'B5'|'B6')[],
-      Filename: 'map',
+      Filename: 'map'
     }
 
     constructor(options: Options) {
@@ -153,7 +153,7 @@ export default class MaplibreExportControl implements IControl {
           Number(dpiType.value),
           formatType.value,
           Unit.mm,
-          this.options.Filename,
+          this.options.Filename
         );
         mapGenerator.generate();
       });
