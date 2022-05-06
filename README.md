@@ -88,6 +88,14 @@ You can specify default option as follows.
 - Local
   - default `en` for english
   - `fr` french
+- AllowedSizes
+  - list of allowed page sizes for export
+  - available values `'A2'`, `'A3'`, `'A4'`, `'A5'`, `'A6'`, `'B2'`, `'B3'`, `'B4'`, `'B5'`, `'B6'`
+  - default: all sizes `['A2','A3','A4','A5','A6','B2','B3','B4','B5','B6']`
+- Filename
+  - file name template, file part
+  - default `map` for i.e `map.pdf`
+
 ## Attribution
 
 When you use exported map, please includes attribution as follows.
