@@ -13,15 +13,15 @@ import MapGenerator, {
 } from './map-generator';
 
 type Options = {
-  PageSize: any;
-  PageOrientation: string;
-  Format: string;
-  DPI: number;
+  PageSize?: any;
+  PageOrientation?: string;
+  Format?: string;
+  DPI?: number;
   Crosshair?: boolean;
   PrintableArea?: boolean;
   Local?: 'en' | 'fr' | 'fi' | 'sv';
-  AllowedSizes: ('A2'|'A3'|'A4'|'A5'|'A6'|'B2'|'B3'|'B4'|'B5'|'B6')[];
-  Filename: 'map';
+  AllowedSizes?: ('A2'|'A3'|'A4'|'A5'|'A6'|'B2'|'B3'|'B4'|'B5'|'B6')[];
+  Filename?: 'map';
 }
 
 /**
@@ -49,8 +49,8 @@ export default class MaplibreExportControl implements IControl {
       Crosshair: false,
       PrintableArea: false,
       Local: 'en',
-      AllowedSizes : Object.keys(Size) as ('A2'|'A3'|'A4'|'A5'|'A6'|'B2'|'B3'|'B4'|'B5'|'B6')[],
-      Filename:'map'
+      AllowedSizes: Object.keys(Size) as ('A2'|'A3'|'A4'|'A5'|'A6'|'B2'|'B3'|'B4'|'B5'|'B6')[],
+      Filename: 'map',
     }
 
     constructor(options: Options) {
@@ -104,21 +104,20 @@ export default class MaplibreExportControl implements IControl {
       const table = document.createElement('TABLE');
       table.className = 'print-table';
 
-      var sizes = {}
-      this.options.AllowedSizes?.forEach(size => {
-        const dimensions = Size[size]
-        if(dimensions) {
-          sizes[size] = Size[size]
+      const sizes = {};
+      this.options.AllowedSizes?.forEach((size) => {
+        const dimensions = Size[size];
+        if (dimensions) {
+          sizes[size] = Size[size];
         }
-      })
-      console.log("Sizes", sizes, Size)
+      });
       const tr1 = this.createSelection(
         sizes, this.getTranslation().PageSize, 'page-size', this.options.PageSize, (data, key) => JSON.stringify(data[key]),
       );
       table.appendChild(tr1);
 
       const tr2 = this.createSelection(
-        PageOrientation, this.getTranslation().PageOrientation, 'page-orientaiton', this.options.PageOrientation, (data, key) => data[key],
+        PageOrientation, this.getTranslation().PageOrientation, 'page-orientation', this.options.PageOrientation, (data, key) => data[key],
       );
       table.appendChild(tr2);
 
@@ -154,7 +153,7 @@ export default class MaplibreExportControl implements IControl {
           Number(dpiType.value),
           formatType.value,
           Unit.mm,
-          this.options.Filename
+          this.options.Filename,
         );
         mapGenerator.generate();
       });
