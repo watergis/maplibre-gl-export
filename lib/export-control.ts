@@ -20,6 +20,8 @@ type Options = {
   Crosshair?: boolean;
   PrintableArea?: boolean;
   Local?: 'en' | 'fr' | 'fi' | 'sv';
+  AllowedSizes: ('A2'|'A3'|'A4'|'A5'|'A6'|'B2'|'B3'|'B4'|'B5'|'B6')[];
+  Filename: 'map';
 }
 
 /**
@@ -47,6 +49,8 @@ export default class MaplibreExportControl implements IControl {
       Crosshair: false,
       PrintableArea: false,
       Local: 'en',
+      AllowedSizes : Object.keys(Size) as ('A2'|'A3'|'A4'|'A5'|'A6'|'B2'|'B3'|'B4'|'B5'|'B6')[],
+      Filename:'map'
     }
 
     constructor(options: Options) {
@@ -100,8 +104,16 @@ export default class MaplibreExportControl implements IControl {
       const table = document.createElement('TABLE');
       table.className = 'print-table';
 
+      var sizes = {}
+      this.options.AllowedSizes?.forEach(size => {
+        const dimensions = Size[size]
+        if(dimensions) {
+          sizes[size] = Size[size]
+        }
+      })
+      console.log("Sizes", sizes, Size)
       const tr1 = this.createSelection(
-        Size, this.getTranslation().PageSize, 'page-size', this.options.PageSize, (data, key) => JSON.stringify(data[key]),
+        sizes, this.getTranslation().PageSize, 'page-size', this.options.PageSize, (data, key) => JSON.stringify(data[key]),
       );
       table.appendChild(tr1);
 
@@ -128,7 +140,7 @@ export default class MaplibreExportControl implements IControl {
       generateButton.classList.add('generate-button');
       generateButton.addEventListener('click', () => {
         const pageSize: HTMLSelectElement = <HTMLSelectElement>document.getElementById('mapbox-gl-export-page-size');
-        const pageOrientation: HTMLSelectElement = <HTMLSelectElement>document.getElementById('mapbox-gl-export-page-orientaiton');
+        const pageOrientation: HTMLSelectElement = <HTMLSelectElement>document.getElementById('mapbox-gl-export-page-orientation');
         const formatType: HTMLSelectElement = <HTMLSelectElement>document.getElementById('mapbox-gl-export-format-type');
         const dpiType: HTMLSelectElement = <HTMLSelectElement>document.getElementById('mapbox-gl-export-dpi-type');
         const orientValue = pageOrientation.value;
@@ -142,6 +154,7 @@ export default class MaplibreExportControl implements IControl {
           Number(dpiType.value),
           formatType.value,
           Unit.mm,
+          this.options.Filename
         );
         mapGenerator.generate();
       });
@@ -250,7 +263,7 @@ export default class MaplibreExportControl implements IControl {
         return;
       }
       const pageSize: HTMLSelectElement = <HTMLSelectElement>document.getElementById('mapbox-gl-export-page-size');
-      const pageOrientation: HTMLSelectElement = <HTMLSelectElement>document.getElementById('mapbox-gl-export-page-orientaiton');
+      const pageOrientation: HTMLSelectElement = <HTMLSelectElement>document.getElementById('mapbox-gl-export-page-orientation');
       const orientValue = pageOrientation.value;
       let pageSizeValue = JSON.parse(pageSize.value);
       if (orientValue === PageOrientation.Portrait) {

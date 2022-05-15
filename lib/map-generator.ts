@@ -84,17 +84,10 @@ export const DPI = {
 type DPI = typeof DPI[keyof typeof DPI];
 
 export default class MapGenerator {
-  private map: MaplibreMap;
 
   private width: number;
 
   private height: number;
-
-  private dpi: number;
-
-  private format: string;
-
-  private unit: Unit;
 
   /**
    * Constructor
@@ -105,18 +98,15 @@ export default class MapGenerator {
    * @param unit length unit. default is mm
    */
   constructor(
-    map:MaplibreMap,
+    private map:MaplibreMap,
     size: Size = Size.A4,
-    dpi: number = 300,
-    format:string = Format.PNG.toString(),
-    unit: Unit = Unit.mm,
+    private dpi: number = 300,
+    private format:string = Format.PNG.toString(),
+    private unit: Unit = Unit.mm,
+    private fileName: string = 'map'
   ) {
-    this.map = map;
     this.width = size[0];
     this.height = size[1];
-    this.dpi = dpi;
-    this.format = format;
-    this.unit = unit;
   }
 
   /**
@@ -189,7 +179,7 @@ export default class MapGenerator {
 
     renderMap.once('idle', () => {
       const canvas = renderMap.getCanvas();
-      const fileName = `map.${this_.format}`;
+      const fileName = `${this.fileName}.${this_.format}`;
       switch (this_.format) {
         case Format.PNG:
           this_.toPNG(canvas, fileName);
