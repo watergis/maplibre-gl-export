@@ -6,6 +6,7 @@ import {
   french,
   finnish,
   swedish,
+  spanish,
   Translation,
 } from './local';
 import MapGenerator, {
@@ -19,7 +20,7 @@ type Options = {
   DPI?: number;
   Crosshair?: boolean;
   PrintableArea?: boolean;
-  Local?: 'en' | 'fr' | 'fi' | 'sv';
+  Local?: 'en' | 'fr' | 'fi' | 'sv' | 'es';
   AllowedSizes?: ('A2'|'A3'|'A4'|'A5'|'A6'|'B2'|'B3'|'B4'|'B5'|'B6')[];
   Filename?: string;
 }
@@ -75,6 +76,8 @@ export default class MaplibreExportControl implements IControl {
           return finnish;
         case 'sv':
           return swedish;
+        case 'es':
+          return spanish;
         default:
           return english;
       }

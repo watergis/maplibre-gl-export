@@ -2,6 +2,7 @@ import english from './en';
 import french from './fr';
 import finnish from './fi';
 import swedish from './sv';
+import spanish from './es';
 
 type Translation = {
   PageSize: string;
@@ -12,5 +13,5 @@ type Translation = {
 }
 
 export {
-  english, french, finnish, swedish, Translation,
+  english, french, finnish, swedish, spanish, Translation,
 };
