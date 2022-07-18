@@ -200,6 +200,11 @@ export default class MapGenerator {
       transformRequest: (this.map as any)._requestManager._transformRequestFn,
     });
 
+    const images = (this.map.style.imageManager||{}).images||[];
+    for (const key in images) {
+        renderMap.addImage(key, images[key].data);
+    }
+
     renderMap.once('idle', () => {
       const canvas = renderMap.getCanvas();
       const fileName = `${this.fileName}.${this_.format}`;
