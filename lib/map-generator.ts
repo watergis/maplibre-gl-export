@@ -29,7 +29,7 @@
 
 import { jsPDF } from 'jspdf';
 import { saveAs } from 'file-saver';
-import { Map as MaplibreMap } from 'maplibre-gl';
+import { Map as MaplibreMap, Marker } from 'maplibre-gl';
 import 'js-loading-overlay';
 import { fabric } from 'fabric';
 
@@ -84,7 +84,6 @@ export const DPI = {
 type DPI = typeof DPI[keyof typeof DPI];
 
 export default class MapGenerator {
-
   private width: number;
 
   private height: number;
@@ -103,7 +102,8 @@ export default class MapGenerator {
     private dpi: number = 300,
     private format:string = Format.PNG.toString(),
     private unit: Unit = Unit.mm,
-    private fileName: string = 'map'
+    private fileName: string = 'map',
+    private markers: Marker[]
   ) {
     this.width = size[0];
     this.height = size[1];
@@ -160,6 +160,29 @@ export default class MapGenerator {
         });
       });
     }
+
+    // Add markers to the layers
+    this.markers.forEach((marker, index) => {
+      this.map.addSource(`point${index}`, {
+        type: 'geojson',
+        data: {
+          type: 'Point',
+          coordinates: [marker.getLngLat().lng, marker.getLngLat().lat],
+        },
+      });
+
+      this.map.addLayer({
+        id: `point${index}`,
+        source: `point${index}`,
+        type: 'circle',
+        paint: {
+          'circle-radius': 8,
+          'circle-color': 'red',
+          'circle-stroke-width': 1,
+          'circle-blur': 0.5,
+        },
+      });
+    });
 
     // Render map
     const renderMap = new MaplibreMap({
