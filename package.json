@@ -38,8 +38,8 @@
   "devDependencies": {
     "@types/geojson": "^7946.0.7",
     "@types/maplibre-gl": "^1.14.0",
-    "@typescript-eslint/eslint-plugin": "^4.18.0",
-    "@typescript-eslint/parser": "^4.18.0",
+    "@typescript-eslint/eslint-plugin": "^4.33.0",
+    "@typescript-eslint/parser": "^4.33.0",
     "css-loader": "^5.2.4",
     "es6-promise": "^4.2.8",
     "eslint": "^7.22.0",
