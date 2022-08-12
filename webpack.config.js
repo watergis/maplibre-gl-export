@@ -36,8 +36,9 @@ module.exports = {
     },
     devtool: 'inline-source-map',
     devServer: {
-        watchContentBase: true,
-        contentBase: './example',
+        static: {
+            directory: path.join(__dirname, 'example'),
+        },
     },
     externals: {
         'maplibre-gl': 'maplibregl'

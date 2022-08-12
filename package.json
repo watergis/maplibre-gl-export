@@ -15,7 +15,7 @@
     "build": "tsc && npm run build:cdn && npm run build:example",
     "build:example": "webpack --mode production --config webpack.config.js",
     "build:cdn": "webpack --mode production --config webpack.cdn.config.js && cp ./dist/cdn/maplibre-gl-export.js ./example/. && cp ./css/styles.css ./example/maplibre-gl-export.css",
-    "dev": "webpack serve --mode development --open --hot --inline --config webpack.config.js",
+    "dev": "webpack serve --mode development --open --hot --config webpack.config.js",
     "deploy": "gh-pages -d example -m 'deploy to gh-pages'"
   },
   "keywords": [
@@ -36,29 +36,29 @@
   },
   "homepage": "https://github.com/watergis/maplibre-gl-export#readme",
   "devDependencies": {
-    "@types/geojson": "^7946.0.7",
+    "@types/geojson": "^7946.0.10",
     "@types/maplibre-gl": "^1.14.0",
-    "@typescript-eslint/eslint-plugin": "^4.18.0",
-    "@typescript-eslint/parser": "^4.18.0",
-    "css-loader": "^5.2.4",
+    "@typescript-eslint/eslint-plugin": "^5.33.0",
+    "@typescript-eslint/parser": "^5.33.0",
+    "css-loader": "^6.7.1",
     "es6-promise": "^4.2.8",
-    "eslint": "^7.22.0",
-    "eslint-config-airbnb-base": "^14.2.1",
-    "eslint-plugin-import": "^2.22.1",
-    "gh-pages": "^3.1.0",
+    "eslint": "^8.21.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "gh-pages": "^4.0.0",
     "path": "^0.12.7",
-    "style-loader": "^2.0.0",
-    "ts-loader": "^9.1.2",
-    "typescript": "^4.2.4",
-    "webpack": "^5.37.0",
-    "webpack-cli": "^4.7.0",
-    "webpack-dev-server": "^3.11.2"
+    "style-loader": "^3.3.1",
+    "ts-loader": "^9.3.1",
+    "typescript": "^4.7.4",
+    "webpack": "^5.74.0",
+    "webpack-cli": "^4.10.0",
+    "webpack-dev-server": "^4.10.0"
   },
   "dependencies": {
-    "fabric": "^4.3.1",
+    "fabric": "^5.2.1",
     "file-saver": "^2.0.5",
     "js-loading-overlay": "^1.2.0",
-    "jspdf": "^2.3.1",
-    "maplibre-gl": "^2.1.9"
+    "jspdf": "^2.5.1",
+    "maplibre-gl": "^2.2.1"
   }
 }
