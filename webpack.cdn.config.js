@@ -10,7 +10,7 @@ module.exports = {
         }),
     ],
     output: {
-        library: 'watergis',
+        // library: 'watergis',
         libraryTarget: 'umd',
         filename: 'maplibre-gl-export.js',
         path: path.resolve(__dirname, 'dist/cdn'),
