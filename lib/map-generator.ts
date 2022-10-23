@@ -84,10 +84,19 @@ export const DPI = {
 type DPI = typeof DPI[keyof typeof DPI];
 
 export default class MapGenerator {
+  private map: MaplibreMap;
 
   private width: number;
 
   private height: number;
+
+  private dpi: number;
+
+  private format: string;
+
+  private unit: Unit;
+
+  private fileName: string;
 
   /**
    * Constructor
@@ -96,17 +105,23 @@ export default class MapGenerator {
    * @param dpi dpi value. deafult is 300
    * @param format image format. default is PNG
    * @param unit length unit. default is mm
+   * @param fileName file name. default is 'map'
    */
   constructor(
-    private map:MaplibreMap,
+    map: MaplibreMap,
     size: Size = Size.A4,
-    private dpi: number = 300,
-    private format:string = Format.PNG.toString(),
-    private unit: Unit = Unit.mm,
-    private fileName: string = 'map'
+    dpi: number = 300,
+    format: string = Format.PNG.toString(),
+    unit: Unit = Unit.mm,
+    fileName: string = 'map',
   ) {
+    this.map = map;
     this.width = size[0];
     this.height = size[1];
+    this.dpi = dpi;
+    this.format = format;
+    this.unit = unit;
+    this.fileName = fileName;
   }
 
   /**
@@ -177,10 +192,11 @@ export default class MapGenerator {
       transformRequest: (this.map as any)._requestManager._transformRequestFn,
     });
 
-    const images = (this.map.style.imageManager||{}).images||[];
-    for (const key in images) {
-        renderMap.addImage(key, images[key].data);
-    }
+    // @ts-ignore
+    const images = (this.map.style.imageManager || {}).images || [];
+    Object.keys(images).forEach((key) => {
+      renderMap.addImage(key, images[key].data);
+    });
 
     renderMap.once('idle', () => {
       const canvas = renderMap.getCanvas();
@@ -318,7 +334,7 @@ export default class MapGenerator {
    * @param length mm/inch length
    * @param conversionFactor DPI value. default is 96.
    */
-  private toPixels(length:number, conversionFactor = 96) {
+  private toPixels(length: number, conversionFactor = 96) {
     if (this.unit === Unit.mm) {
       conversionFactor /= 25.4;
     }
