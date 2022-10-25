@@ -10,8 +10,8 @@
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "eslint lib/**/*.ts",
-    "lint:fix": "eslint --fix lib/**/*.ts",
+    "lint": "eslint lib/*.ts",
+    "lint:fix": "eslint --fix lib/*.ts",
     "build": "tsc && npm run build:cdn && npm run build:example",
     "build:example": "webpack --mode production --config webpack.config.js",
     "build:cdn": "webpack --mode production --config webpack.cdn.config.js && cp ./dist/cdn/maplibre-gl-export.js ./example/. && cp ./css/styles.css ./example/maplibre-gl-export.css",

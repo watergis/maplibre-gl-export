@@ -16,6 +16,10 @@
         "@typescript-eslint"
     ],
     "rules": {
+        "@typescript-eslint/type-annotation-spacing": ["warn", {
+            "before": false,
+            "after": true
+        }],
         "no-redeclare":"off",
         "prefer-destructuring":"off",
         "no-underscore-dangle":"off",
