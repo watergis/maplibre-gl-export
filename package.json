@@ -54,8 +54,6 @@
     "webpack-dev-server": "^4.11.0"
   },
   "dependencies": {
-    "fabric": "^5.2.4",
-    "file-saver": "^2.0.5",
     "js-loading-overlay": "^1.2.0",
     "jspdf": "^2.5.1",
     "maplibre-gl": "^2.4.0"
