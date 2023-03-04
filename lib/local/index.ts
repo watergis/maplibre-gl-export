@@ -1,6 +1,7 @@
 import english from './en';
 import french from './fr';
 import finnish from './fi';
+import german from './de';
 import swedish from './sv';
 import spanish from './es';
 
@@ -13,5 +14,5 @@ type Translation = {
 }
 
 export {
-  english, french, finnish, swedish, spanish, Translation,
+  english, french, finnish, german, swedish, spanish, Translation,
 };

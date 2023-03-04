@@ -88,6 +88,7 @@ You can specify default option as follows.
   - default is `false`
 - Local
   - default `en` for english
+  - `de` german
   - `fr` french
   - `fi` finnish
   - `sv` swedish
