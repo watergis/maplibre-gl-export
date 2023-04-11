@@ -6,12 +6,7 @@ name: build
 on:
   push:
     branches: [ main ]
-    paths:
-      - "lib/**"
-
   pull_request:
-    paths:
-      - "lib/**"
 
 jobs:
   build:
@@ -19,13 +14,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Use Node.js
-      uses: actions/setup-node@v1
+      uses: actions/setup-node@v3
       with:
-        node-version: 16.x
+        node-version: 18.x
     - run: yarn
-    - name: build
+    - run: yarn lint
+    - run: yarn build
+    - name: configure git, build and deploy
+      if: ${{ github.ref == 'refs/heads/main'}}
+      env:
+        NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
       run: |
-        yarn run lint
-        yarn run build
+        git config --global user.name "watergis+githubci"
+        git config --global user.email "watergis+githubci@users.noreply.github.com"
+        git remote set-url origin https://x-access-token:${NODE_AUTH_TOKEN}@github.com/watergis/maplibre-gl-export.git
+        yarn run deploy

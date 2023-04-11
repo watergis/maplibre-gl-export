@@ -18,13 +18,13 @@ jobs:
     - run: yarn 
       env:
         CI: true
+    - run: yarn lint
     - name: build
       run: |
-        yarn run lint
         yarn run build
         mkdir ./release
-        cp ./dist/cdn/maplibre-gl-export.js ./release/.
-        cp ./css/styles.css ./release/maplibre-gl-export.css
+        cp ./dist/maplibre-gl-export.umd.js ./release/maplibre-gl-export.js
+        cp ./dist/maplibre-gl-export.css ./release/maplibre-gl-export.css
     - name: Create Release
       id: create_release
       uses: actions/create-release@latest

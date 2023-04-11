@@ -20,10 +20,8 @@ jobs:
           # Defaults to the user or organization that owns the workflow file
           scope: '@watergis'
       - run: yarn
-      - name: build
-        run: |
-          yarn run lint
-          yarn run build
+      - run: yarn lint
+      - run: yarn build
       - run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}
@@ -42,10 +40,8 @@ jobs:
       - run: yarn
         env:
           NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
-      - name: build
-        run: |
-          yarn run lint
-          yarn run build
+      - run: yarn lint
+      - run: yarn build
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}

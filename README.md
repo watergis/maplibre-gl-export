@@ -122,9 +122,9 @@ Also, default example is using base map by United Nation Vector Tile Toolkit. Th
 ## Development:
 
 ```
-yarn run lint # check styling of source code
-yarn run lint:fix # fix styling by eslint
-yarn run dev
+yarn lint
+yarn format
+yarn dev
 ```
 
 open [http://localhost:8080](http://localhost:8080).
@@ -134,7 +134,7 @@ If there are any changes on source code, it will be reflected automatically.
 ## Build package:
 
 ```
-yarn run build
+yarn build
 ```
 
 The modules will be generated under `dist` folder.
@@ -145,7 +145,7 @@ The modules will be generated under `dist` folder.
 yarn run deploy
 ```
 
-It will deploy files under `example` folder to gh-pages.
+It will deploy files under `dist` folder to gh-pages.
 
 ## How to release
 
@@ -153,7 +153,7 @@ It will deploy files under `example` folder to gh-pages.
 yarn version --patch # it increase patch version 0.0.X
 yarn version --minor # it increase minor version 0.x.0
 yarn version --major # it increase major version x.0.0
-git push origin master --tag
+git push origin main --tag
 # release CI will create draft release in Github pages, then publish it if it is ready.
 # publish CI will deploy npmjs and Github Packages.
 ```
