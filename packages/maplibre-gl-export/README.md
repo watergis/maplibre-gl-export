@@ -36,7 +36,7 @@ Furthermore, you may download specific version's scripts and css locally from [r
 
 ## Demo:
 
-See [demo](https://watergis.github.io/maplibre-gl-export/#12/-1.08551/35.87063).
+See [demo](https://maplibre-gl-export.water-gis.com/).
 
 ![demo.gif](./demo.gif)
 
