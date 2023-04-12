@@ -9,6 +9,10 @@
 		".": {
 			"import": "./dist/maplibre-gl-export.es.js",
 			"require": "./dist/maplibre-gl-export.umd.js"
+		},
+		"./dist/maplibre-gl-export.css": {
+			"import": "./dist/maplibre-gl-export.css",
+			"require": "./dist/maplibre-gl-export.css"
 		}
 	},
 	"files": [
@@ -43,7 +47,7 @@
 	"bugs": {
 		"url": "https://github.com/watergis/maplibre-gl-export/issues"
 	},
-	"homepage": "https://github.com/watergis/maplibre-gl-export#readme",
+	"homepage": "https://github.com/watergis/maplibre-gl-export/tree/main/packages/maplibre-gl-export#readme",
 	"devDependencies": {
 		"@types/geojson": "^7946.0.10",
 		"@types/node": "^18.15.11",
