@@ -1,20 +1,17 @@
-# EXAMPLE USAGE:
-#
-#   Refer for explanation to following link:
-#   https://github.com/evilmartians/lefthook/blob/master/docs/configuration.md
-#
-pre-push:
-  parallel: true
-  commands:
-    build:
-      tags: build
-      run: yarn build
+# EXAMPLE USAGE
+# Refer for explanation to following link:
+# https://github.com/evilmartians/lefthook/blob/master/docs/full_guide.md
 
 pre-commit:
   parallel: true
   commands:
-    precommit:
-      tags: precommit
+    lint+format:
       run: |
-        yarn format
-        yarn lint
+        pnpm lint
+        pnpm format
+
+pre-push:
+  parallel: true
+  commands:
+    build:
+      run: pnpm build

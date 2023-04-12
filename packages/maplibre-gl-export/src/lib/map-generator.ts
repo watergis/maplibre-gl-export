@@ -176,6 +176,10 @@ export default class MapGenerator {
 				});
 			});
 		}
+		if (style && style.sprite) {
+			// delete sprite property. It looks like sprite is already loaded in the main map object, and maplibre complains sprite image is already loaded.
+			delete style.sprite;
+		}
 
 		// Render map
 		const renderMap = new MaplibreMap({
@@ -226,6 +230,7 @@ export default class MapGenerator {
 					return actualPixelRatio;
 				}
 			});
+			hidden.remove();
 
 			// eslint-disable-next-line
 			// @ts-ignore

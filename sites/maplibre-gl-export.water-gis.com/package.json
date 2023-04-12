@@ -1,0 +1,23 @@
+{
+	"name": "maplibre-gl-export.water-gis.com",
+	"private": true,
+	"version": "0.0.0",
+	"type": "module",
+	"scripts": {
+		"dev": "vite",
+		"build": "vite build",
+		"preview": "vite preview",
+		"lint": "prettier --plugin-search-dir . --check . && eslint .",
+		"format": "prettier --plugin-search-dir . --write ."
+	},
+	"devDependencies": {
+		"@typescript-eslint/eslint-plugin": "^5.36.2",
+		"@typescript-eslint/parser": "^5.36.2",
+		"@watergis/maplibre-gl-export": "workspace:^",
+		"eslint-config-prettier": "^8.6.0",
+		"eslint-plugin-import": "^2.26.0",
+		"maplibre-gl": "^2.4.0",
+		"prettier": "^2.8.4",
+		"vite": "^4.2.0"
+	}
+}
