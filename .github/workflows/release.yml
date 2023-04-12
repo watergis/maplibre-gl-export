@@ -1,9 +1,8 @@
-name: Release Draft
+name: Release
 
 on:
   push:
-   branch:
-    - main
+    branches: [ main ]
 
 env:
   CI: true
