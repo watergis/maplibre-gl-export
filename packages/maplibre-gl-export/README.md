@@ -16,9 +16,9 @@ yarn add @watergis/maplibre-gl-export --save
 ## Use CDN
 
 ```html
-<link href='https://watergis.github.io/maplibre-gl-export/maplibre-gl-export.css' rel='stylesheet' />
+<link href='https://www.unpkg.com/@watergis/maplibre-gl-export@2.0.0/dist/maplibre-gl-export.css' rel='stylesheet' />
 <script src='https://unpkg.com/maplibre-gl@1.15.2/dist/maplibre-gl.js'></script>
-<script src="https://watergis.github.io/maplibre-gl-export/maplibre-gl-export.js"></script>
+<script src="https://www.unpkg.com/@watergis/maplibre-gl-export@2.0.0/dist/maplibre-gl-export.umd.js"></script>
 <script>
   map.addControl(new MaplibreExportControl({
       PageSize: Size.A3,

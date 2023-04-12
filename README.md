@@ -6,10 +6,10 @@ This monorepo manages the source code and demo page for `@watergis/maplibre-gl-e
 
 ## Repositories
 
-| repository | description |
-|---|---|
-|[@watergis/maplibre-gl-export](./packages/maplibre-gl-export/)|The main repository to manage plugin source code|
-|[maplibre-gl-export.water-gis.com](./sites/maplibre-gl-export.water-gis.com/)|The repository manages demo website|
+| repository | description | changelog |
+|---|---|---|
+|[@watergis/maplibre-gl-export](./packages/maplibre-gl-export/)|The main repository to manage plugin source code|[CHANGELOG](./packages/maplibre-gl-export/CHANGELOG.md)
+|[maplibre-gl-export.water-gis.com](./sites/maplibre-gl-export.water-gis.com/)|The repository manages demo website|-|
 
 ## Usage of the plugin
 
