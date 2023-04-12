@@ -1,0 +1,70 @@
+{
+	"name": "@watergis/maplibre-gl-export",
+	"version": "1.3.9",
+	"description": "This module adds control which can export PDF and images.",
+	"main": "dist/maplibre-gl-export.umd.js",
+	"types": "./dist/types/index.d.ts",
+	"module": "dist/maplibre-gl-export.es.js",
+	"exports": {
+		".": {
+			"import": "./dist/maplibre-gl-export.es.js",
+			"require": "./dist/maplibre-gl-export.umd.js"
+		}
+	},
+	"files": [
+		"dist",
+		"package.json"
+	],
+	"scripts": {
+		"dev": "vite",
+		"build": "npm run build:js && npm run build:css",
+		"build:js": "tsc && vite build",
+		"build:scss": "sass --no-source-map --style=compressed src/scss/maplibre-gl-export.scss:dist/maplibre-gl-export.css",
+		"build:postcss": "postcss dist/*.css -r",
+		"build:css": "npm run build:scss && npm run build:postcss",
+		"preview": "vite preview",
+		"lint": "prettier --plugin-search-dir . --check . && eslint .",
+		"format": "prettier --plugin-search-dir . --write .",
+		"deploy": "gh-pages -d dist -m 'deploy to gh-pages'"
+	},
+	"keywords": [
+		"mapbox",
+		"mapbox-gl-js",
+		"export",
+		"image",
+		"pdf"
+	],
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/watergis/maplibre-gl-export.git"
+	},
+	"author": "Jin IGARASHI",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/watergis/maplibre-gl-export/issues"
+	},
+	"homepage": "https://github.com/watergis/maplibre-gl-export#readme",
+	"devDependencies": {
+		"@types/geojson": "^7946.0.10",
+		"@types/node": "^18.15.11",
+		"@typescript-eslint/eslint-plugin": "^5.58.0",
+		"@typescript-eslint/parser": "^5.58.0",
+		"autoprefixer": "^10.4.14",
+		"eslint": "^8.38.0",
+		"eslint-config-prettier": "^8.8.0",
+		"eslint-plugin-import": "^2.27.5",
+		"path": "^0.12.7",
+		"postcss": "^8.4.21",
+		"postcss-cli": "^10.1.0",
+		"prettier": "^2.8.7",
+		"sass": "^1.62.0",
+		"sass-loader": "^13.2.2",
+		"typescript": "^5.0.4",
+		"vite": "^4.2.1"
+	},
+	"dependencies": {
+		"js-loading-overlay": "^1.2.0",
+		"jspdf": "^2.5.1",
+		"maplibre-gl": "^2.4.0"
+	}
+}

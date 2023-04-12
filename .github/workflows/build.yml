@@ -6,26 +6,38 @@ name: build
 on:
   push:
     branches: [ main ]
-    paths:
-      - "lib/**"
-
   pull_request:
-    paths:
-      - "lib/**"
+
+env:
+  CI: true
+  PNPM_CACHE_FOLDER: .pnpm-store
 
 jobs:
   build:
 
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18]
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js
-      uses: actions/setup-node@v1
+    - uses: actions/checkout@v3
+    - uses: pnpm/action-setup@v2.2.4
+    - name: Setup Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
       with:
-        node-version: 16.x
-    - run: yarn
-    - name: build
-      run: |
-        yarn run lint
-        yarn run build
+        node-version: ${{ matrix.node-version }}
+        cache: pnpm
+    - name: install dependencies
+      run: pnpm install --frozen-lockfile
+
+    - run: pnpm lint
+
+    - run: pnpm build
+
+    - name: configure git, build and deploy
+      if: ${{ github.ref == 'refs/heads/main'}}
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./sites/maplibre-gl-export/dist

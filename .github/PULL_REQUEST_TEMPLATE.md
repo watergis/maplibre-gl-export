@@ -15,7 +15,7 @@ Please describe what you changed briefly.
 ## Verify the followings
 <!-- ignore-task-list-start -->
 - [ ] Code is up-to-date with the `main` branch
-- [ ] No lint errors after `yarn run lint`
+- [ ] No lint errors after `pnpm lint`
 - [ ] Make sure all the exsiting features working well
 <!-- ignore-task-list-end -->
 
