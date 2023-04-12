@@ -35,7 +35,7 @@ jobs:
 
     - run: pnpm build
 
-    - name: configure git, build and deploy
+    - name: deploy demo site
       if: ${{ github.ref == 'refs/heads/main'}}
       uses: peaceiris/actions-gh-pages@v3
       with:
