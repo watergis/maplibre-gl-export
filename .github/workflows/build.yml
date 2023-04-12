@@ -34,10 +34,3 @@ jobs:
     - run: pnpm lint
 
     - run: pnpm build
-
-    - name: deploy demo site
-      if: ${{ github.ref == 'refs/heads/main'}}
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./sites/maplibre-gl-export.water-gis.com/dist

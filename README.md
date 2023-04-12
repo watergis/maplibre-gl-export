@@ -1,5 +1,7 @@
 # malibre-gl-export
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/2ca781c3-2680-4c17-9219-4992c1f2a44e/deploy-status)](https://app.netlify.com/sites/maplibre-gl-export/deploys)
+
 This monorepo manages the source code and demo page for `@watergis/maplibre-gl-export`.
 
 ## Repositories
