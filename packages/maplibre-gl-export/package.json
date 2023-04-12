@@ -13,8 +13,7 @@
 	},
 	"files": [
 		"dist",
-		"package.json",
-		"LICENSE"
+		"package.json"
 	],
 	"scripts": {
 		"dev": "vite",
