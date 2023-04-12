@@ -1,5 +1,11 @@
 # @watergis/maplibre-gl-export
 
+## 2.0.1
+
+### Patch Changes
+
+- 83c85bc: fix: added exports for maplibre-gl-export.css
+
 ## 2.0.0
 
 ### Major Changes
