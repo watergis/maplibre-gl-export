@@ -1,5 +1,11 @@
 # @watergis/maplibre-gl-export
 
+## 3.0.0
+
+### Major Changes
+
+- 47c956a: [**breaking change**] feat: upgraded maplibre-gl-js to v3
+
 ## 2.0.1
 
 ### Patch Changes
