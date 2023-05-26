@@ -50,25 +50,25 @@
 	"homepage": "https://github.com/watergis/maplibre-gl-export/tree/main/packages/maplibre-gl-export#readme",
 	"devDependencies": {
 		"@types/geojson": "^7946.0.10",
-		"@types/node": "^18.15.11",
-		"@typescript-eslint/eslint-plugin": "^5.58.0",
-		"@typescript-eslint/parser": "^5.58.0",
+		"@types/node": "^20.2.4",
+		"@typescript-eslint/eslint-plugin": "^5.59.7",
+		"@typescript-eslint/parser": "^5.59.7",
 		"autoprefixer": "^10.4.14",
-		"eslint": "^8.38.0",
+		"eslint": "^8.41.0",
 		"eslint-config-prettier": "^8.8.0",
 		"eslint-plugin-import": "^2.27.5",
 		"path": "^0.12.7",
-		"postcss": "^8.4.21",
+		"postcss": "^8.4.23",
 		"postcss-cli": "^10.1.0",
-		"prettier": "^2.8.7",
-		"sass": "^1.62.0",
-		"sass-loader": "^13.2.2",
+		"prettier": "^2.8.8",
+		"sass": "^1.62.1",
+		"sass-loader": "^13.3.0",
 		"typescript": "^5.0.4",
-		"vite": "^4.2.1"
+		"vite": "^4.3.8"
 	},
 	"dependencies": {
 		"js-loading-overlay": "^1.2.0",
 		"jspdf": "^2.5.1",
-		"maplibre-gl": "^2.4.0"
+		"maplibre-gl": "^3.0.0"
 	}
 }

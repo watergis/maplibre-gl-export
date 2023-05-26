@@ -176,10 +176,6 @@ export default class MapGenerator {
 				});
 			});
 		}
-		if (style && style.sprite) {
-			// delete sprite property. It looks like sprite is already loaded in the main map object, and maplibre complains sprite image is already loaded.
-			delete style.sprite;
-		}
 
 		// Render map
 		const renderMap = new MaplibreMap({
@@ -197,10 +193,13 @@ export default class MapGenerator {
 			transformRequest: (this.map as any)._requestManager._transformRequestFn
 		});
 
-		const images = (this.map.style.imageManager || {}).images || [];
-		Object.keys(images).forEach((key) => {
-			renderMap.addImage(key, images[key].data);
-		});
+		// comment this statement because an error is occured since maplibre v3. images[key].data has no value (null)
+		// it looks working well in my style. let's see how it works without this code
+		// the below code was added by https://github.com/watergis/maplibre-gl-export/pull/18.
+		// const images = (this.map.style.imageManager || {}).images || [];
+		// Object.keys(images).forEach((key) => {
+		// 	renderMap.addImage(key, images[key].data);
+		// });
 
 		renderMap.once('idle', () => {
 			const canvas = renderMap.getCanvas();

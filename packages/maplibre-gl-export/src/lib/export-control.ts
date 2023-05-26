@@ -90,8 +90,8 @@ export default class MaplibreExportControl implements IControl {
 	public onAdd(map: MaplibreMap): HTMLElement {
 		this.map = map;
 		this.controlContainer = document.createElement('div');
-		this.controlContainer.classList.add('mapboxgl-ctrl');
-		this.controlContainer.classList.add('mapboxgl-ctrl-group');
+		this.controlContainer.classList.add('maplibregl-ctrl');
+		this.controlContainer.classList.add('maplibregl-ctrl-group');
 		this.exportContainer = document.createElement('div');
 		this.exportContainer.classList.add('maplibregl-export-list');
 		this.exportButton = document.createElement('button');
