@@ -44,7 +44,7 @@ See [demo](https://maplibre-gl-export.water-gis.com/).
 
 ```ts
 import { MaplibreExportControl, Size, PageOrientation, Format, DPI} from "@watergis/maplibre-gl-export";
-import '@watergis/maplibre-gl-export/css/styles.css';
+import '@watergis/maplibre-gl-export/dist/maplibre-gl-export.css';
 import { Map} from 'maplibre-gl';
 
 const map = new Map();
