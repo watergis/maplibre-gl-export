@@ -283,7 +283,8 @@ export default class MapGenerator {
 		const pdf = new jsPDF({
 			orientation: this.width > this.height ? 'l' : 'p',
 			unit: this.unit,
-			compress: true
+			compress: true,
+			format: [this.width, this.height]
 		});
 
 		pdf.addImage(
