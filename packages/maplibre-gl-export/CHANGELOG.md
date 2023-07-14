@@ -1,5 +1,11 @@
 # @watergis/maplibre-gl-export
 
+## 3.0.1
+
+### Patch Changes
+
+- fc5adb2: fix: fixed the bug of export PDF of A3 size spondered by @PivnoyBaronDmitry through the PR of https://github.com/watergis/mapbox-gl-export/pull/48
+
 ## 3.0.0
 
 ### Major Changes
