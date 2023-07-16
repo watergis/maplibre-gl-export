@@ -21,14 +21,14 @@ yarn add @watergis/maplibre-gl-export --save
 <script src="https://www.unpkg.com/@watergis/maplibre-gl-export@2.0.0/dist/maplibre-gl-export.umd.js"></script>
 <script>
   map.addControl(new MaplibreExportControl.MaplibreExportControl({
-            PageSize: MaplibreExportControl.Size.A4,
-            PageOrientation: MaplibreExportControl.PageOrientation.Landscape,
-            Format: MaplibreExportControl.Format.PNG,
-            DPI: MaplibreExportControl.DPI[300],
-            Crosshair: true,
-            PrintableArea: true,
-            Local: 'fr'
-        }), 'top-right');
+    PageSize: MaplibreExportControl.Size.A4,
+    PageOrientation: MaplibreExportControl.PageOrientation.Landscape,
+    Format: MaplibreExportControl.Format.PNG,
+    DPI: MaplibreExportControl.DPI[300],
+    Crosshair: true,
+    PrintableArea: true,
+    Local: 'fr'
+  }), 'top-right');
 </script>
 ```
 
