@@ -16,18 +16,18 @@ yarn add @watergis/maplibre-gl-export --save
 ## Use CDN
 
 ```html
-<link href='https://www.unpkg.com/@watergis/maplibre-gl-export@2.0.0/dist/maplibre-gl-export.css' rel='stylesheet' />
-<script src='https://unpkg.com/maplibre-gl@1.15.2/dist/maplibre-gl.js'></script>
-<script src="https://www.unpkg.com/@watergis/maplibre-gl-export@2.0.0/dist/maplibre-gl-export.umd.js"></script>
+<link href="https://www.unpkg.com/@watergis/maplibre-gl-export@3.0.1/dist/maplibre-gl-export.css" rel="stylesheet" />
+<script src="https://unpkg.com/maplibre-gl@1.15.2/dist/maplibre-gl.js"></script>
+<script src="https://www.unpkg.com/@watergis/maplibre-gl-export@3.0.1/dist/maplibre-gl-export.umd.js"></script>
 <script>
-  map.addControl(new MaplibreExportControl({
-      PageSize: Size.A3,
-      PageOrientation: PageOrientation.Portrait,
-      Format: Format.PNG,
-      DPI: DPI[96],
-      Crosshair: true,
-      PrintableArea: true,
-      Local: 'en'
+  map.addControl(new MaplibreExportControl.MaplibreExportControl({
+    PageSize: MaplibreExportControl.Size.A4,
+    PageOrientation: MaplibreExportControl.PageOrientation.Landscape,
+    Format: MaplibreExportControl.Format.PNG,
+    DPI: MaplibreExportControl.DPI[300],
+    Crosshair: true,
+    PrintableArea: true,
+    Local: 'fr'
   }), 'top-right');
 </script>
 ```
