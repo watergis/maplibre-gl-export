@@ -1,5 +1,12 @@
 # @watergis/maplibre-gl-export
 
+## 3.1.0
+
+### Minor Changes
+
+- eb5270d: feat: add Japanese language (ja)
+- eb5270d: feat: bring new translations (Vietnam, Ukranian, Chinese simplified and Chinese traditional) from mapbox-gl-export
+
 ## 3.0.1
 
 ### Patch Changes
