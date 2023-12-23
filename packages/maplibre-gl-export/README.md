@@ -95,6 +95,7 @@ You can specify default option as follows.
   - `uk` Ukranian
   - `zhHans` Chinese Simplified
   - `zhHant` Chinese Traditional
+  - `ja` Japanese
 - AllowedSizes
   - list of allowed page sizes for export
   - available values `'A2'`, `'A3'`, `'A4'`, `'A5'`, `'A6'`, `'B2'`, `'B3'`, `'B4'`, `'B5'`, `'B6'`

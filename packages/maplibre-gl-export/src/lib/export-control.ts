@@ -12,6 +12,7 @@ import {
 	ukranian,
 	zhHans,
 	zhHant,
+	ja,
 	Translation
 } from './local';
 import MapGenerator, { Size, Format, PageOrientation, DPI, Unit } from './map-generator';
@@ -23,7 +24,7 @@ type Options = {
 	DPI?: number;
 	Crosshair?: boolean;
 	PrintableArea?: boolean;
-	Local?: 'de' | 'en' | 'fr' | 'fi' | 'sv' | 'es' | 'vi' | 'uk' | 'zhHans' | 'zhHant';
+	Local?: 'de' | 'en' | 'fr' | 'fi' | 'sv' | 'es' | 'vi' | 'uk' | 'zhHans' | 'zhHant' | 'ja';
 	AllowedSizes?: ('A2' | 'A3' | 'A4' | 'A5' | 'A6' | 'B2' | 'B3' | 'B4' | 'B5' | 'B6')[];
 	Filename?: string;
 };
@@ -102,6 +103,8 @@ export default class MaplibreExportControl implements IControl {
 				return zhHans;
 			case 'zhHant':
 				return zhHant;
+			case 'ja':
+				return ja;
 			default:
 				return english;
 		}
