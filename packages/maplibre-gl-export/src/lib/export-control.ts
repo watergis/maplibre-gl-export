@@ -1,7 +1,20 @@
 import { ControlPosition, IControl, Map as MaplibreMap } from 'maplibre-gl';
 import CrosshairManager from './crosshair-manager';
 import PrintableAreaManager from './printable-area-manager';
-import { english, french, finnish, german, swedish, spanish, Translation } from './local';
+import {
+	english,
+	french,
+	finnish,
+	german,
+	swedish,
+	spanish,
+	vietnam,
+	ukranian,
+	zhHans,
+	zhHant,
+	ja,
+	Translation
+} from './local';
 import MapGenerator, { Size, Format, PageOrientation, DPI, Unit } from './map-generator';
 
 type Options = {
@@ -11,7 +24,7 @@ type Options = {
 	DPI?: number;
 	Crosshair?: boolean;
 	PrintableArea?: boolean;
-	Local?: 'de' | 'en' | 'fr' | 'fi' | 'sv' | 'es';
+	Local?: 'de' | 'en' | 'fr' | 'fi' | 'sv' | 'es' | 'vi' | 'uk' | 'zhHans' | 'zhHant' | 'ja';
 	AllowedSizes?: ('A2' | 'A3' | 'A4' | 'A5' | 'A6' | 'B2' | 'B3' | 'B4' | 'B5' | 'B6')[];
 	Filename?: string;
 };
@@ -82,6 +95,16 @@ export default class MaplibreExportControl implements IControl {
 				return swedish;
 			case 'es':
 				return spanish;
+			case 'vi':
+				return vietnam;
+			case 'uk':
+				return ukranian;
+			case 'zhHans':
+				return zhHans;
+			case 'zhHant':
+				return zhHant;
+			case 'ja':
+				return ja;
 			default:
 				return english;
 		}
