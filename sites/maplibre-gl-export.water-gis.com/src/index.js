@@ -16,15 +16,37 @@ const map = new Map({
 	hash: true
 });
 map.addControl(new NavigationControl({}), 'top-right');
-map.addControl(
-	new MaplibreExportControl({
+
+const languageOption = document.getElementById('language');
+languageOption.value = 'en';
+
+let exportControl = new MaplibreExportControl({
+	PageSize: Size.A3,
+	PageOrientation: PageOrientation.Portrait,
+	Format: Format.PNG,
+	DPI: DPI[96],
+	Crosshair: true,
+	PrintableArea: true,
+	Local: languageOption.value
+});
+
+map.addControl(exportControl, 'top-right');
+
+languageOption.addEventListener('change', () => {
+	if (exportControl) {
+		map.removeControl(exportControl);
+	}
+
+	const language = document.getElementById('language');
+	exportControl = new MaplibreExportControl({
 		PageSize: Size.A3,
 		PageOrientation: PageOrientation.Portrait,
 		Format: Format.PNG,
 		DPI: DPI[96],
 		Crosshair: true,
 		PrintableArea: true,
-		Local: 'en'
-	}),
-	'top-right'
-);
+		Local: language.value
+	});
+
+	map.addControl(exportControl, 'top-right');
+});
