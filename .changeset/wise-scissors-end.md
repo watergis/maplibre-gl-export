@@ -2,4 +2,4 @@
 "@watergis/maplibre-gl-export": patch
 ---
 
-Fix export icon color inconsistency
+fix: Fix export icon color inconsistency fixed by @sudolev
