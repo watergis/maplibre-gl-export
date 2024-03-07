@@ -1,5 +1,11 @@
 # @watergis/maplibre-gl-export
 
+## 3.1.1
+
+### Patch Changes
+
+- fdddb32: fix: Fix export icon color inconsistency fixed by @sudolev
+
 ## 3.1.0
 
 ### Minor Changes
