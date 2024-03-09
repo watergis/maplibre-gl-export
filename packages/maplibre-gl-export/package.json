@@ -58,6 +58,7 @@
 		"eslint-config-prettier": "^8.8.0",
 		"eslint-plugin-import": "^2.27.5",
 		"path": "^0.12.7",
+		"pmtiles": "^3.0.5",
 		"postcss": "^8.4.23",
 		"postcss-cli": "^10.1.0",
 		"prettier": "^2.8.8",

@@ -25,7 +25,7 @@ type Options = {
 	Crosshair?: boolean;
 	PrintableArea?: boolean;
 	Local?: 'de' | 'en' | 'fr' | 'fi' | 'sv' | 'es' | 'vi' | 'uk' | 'zhHans' | 'zhHant' | 'ja';
-	AllowedSizes?: ('A2' | 'A3' | 'A4' | 'A5' | 'A6' | 'B2' | 'B3' | 'B4' | 'B5' | 'B6')[];
+	AllowedSizes?: ('LETTER' | 'A2' | 'A3' | 'A4' | 'A5' | 'A6' | 'B2' | 'B3' | 'B4' | 'B5' | 'B6')[];
 	Filename?: string;
 };
 
@@ -55,6 +55,7 @@ export default class MaplibreExportControl implements IControl {
 		PrintableArea: false,
 		Local: 'en',
 		AllowedSizes: Object.keys(Size) as (
+			| 'LETTER'
 			| 'A2'
 			| 'A3'
 			| 'A4'

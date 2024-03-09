@@ -26,6 +26,7 @@ type Options = {
 	PrintableArea: boolean;
 	accessToken?: string;
 	Local?: 'de' | 'en' | 'fr' | 'fi' | 'sv' | 'es' | 'vi' | 'uk' | 'zhHans' | 'zhHant' | 'ja';
+	AllowedSizes?: ('LETTER' | 'A2' | 'A3' | 'A4' | 'A5' | 'A6' | 'B2' | 'B3' | 'B4' | 'B5' | 'B6')[];
 	Filename?: string;
 };
 
@@ -54,6 +55,19 @@ export default class MapboxExportControl implements IControl {
 		Crosshair: false,
 		PrintableArea: false,
 		Local: 'en',
+		AllowedSizes: Object.keys(Size) as (
+			| 'LETTER'
+			| 'A2'
+			| 'A3'
+			| 'A4'
+			| 'A5'
+			| 'A6'
+			| 'B2'
+			| 'B3'
+			| 'B4'
+			| 'B5'
+			| 'B6'
+		)[],
 		Filename: 'map',
 		accessToken: undefined
 	};
@@ -123,8 +137,15 @@ export default class MapboxExportControl implements IControl {
 		const table = document.createElement('TABLE');
 		table.className = 'print-table';
 
+		const sizes = {};
+		this.options.AllowedSizes?.forEach((size) => {
+			const dimensions = Size[size];
+			if (dimensions) {
+				sizes[size] = Size[size];
+			}
+		});
 		const tr1 = this.createSelection(
-			Size,
+			sizes,
 			this.getTranslation().PageSize,
 			'page-size',
 			this.options.PageSize,

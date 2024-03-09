@@ -118,6 +118,9 @@ importers:
       path:
         specifier: ^0.12.7
         version: 0.12.7
+      pmtiles:
+        specifier: ^3.0.5
+        version: 3.0.5
       postcss:
         specifier: ^8.4.23
         version: 8.4.23

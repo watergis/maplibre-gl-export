@@ -1,7 +1,11 @@
-import { Map, NavigationControl } from 'maplibre-gl';
+import maplibregl, { Map, NavigationControl } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { MaplibreExportControl, Size, PageOrientation, Format, DPI } from './src/lib/index';
 import './src/scss/maplibre-gl-export.scss';
+import { Protocol } from 'pmtiles';
+
+let protocol = new Protocol();
+maplibregl.addProtocol('pmtiles', protocol.tile);
 
 const map = new Map({
 	container: 'map',
