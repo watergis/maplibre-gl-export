@@ -1,0 +1,26 @@
+{
+	"compilerOptions": {
+		"alwaysStrict": true,
+		"baseUrl": ".",
+		"emitDeclarationOnly": true,
+		"declaration": true,
+		"declarationMap": true,
+		"declarationDir": "./dist/types",
+		"experimentalDecorators": true,
+		"lib": ["dom", "ESNext"],
+		"module": "ESNext",
+		"moduleResolution": "node",
+		"noImplicitThis": true,
+		"noUnusedLocals": true,
+		"outDir": "./dist/lib",
+		"preserveConstEnums": true,
+		"removeComments": true,
+		"strictFunctionTypes": true,
+		"strictNullChecks": true,
+		"sourceMap": true,
+		"target": "ESNext",
+		"esModuleInterop": true,
+		"skipLibCheck": true
+	},
+	"include": ["src/lib"]
+}

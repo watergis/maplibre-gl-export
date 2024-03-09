@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
 	<head>
 		<meta charset="utf-8" />
@@ -6,11 +6,10 @@
 		<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
 		<link
 			rel="stylesheet"
-			href="https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.3/gh-fork-ribbon.min.css"
-		/>
-		<link
-			rel="stylesheet"
-			href="node_modules/@watergis/maplibre-gl-export/dist/maplibre-gl-export.css"
+			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+			integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+			crossorigin="anonymous"
+			referrerpolicy="no-referrer"
 		/>
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css" />
 		<style>
@@ -18,53 +17,61 @@
 				margin: 0;
 				padding: 0;
 			}
-			#map {
-				position: absolute;
-				top: 0;
-				bottom: 0;
-				width: 100%;
-				z-index: 10;
-			}
-			.overlay {
-				position: absolute;
-				top: 10px;
-				right: 60px;
-				background-color: white;
-				z-index: 10;
-			}
 		</style>
 	</head>
 	<body>
-		<a
-			class="github-fork-ribbon left-top"
-			href="https://github.com/watergis/maplibre-gl-export"
-			data-ribbon="Fork me on GitHub"
-			title="Fork me on GitHub"
-			>Fork me on GitHub</a
-		>
-		<div id="map"></div>
-		<div class="overlay p-2">
-			<div class="field">
-				<label class="label">Select a language</label>
-				<div class="control">
-					<div class="select is-medimum">
-						<select id="language">
-							<option value="en">English</option>
-							<option value="fr">French</option>
-							<option value="fi">Finish</option>
-							<option value="de">German</option>
-							<option value="sv">Swedish</option>
-							<option value="es">Spanish</option>
-							<option value="vi">Vietnam</option>
-							<option value="uk">Ukranian</option>
-							<option value="zhHans">Chinese simplified</option>
-							<option value="zhHant">Chinese traditional</option>
-							<option value="ja">Japanese</option>
-						</select>
+		<nav class="navbar is-primary" role="navigation" aria-label="main navigation">
+			<div class="navbar-brand px-2">
+				<p class="is-size-3 my-auto">Map Export plugin</p>
+
+				<a
+					role="button"
+					class="navbar-burger"
+					aria-label="menu"
+					aria-expanded="false"
+					data-target="navbarBasicExample"
+				>
+					<span aria-hidden="true"></span>
+					<span aria-hidden="true"></span>
+					<span aria-hidden="true"></span>
+				</a>
+			</div>
+
+			<div class="navbar-end">
+				<div class="navbar-item">
+					<div class="buttons">
+						<a class="button is-link" href="https://github.com/watergis/maplibre-gl-export">
+							<span class="icon">
+								<i class="fab fa-github"></i>
+							</span>
+							<span>GitHub</span>
+						</a>
 					</div>
 				</div>
 			</div>
+		</nav>
+
+		<div class="p-4">
+			<div class="is-flex is-flex-direction-column">
+				<p class="is-size-5">Please click the following links to see export plugin example</p>
+
+				<a class="is-size-5" href="maplibre.html">Maplibre GL Export example</a>
+
+				<a class="is-size-5" href="mapbox.html">Mapbox GL Export example</a>
+			</div>
 		</div>
-		<script type="module" src="src/index.js"></script>
+
+		<footer class="footer">
+			<div class="content has-text-centered">
+				<p>
+					<strong>maplibre-gl-export</strong> and <strong>mapbox-gl-export</strong> by
+					<a href="https://github.com/JinIgarashi">JinIgarashi</a>.
+					<br />
+					The source code is licensed
+					<a href="http://opensource.org/licenses/mit-license.php">MIT</a>. The website content is
+					licensed <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY NC SA 4.0</a>.
+				</p>
+			</div>
+		</footer>
 	</body>
 </html>

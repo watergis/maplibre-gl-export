@@ -1,4 +1,4 @@
-import { Map, NavigationControl } from 'maplibre-gl';
+import maplibregl, { Map, NavigationControl } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import {
 	MaplibreExportControl,
@@ -7,6 +7,11 @@ import {
 	Format,
 	DPI
 } from '@watergis/maplibre-gl-export';
+import { Protocol } from 'pmtiles';
+import '@watergis/maplibre-gl-export/dist/maplibre-gl-export.css';
+
+let protocol = new Protocol();
+maplibregl.addProtocol('pmtiles', protocol.tile);
 
 const map = new Map({
 	container: 'map',
