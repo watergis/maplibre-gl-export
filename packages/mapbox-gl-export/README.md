@@ -22,7 +22,7 @@ npm i @watergis/mapbox-gl-export --save
 ```html
 <link href="https://www.unpkg.com/@watergis/mapbox-gl-export@latest/dist/mapbox-gl-export.css" rel="stylesheet" />
 <script src='https://api.mapbox.com/mapbox-gl-js/v1.13.1/mapbox-gl.js'></script>
-<script src="https://www.unpkg.com/@watergis/mapbox-gl-export@latest/dist/maplibre-gl-export.umd.js"></script>
+<script src="https://www.unpkg.com/@watergis/mapbox-gl-export@latest/dist/mapbox-gl-export.umd.js"></script>
 <script>
   map.addControl(new MapboxExportControl({
       PageSize: Size.A3,

@@ -17,5 +17,5 @@
     href="https://www.unpkg.com/@watergis/mapbox-gl-export@latest/dist/mapbox-gl-export.css"
     rel="stylesheet"
   />
-  <script src="https://www.unpkg.com/@watergis/mapbox-gl-export@latest/dist/maplibre-gl-export.umd.js"></script>
+  <script src="https://www.unpkg.com/@watergis/mapbox-gl-export@latest/dist/mapbox-gl-export.umd.js"></script>
   ```
