@@ -10,7 +10,7 @@ import {
 import { Protocol } from 'pmtiles';
 import '@watergis/maplibre-gl-export/dist/maplibre-gl-export.css';
 
-let protocol = new Protocol();
+const protocol = new Protocol();
 maplibregl.addProtocol('pmtiles', protocol.tile);
 
 const map = new Map({

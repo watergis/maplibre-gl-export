@@ -4,7 +4,7 @@ import { MaplibreExportControl, Size, PageOrientation, Format, DPI } from './src
 import './src/scss/maplibre-gl-export.scss';
 import { Protocol } from 'pmtiles';
 
-let protocol = new Protocol();
+const protocol = new Protocol();
 maplibregl.addProtocol('pmtiles', protocol.tile);
 
 const map = new Map({
