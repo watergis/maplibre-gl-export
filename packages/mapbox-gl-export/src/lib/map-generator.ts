@@ -28,7 +28,7 @@
  */
 
 import { jsPDF } from 'jspdf';
-import { Map as MaplibreMap } from 'maplibre-gl';
+import { accessToken, Map as MapboxMap } from 'mapbox-gl';
 import 'js-loading-overlay';
 
 export const Format = {
@@ -83,7 +83,7 @@ export const DPI = {
 type DPI = (typeof DPI)[keyof typeof DPI];
 
 export default class MapGenerator {
-	private map: MaplibreMap;
+	private map: MapboxMap;
 
 	private width: number;
 
@@ -97,9 +97,11 @@ export default class MapGenerator {
 
 	private fileName: string;
 
+	private accesstoken: string | undefined;
+
 	/**
 	 * Constructor
-	 * @param map MaplibreMap object
+	 * @param map MapboxMap object
 	 * @param size layout size. default is A4
 	 * @param dpi dpi value. deafult is 300
 	 * @param format image format. default is PNG
@@ -107,12 +109,13 @@ export default class MapGenerator {
 	 * @param fileName file name. default is 'map'
 	 */
 	constructor(
-		map: MaplibreMap,
+		map: MapboxMap,
 		size: Size = Size.A4,
 		dpi = 300,
 		format: string = Format.PNG.toString(),
 		unit: Unit = Unit.mm,
-		fileName = 'map'
+		fileName = 'map',
+		accesstoken?: string
 	) {
 		this.map = map;
 		this.width = size[0];
@@ -121,6 +124,7 @@ export default class MapGenerator {
 		this.format = format;
 		this.unit = unit;
 		this.fileName = fileName;
+		this.accesstoken = accesstoken;
 	}
 
 	/**
@@ -180,7 +184,8 @@ export default class MapGenerator {
 		}
 
 		// Render map
-		const renderMap = new MaplibreMap({
+		const renderMap = new MapboxMap({
+			accessToken: this.accesstoken || accessToken,
 			container,
 			style,
 			center: this.map.getCenter(),
@@ -197,13 +202,15 @@ export default class MapGenerator {
 			transformRequest: (this.map as unknown)._requestManager._transformRequestFn
 		});
 
-		// comment this statement because an error is occured since maplibre v3. images[key].data has no value (null)
-		// it looks working well in my style. let's see how it works without this code
-		// the below code was added by https://github.com/watergis/maplibre-gl-export/pull/18.
-		// const images = (this.map.style.imageManager || {}).images || [];
-		// Object.keys(images).forEach((key) => {
-		// 	renderMap.addImage(key, images[key].data);
-		// });
+		// eslint-disable-next-line
+		// @ts-ignore
+		const images = (this.map.style.imageManager || {}).images || [];
+		if (images && Object.keys(images)?.length > 0) {
+			Object.keys(images).forEach((key) => {
+				if (!key) return;
+				renderMap.addImage(key, images[key].data);
+			});
+		}
 
 		renderMap.once('idle', () => {
 			const canvas = renderMap.getCanvas();
@@ -233,7 +240,6 @@ export default class MapGenerator {
 					return actualPixelRatio;
 				}
 			});
-			hidden.remove();
 
 			// eslint-disable-next-line
 			// @ts-ignore
@@ -270,10 +276,10 @@ export default class MapGenerator {
 
 	/**
 	 * Convert Map object to PDF
-	 * @param map Map object
+	 * @param map mapboxgl.Map object
 	 * @param fileName file name
 	 */
-	private toPDF(map: MaplibreMap, fileName: string) {
+	private toPDF(map: mapboxgl.Map, fileName: string) {
 		const canvas = map.getCanvas();
 		const pdf = new jsPDF({
 			orientation: this.width > this.height ? 'l' : 'p',
@@ -306,6 +312,9 @@ export default class MapGenerator {
 
 	/**
 	 * Convert canvas to SVG
+	 * this SVG export is using fabric.js. It is under experiment.
+	 * Please also see their document.
+	 * http://fabricjs.com/docs/
 	 * @param canvas Canvas element
 	 * @param fileName file name
 	 */

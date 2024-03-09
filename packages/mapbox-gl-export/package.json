@@ -1,18 +1,18 @@
 {
-	"name": "@watergis/maplibre-gl-export",
-	"version": "3.1.1",
+	"name": "@watergis/mapbox-gl-export",
+	"version": "2.0.2",
 	"description": "This module adds control which can export PDF and images.",
-	"main": "dist/maplibre-gl-export.umd.js",
+	"main": "dist/mapbox-gl-export.umd.js",
 	"types": "./dist/types/index.d.ts",
-	"module": "dist/maplibre-gl-export.es.js",
+	"module": "dist/mapbox-gl-export.es.js",
 	"exports": {
 		".": {
-			"import": "./dist/maplibre-gl-export.es.js",
-			"require": "./dist/maplibre-gl-export.umd.js"
+			"import": "./dist/mapbox-gl-export.es.js",
+			"require": "./dist/mapbox-gl-export.umd.js"
 		},
-		"./dist/maplibre-gl-export.css": {
-			"import": "./dist/maplibre-gl-export.css",
-			"require": "./dist/maplibre-gl-export.css"
+		"./dist/mapbox-gl-export.css": {
+			"import": "./dist/mapbox-gl-export.css",
+			"require": "./dist/mapbox-gl-export.css"
 		}
 	},
 	"files": [
@@ -23,13 +23,12 @@
 		"dev": "vite",
 		"build": "npm run build:js && npm run build:css",
 		"build:js": "tsc && vite build",
-		"build:scss": "sass --no-source-map --style=compressed src/scss/maplibre-gl-export.scss:dist/maplibre-gl-export.css",
+		"build:scss": "sass --no-source-map --style=compressed src/scss/mapbox-gl-export.scss:dist/mapbox-gl-export.css",
 		"build:postcss": "postcss dist/*.css -r",
 		"build:css": "npm run build:scss && npm run build:postcss",
 		"preview": "vite preview",
 		"lint": "prettier --check . && eslint .",
-		"format": "prettier --write .",
-		"deploy": "gh-pages -d dist -m 'deploy to gh-pages'"
+		"format": "prettier --write ."
 	},
 	"keywords": [
 		"mapbox",
@@ -47,9 +46,10 @@
 	"bugs": {
 		"url": "https://github.com/watergis/maplibre-gl-export/issues"
 	},
-	"homepage": "https://github.com/watergis/maplibre-gl-export/tree/main/packages/maplibre-gl-export#readme",
+	"homepage": "https://github.com/watergis/maplibre-gl-export#readme",
 	"devDependencies": {
 		"@types/geojson": "^7946.0.14",
+		"@types/mapbox-gl": "^3.1.0",
 		"@types/node": "^20.11.25",
 		"@typescript-eslint/eslint-plugin": "^7.1.1",
 		"@typescript-eslint/parser": "^7.1.1",
@@ -58,7 +58,6 @@
 		"eslint-config-prettier": "^9.1.0",
 		"eslint-plugin-import": "^2.29.1",
 		"path": "^0.12.7",
-		"pmtiles": "^3.0.5",
 		"postcss": "^8.4.35",
 		"postcss-cli": "^11.0.0",
 		"prettier": "^3.2.5",
@@ -70,6 +69,6 @@
 	"dependencies": {
 		"js-loading-overlay": "^1.2.0",
 		"jspdf": "^2.5.1",
-		"maplibre-gl": "^4.1.0"
+		"mapbox-gl": "^3.2.0"
 	}
 }

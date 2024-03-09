@@ -1,57 +1,62 @@
-# maplibre-gl-export
+# mapbox-gl-export
 
 ![build](https://github.com/watergis/maplibre-gl-export/workflows/build/badge.svg)
 ![GitHub](https://img.shields.io/github/license/watergis/maplibre-gl-export)
 
-This module adds control which can export PDF and images. It was forked from [mapbox-gl-export](https://github.com/watergis/mapbox-gl-export).
+This module adds control which can export PDF and images.
 
 This module is using source code of [mpetroff/print-maps](https://github.com/mpetroff/print-maps). I just adopted this library to normal Mapbox GL Plugin. Thanks so much to develop this library!
 
-## Installation:
+## for Maplibre GL users
+
+Please consider to use [maplibre-gl-export](https://github.com/watergis/maplibre-gl-export) plugin for Maplibre GL.
+
+## Installation
 
 ```bash
-yarn add @watergis/maplibre-gl-export --save
+npm i @watergis/mapbox-gl-export --save
 ```
 
 ## Use CDN
 
 ```html
-<link href="https://www.unpkg.com/@watergis/maplibre-gl-export@3.0.1/dist/maplibre-gl-export.css" rel="stylesheet" />
-<script src="https://unpkg.com/maplibre-gl@1.15.2/dist/maplibre-gl.js"></script>
-<script src="https://www.unpkg.com/@watergis/maplibre-gl-export@3.0.1/dist/maplibre-gl-export.umd.js"></script>
+<link href="https://www.unpkg.com/@watergis/mapbox-gl-export@latest/dist/mapbox-gl-export.css" rel="stylesheet" />
+<script src='https://api.mapbox.com/mapbox-gl-js/v1.13.1/mapbox-gl.js'></script>
+<script src="https://www.unpkg.com/@watergis/mapbox-gl-export@latest/dist/maplibre-gl-export.umd.js"></script>
 <script>
-  map.addControl(new MaplibreExportControl.MaplibreExportControl({
-    PageSize: MaplibreExportControl.Size.A4,
-    PageOrientation: MaplibreExportControl.PageOrientation.Landscape,
-    Format: MaplibreExportControl.Format.PNG,
-    DPI: MaplibreExportControl.DPI[300],
-    Crosshair: true,
-    PrintableArea: true,
-    Local: 'fr'
+  map.addControl(new MapboxExportControl({
+      PageSize: Size.A3,
+      PageOrientation: PageOrientation.Portrait,
+      Format: Format.PNG,
+      DPI: DPI[96],
+      Crosshair: true,
+      PrintableArea: true,
   }), 'top-right');
 </script>
 ```
 
 Furthermore, you may download specific version's scripts and css locally from [release](https://github.com/watergis/maplibre-gl-export/releases) page.
 
-## Demo:
+## Demo
 
-See [demo](https://maplibre-gl-export.water-gis.com/).
+Try [codesandbox](https://codesandbox.io/s/mapbox-gl-export-8x4lw?file=/src/index.ts).
+
+See [demo](https://watergis.github.io/mapbox-gl-export/#12/-1.08551/35.87063).
 
 ![demo.gif](./demo.gif)
 
-## Usage:
+## Usage
 
 ```ts
-import { MaplibreExportControl, Size, PageOrientation, Format, DPI} from "@watergis/maplibre-gl-export";
-import '@watergis/maplibre-gl-export/dist/maplibre-gl-export.css';
-import { Map} from 'maplibre-gl';
+import { MapboxExportControl, Size, PageOrientation, Format, DPI} from "@watergis/mapbox-gl-export";
+import '@watergis/mapbox-gl-export/dist/mapbox-gl-export.css';
+import mapboxgl from 'mapbox-gl';
 
-const map = new Map();
+const map = new mapboxgl.Map();
 // create control with default options
-map.addControl(new MaplibreExportControl(), 'top-right');
+map.addControl(new MapboxExportControl(), 'top-right');
 // create control with specified options
-map.addControl(new MaplibreExportControl({
+map.addControl(new MapboxExportControl({
     PageSize: Size.A3,
     PageOrientation: PageOrientation.Portrait,
     Format: Format.PNG,
@@ -61,7 +66,30 @@ map.addControl(new MaplibreExportControl({
 }), 'top-right');
 ```
 
+### if you want to use a basemap from Mapbox
+
+- for mapbox v1 user
+
+```ts
+mapboxgl.accessToken='your mapbox access token'
+```
+
+- for mapbox v2 user
+There is an option of `accessToken` in `MapboxExportControl`. Please put your accessToken when you create a instance of plugin.
+
+```ts
+mapboxgl.accessToken='your mapbox access token'
+const map = new mapboxgl.Map({
+    container: 'map',
+    style: 'mapbox://styles/mapbox/streets-v11',
+});
+map.addControl(new MapboxExportControl({
+    accessToken: 'your mapbox access token'
+}), 'top-right');
+```
+
 ### Options
+
 You can specify default option as follows.
 
 - PageSize
@@ -109,11 +137,13 @@ You can specify default option as follows.
 When you use exported map, please includes attribution as follows.
 
 If you can include HTML, use this code snippet that includes links to Mapbox & OpenStreetMap:
+
 ```html
 © NARWASSCO, Ltd. © <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>Powered by the United Nations Vector Tile Toolkit
 ```
 
 For print output or if you can’t include links, use this text-only attribution:
+
 ```
 © NARWASSCO, Ltd. ©Mapbox ©OpenStreetMap contributors, Powered by the United Nations Vector Tile Toolkit
 ```
@@ -124,7 +154,7 @@ Also, default example is using base map by United Nation Vector Tile Toolkit. Th
 
 ## Development
 
-```
+```bash
 pnpm lint
 pnpm format
 pnpm dev

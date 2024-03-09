@@ -1,0 +1,67 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>maplibre-gl-export example</title>
+		<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+		<link
+			rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.3/gh-fork-ribbon.min.css"
+		/>
+		<link href="https://api.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.css" rel="stylesheet" />
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css" />
+		<style>
+			body {
+				margin: 0;
+				padding: 0;
+			}
+			#map {
+				position: absolute;
+				top: 0;
+				bottom: 0;
+				width: 100%;
+				z-index: 10;
+			}
+			.overlay {
+				position: absolute;
+				top: 10px;
+				right: 60px;
+				background-color: white;
+				z-index: 10;
+			}
+		</style>
+	</head>
+	<body>
+		<a
+			class="github-fork-ribbon left-top"
+			href="https://github.com/watergis/maplibre-gl-export"
+			data-ribbon="Fork me on GitHub"
+			title="Fork me on GitHub"
+			>Fork me on GitHub</a
+		>
+		<div id="map"></div>
+		<div class="overlay p-2">
+			<div class="field">
+				<label class="label">Select a language</label>
+				<div class="control">
+					<div class="select is-medimum">
+						<select id="language">
+							<option value="en">English</option>
+							<option value="fr">French</option>
+							<option value="fi">Finish</option>
+							<option value="de">German</option>
+							<option value="sv">Swedish</option>
+							<option value="es">Spanish</option>
+							<option value="vi">Vietnam</option>
+							<option value="uk">Ukranian</option>
+							<option value="zhHans">Chinese simplified</option>
+							<option value="zhHant">Chinese traditional</option>
+							<option value="ja">Japanese</option>
+						</select>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script type="module" src="src/mapbox.js"></script>
+	</body>
+</html>
