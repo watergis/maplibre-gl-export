@@ -192,7 +192,9 @@ export default class MapGenerator {
 			fadeDuration: 0,
 			attributionControl: false,
 			// hack to read transfrom request callback function
-			transformRequest: (this.map as any)._requestManager._transformRequestFn
+			// eslint-disable-next-line
+			// @ts-ignore
+			transformRequest: (this.map as unknown)._requestManager._transformRequestFn
 		});
 
 		// comment this statement because an error is occured since maplibre v3. images[key].data has no value (null)
@@ -259,20 +261,11 @@ export default class MapGenerator {
 	 */
 	private toJPEG(canvas: HTMLCanvasElement, fileName: string) {
 		const uri = canvas.toDataURL('image/jpeg', 0.85);
-		// eslint-disable-next-line
-		// @ts-ignore
-		if (canvas.msToBlob) {
-			// for IE11
-			const blob = this.toBlob(uri);
-			(window.navigator as any).msSaveBlob(blob, fileName);
-		} else {
-			// for other browsers except IE11
-			const a = document.createElement('a');
-			a.href = uri;
-			a.download = fileName;
-			a.click();
-			a.remove();
-		}
+		const a = document.createElement('a');
+		a.href = uri;
+		a.download = fileName;
+		a.click();
+		a.remove();
 	}
 
 	/**
@@ -351,19 +344,5 @@ export default class MapGenerator {
 			conversionFactor /= 25.4;
 		}
 		return `${conversionFactor * length}px`;
-	}
-
-	/**
-	 * Convert base64 to Blob
-	 * @param base64 string value for base64
-	 */
-	private toBlob(base64: string): Blob {
-		const bin = atob(base64.replace(/^.*,/, ''));
-		const buffer = new Uint8Array(bin.length);
-		for (let i = 0; i < bin.length; i += 1) {
-			buffer[i] = bin.charCodeAt(i);
-		}
-		const blob = new Blob([buffer.buffer], { type: 'image/png' });
-		return blob;
 	}
 }

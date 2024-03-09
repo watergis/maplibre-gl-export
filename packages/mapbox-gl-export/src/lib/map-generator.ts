@@ -197,7 +197,9 @@ export default class MapGenerator {
 			fadeDuration: 0,
 			attributionControl: false,
 			// hack to read transfrom request callback function
-			transformRequest: (this.map as any)._requestManager._transformRequestFn
+			// eslint-disable-next-line
+			// @ts-ignore
+			transformRequest: (this.map as unknown)._requestManager._transformRequestFn
 		});
 
 		// eslint-disable-next-line

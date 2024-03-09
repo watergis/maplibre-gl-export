@@ -18,7 +18,7 @@ import {
 import MapGenerator, { Size, Format, PageOrientation, DPI, Unit } from './map-generator';
 
 type Options = {
-	PageSize: any;
+	PageSize: [number, number];
 	PageOrientation: string;
 	Format: string;
 	DPI: number;
@@ -48,7 +48,7 @@ export default class MapboxExportControl implements IControl {
 	private exportButton: HTMLButtonElement;
 
 	private options: Options = {
-		PageSize: Size.A4,
+		PageSize: Size.A4 as [number, number],
 		PageOrientation: PageOrientation.Landscape,
 		Format: Format.PDF,
 		DPI: DPI[300],
@@ -149,7 +149,7 @@ export default class MapboxExportControl implements IControl {
 			this.getTranslation().PageSize,
 			'page-size',
 			this.options.PageSize,
-			(data, key) => JSON.stringify(data[key])
+			(data: { [key: string]: unknown }, key) => JSON.stringify(data[key])
 		);
 		table.appendChild(tr1);
 
@@ -158,7 +158,7 @@ export default class MapboxExportControl implements IControl {
 			this.getTranslation().PageOrientation,
 			'page-orientaiton',
 			this.options.PageOrientation,
-			(data, key) => data[key]
+			(data: { [key: string]: unknown }, key) => data[key]
 		);
 		table.appendChild(tr2);
 
@@ -167,7 +167,7 @@ export default class MapboxExportControl implements IControl {
 			this.getTranslation().Format,
 			'format-type',
 			this.options.Format,
-			(data, key) => data[key]
+			(data: { [key: string]: unknown }, key) => data[key]
 		);
 		table.appendChild(tr3);
 
@@ -176,7 +176,7 @@ export default class MapboxExportControl implements IControl {
 			this.getTranslation().DPI,
 			'dpi-type',
 			this.options.DPI,
-			(data, key) => data[key]
+			(data: { [key: string]: unknown }, key) => data[key]
 		);
 		table.appendChild(tr4);
 
@@ -224,8 +224,8 @@ export default class MapboxExportControl implements IControl {
 		data: Record<string, unknown>,
 		title: string,
 		type: string,
-		defaultValue: any,
-		converter: (data: any, key: string) => string
+		defaultValue: number | string | [number, number],
+		converter: (data: { [key: string]: unknown }, key: string) => unknown
 	): HTMLElement {
 		const label = document.createElement('label');
 		label.textContent = title;
@@ -235,7 +235,7 @@ export default class MapboxExportControl implements IControl {
 		content.style.width = '100%';
 		Object.keys(data).forEach((key) => {
 			const optionLayout = document.createElement('option');
-			optionLayout.setAttribute('value', converter(data, key));
+			optionLayout.setAttribute('value', converter(data, key) as string);
 			optionLayout.appendChild(document.createTextNode(key));
 			optionLayout.setAttribute('name', type);
 			if (defaultValue === data[key]) {

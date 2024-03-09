@@ -18,7 +18,7 @@ import {
 import MapGenerator, { Size, Format, PageOrientation, DPI, Unit } from './map-generator';
 
 type Options = {
-	PageSize?: any;
+	PageSize?: [number, number];
 	PageOrientation?: string;
 	Format?: string;
 	DPI?: number;
@@ -47,7 +47,7 @@ export default class MaplibreExportControl implements IControl {
 	private exportButton: HTMLButtonElement;
 
 	private options: Options = {
-		PageSize: Size.A4,
+		PageSize: Size.A4 as [number, number],
 		PageOrientation: PageOrientation.Landscape,
 		Format: Format.PDF,
 		DPI: DPI[300],
@@ -146,8 +146,8 @@ export default class MaplibreExportControl implements IControl {
 			sizes,
 			this.getTranslation().PageSize,
 			'page-size',
-			this.options.PageSize,
-			(data, key) => JSON.stringify(data[key])
+			this.options.PageSize as [number, number],
+			(data: { [key: string]: unknown }, key) => JSON.stringify(data[key])
 		);
 		table.appendChild(tr1);
 
@@ -155,8 +155,8 @@ export default class MaplibreExportControl implements IControl {
 			PageOrientation,
 			this.getTranslation().PageOrientation,
 			'page-orientation',
-			this.options.PageOrientation,
-			(data, key) => data[key]
+			this.options.PageOrientation as string,
+			(data: { [key: string]: unknown }, key) => data[key]
 		);
 		table.appendChild(tr2);
 
@@ -164,8 +164,8 @@ export default class MaplibreExportControl implements IControl {
 			Format,
 			this.getTranslation().Format,
 			'format-type',
-			this.options.Format,
-			(data, key) => data[key]
+			this.options.Format as string,
+			(data: { [key: string]: unknown }, key) => data[key]
 		);
 		table.appendChild(tr3);
 
@@ -173,8 +173,8 @@ export default class MaplibreExportControl implements IControl {
 			DPI,
 			this.getTranslation().DPI,
 			'dpi-type',
-			this.options.DPI,
-			(data, key) => data[key]
+			this.options.DPI as number,
+			(data: { [key: string]: unknown }, key) => data[key]
 		);
 		table.appendChild(tr4);
 
@@ -221,8 +221,8 @@ export default class MaplibreExportControl implements IControl {
 		data: Record<string, unknown>,
 		title: string,
 		type: string,
-		defaultValue: any,
-		converter: (data: any, key: string) => string
+		defaultValue: string | number | [number, number],
+		converter: (data: { [key: string]: unknown }, key: string) => unknown
 	): HTMLElement {
 		const label = document.createElement('label');
 		label.textContent = title;
@@ -232,7 +232,7 @@ export default class MaplibreExportControl implements IControl {
 		content.style.width = '100%';
 		Object.keys(data).forEach((key) => {
 			const optionLayout = document.createElement('option');
-			optionLayout.setAttribute('value', converter(data, key));
+			optionLayout.setAttribute('value', converter(data, key) as string);
 			optionLayout.appendChild(document.createTextNode(key));
 			optionLayout.setAttribute('name', type);
 			if (defaultValue === data[key]) {

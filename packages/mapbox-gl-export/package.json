@@ -27,8 +27,8 @@
 		"build:postcss": "postcss dist/*.css -r",
 		"build:css": "npm run build:scss && npm run build:postcss",
 		"preview": "vite preview",
-		"lint": "prettier --plugin-search-dir . --check . && eslint .",
-		"format": "prettier --plugin-search-dir . --write ."
+		"lint": "prettier --check . && eslint .",
+		"format": "prettier --write ."
 	},
 	"keywords": [
 		"mapbox",
