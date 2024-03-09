@@ -9,7 +9,7 @@ This monorepo manages the source code and demo page for `@watergis/maplibre-gl-e
 | repository | description | changelog |
 |---|---|---|
 |[@watergis/maplibre-gl-export](./packages/maplibre-gl-export/)| To manage maplibre export plugin source code|[CHANGELOG](./packages/maplibre-gl-export/CHANGELOG.md)|
-|[@watergis/mapbox-gl-export](./packages/mapbox-gl-export/)| To manage maplibre export plugin source code|[CHANGELOG](./packages/mapbox-gl-export/CHANGELOG.md)|
+|[@watergis/mapbox-gl-export](./packages/mapbox-gl-export/)| To manage mapbox export plugin source code|[CHANGELOG](./packages/mapbox-gl-export/CHANGELOG.md)|
 |[maplibre-gl-export.water-gis.com](./sites/maplibre-gl-export.water-gis.com/)| Demo website code for maplibre/mapbox export plugins |-|
 
 ## Usage of the plugin
