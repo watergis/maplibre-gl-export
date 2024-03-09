@@ -1,5 +1,15 @@
 # @watergis/maplibre-gl-export
 
+## 3.2.0
+
+### Minor Changes
+
+- a03a84b: feat: upgrade maplibre dependencies to v4
+
+### Patch Changes
+
+- a03a84b: feat: added `LETTER` page size (migrated it from `mapbox-gl-export`)
+
 ## 3.1.1
 
 ### Patch Changes
