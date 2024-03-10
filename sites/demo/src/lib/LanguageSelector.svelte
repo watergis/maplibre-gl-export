@@ -77,7 +77,7 @@
 >
 	{#each languages as lang}
 		<button
-			class="lang-button"
+			class="lang-button {language === lang ? 'selected' : ''}"
 			on:click={() => {
 				handleClickLanguage(lang);
 			}}
@@ -91,5 +91,14 @@
 	.lang-button {
 		min-width: 150px;
 		padding: 0 0.5rem !important;
+
+		&.selected {
+			background-color: #006eb5;
+			color: white;
+
+			&:hover {
+				color: black;
+			}
+		}
 	}
 </style>
