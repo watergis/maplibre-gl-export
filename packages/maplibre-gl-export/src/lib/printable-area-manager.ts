@@ -1,8 +1,9 @@
-import { Map as MaplibreMap } from 'maplibre-gl';
+import { type Map as MaplibreMap } from 'maplibre-gl';
+import { type Map as MapboxMap } from 'mapbox-gl';
 import { Unit } from './map-generator';
 
 export default class PrintableAreaManager {
-	private map: MaplibreMap | undefined;
+	private map: MaplibreMap | MapboxMap | undefined;
 
 	private width: number;
 
@@ -14,7 +15,7 @@ export default class PrintableAreaManager {
 
 	private svgPath: SVGElement | undefined;
 
-	constructor(map: MaplibreMap | undefined) {
+	constructor(map: MaplibreMap | MapboxMap | undefined) {
 		this.map = map;
 		if (this.map === undefined) {
 			return;

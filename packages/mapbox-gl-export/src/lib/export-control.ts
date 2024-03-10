@@ -1,7 +1,11 @@
 import { IControl, Map as MapboxMap } from 'mapbox-gl';
-import CrosshairManager from './crosshair-manager';
-import PrintableAreaManager from './printable-area-manager';
-import { Translation, languages, getTranslation } from '@watergis/maplibre-gl-export';
+import {
+	CrosshairManager,
+	PrintableAreaManager,
+	type Translation,
+	type languages,
+	getTranslation
+} from '@watergis/maplibre-gl-export';
 import MapGenerator, { Size, Format, PageOrientation, DPI, Unit } from './map-generator';
 
 type Options = {

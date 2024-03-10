@@ -97,6 +97,9 @@ importers:
       '@types/geojson':
         specifier: ^7946.0.14
         version: 7946.0.14
+      '@types/mapbox-gl':
+        specifier: ^3.1.0
+        version: 3.1.0
       '@types/node':
         specifier: ^20.11.25
         version: 20.11.25
