@@ -33,4 +33,8 @@ jobs:
 
     - run: pnpm lint
 
-    - run: pnpm build
+    - name: build
+      env: 
+        PUBLIC_MAPBOX_ACCESSTOKEN: ${{ secrets.PUBLIC_MAPBOX_ACCESSTOKEN }}
+      run: 
+        pnpm build
