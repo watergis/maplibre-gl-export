@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { addProtocol, Map } from 'maplibre-gl';
+	import { addProtocol, Map, NavigationControl } from 'maplibre-gl';
 	import {
 		MaplibreExportControl,
 		Size,
@@ -47,6 +47,8 @@
 			zoom: 12,
 			hash: true
 		});
+
+		map.addControl(new NavigationControl(), 'bottom-right');
 
 		initExportControl();
 	});

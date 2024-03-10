@@ -10,13 +10,28 @@
 	import css from 'highlight.js/lib/languages/css';
 	import javascript from 'highlight.js/lib/languages/javascript';
 	import typescript from 'highlight.js/lib/languages/typescript';
+	import type { PageData } from './$types';
 
 	hljs.registerLanguage('xml', xml); // for HTML
 	hljs.registerLanguage('css', css);
 	hljs.registerLanguage('javascript', javascript);
 	hljs.registerLanguage('typescript', typescript);
 	storeHighlightJs.set(hljs);
+
+	export let data: PageData;
 </script>
+
+<svelte:head>
+	<title>{data.title}</title>
+	<meta property="og:site_name" content={data.site_name} />
+	<meta property="og:type" content="article" />
+	<meta name="description" content={data.site_description} />
+	<meta property="og:description" content={data.site_description} />
+	<meta name="twitter:description" content={data.site_description} />
+	<meta property="og:title" content={data.title} />
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:title" content={data.title} />
+</svelte:head>
 
 <!-- App Shell -->
 <AppShell>
@@ -50,10 +65,8 @@
 	<slot />
 
 	<svelte:fragment slot="footer">
-		<div class="flex flex-col justify-center space-x-2 py-4">
-			<p class="flex justify-center space-x-2">
-				maplibre-gl-export and mapbox-gl-export by JinIgarashi.
-			</p>
+		<div class="space-y-2 py-4">
+			<p class="flex justify-center space-x-2">Maplibre/Mapbox GL Export by JinIgarashi.</p>
 			<p class="flex justify-center space-x-2">The source code is licensed MIT.</p>
 			<p class="flex justify-center space-x-2">The website content is licensed CC BY NC SA 4.0.</p>
 		</div>
