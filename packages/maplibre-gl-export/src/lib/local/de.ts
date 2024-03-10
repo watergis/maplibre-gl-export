@@ -3,7 +3,8 @@ const translation = {
 	PageOrientation: 'Papierausrichtung',
 	Format: 'Dateiformat',
 	DPI: 'Druckauflösung',
-	Generate: 'Erstellen'
+	Generate: 'Erstellen',
+	LanguageName: 'German'
 };
 
 export default translation;

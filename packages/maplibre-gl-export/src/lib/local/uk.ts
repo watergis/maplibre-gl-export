@@ -3,7 +3,8 @@ const translation = {
 	PageOrientation: 'Орієнтація сторінки',
 	Format: 'Формат',
 	DPI: 'DPI',
-	Generate: 'Згенерувати'
+	Generate: 'Згенерувати',
+	LanguageName: 'Ukranian'
 };
 
 export default translation;

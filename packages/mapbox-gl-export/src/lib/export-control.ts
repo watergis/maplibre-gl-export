@@ -242,6 +242,11 @@ export default class MapboxExportControl implements IControl {
 			this.crosshair = undefined;
 		}
 
+		if (this.printableArea !== undefined) {
+			this.printableArea.destroy();
+			this.printableArea = undefined;
+		}
+
 		this.map = undefined;
 	}
 

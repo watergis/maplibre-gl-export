@@ -3,7 +3,8 @@ const translation = {
 	PageOrientation: 'Loại trang',
 	Format: 'Định dạng',
 	DPI: 'Mật độ điểm ảnh (DPI)',
-	Generate: 'Tạo'
+	Generate: 'Tạo',
+	LanguageName: 'Vietnam'
 };
 
 export default translation;

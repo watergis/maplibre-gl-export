@@ -3,7 +3,8 @@ const translation = {
 	PageOrientation: '页面方向',
 	Format: '格式',
 	DPI: '像素',
-	Generate: '导出'
+	Generate: '导出',
+	LanguageName: 'Chinese simplified'
 };
 
 export default translation;
