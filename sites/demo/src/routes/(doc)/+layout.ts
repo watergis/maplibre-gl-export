@@ -11,3 +11,6 @@ export const load: LayoutLoad = async () => {
 		site_description
 	};
 };
+
+export const prerender = true;
+export const ssr = false;
