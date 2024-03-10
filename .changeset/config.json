@@ -7,5 +7,5 @@
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": ["maplibre-gl-export.water-gis.com"]
+  "ignore": ["demo"]
 }

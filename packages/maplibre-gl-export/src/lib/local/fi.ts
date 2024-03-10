@@ -3,7 +3,8 @@ const translation = {
 	PageOrientation: 'Sivun suunta',
 	Format: 'Muoto',
 	DPI: 'DPI',
-	Generate: 'Generoi'
+	Generate: 'Generoi',
+	LanguageName: 'Finish'
 };
 
 export default translation;

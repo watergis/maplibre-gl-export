@@ -16,6 +16,7 @@ type Translation = {
 	Format: string;
 	DPI: string;
 	Generate: string;
+	LanguageName: string;
 };
 
 type languages = 'de' | 'en' | 'fr' | 'fi' | 'sv' | 'es' | 'vi' | 'uk' | 'zhHans' | 'zhHant' | 'ja';

@@ -3,7 +3,8 @@ const translation = {
 	PageOrientation: 'ページ方向',
 	Format: 'フォーマット',
 	DPI: 'DPI（解像度）',
-	Generate: '出力'
+	Generate: '出力',
+	LanguageName: 'Japanese'
 };
 
 export default translation;

@@ -3,7 +3,8 @@ const translation = {
 	PageOrientation: 'Sidorientering',
 	Format: 'Format',
 	DPI: 'DPI',
-	Generate: 'Generera'
+	Generate: 'Generera',
+	LanguageName: 'Swedish'
 };
 
 export default translation;
