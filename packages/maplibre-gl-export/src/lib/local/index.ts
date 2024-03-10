@@ -18,17 +18,39 @@ type Translation = {
 	Generate: string;
 };
 
+type languages = 'de' | 'en' | 'fr' | 'fi' | 'sv' | 'es' | 'vi' | 'uk' | 'zhHans' | 'zhHant' | 'ja';
+
+const getTranslation = (lang: languages) => {
+	switch (lang) {
+		case 'de':
+			return german;
+		case 'en':
+			return english;
+		case 'fr':
+			return french;
+		case 'fi':
+			return finnish;
+		case 'sv':
+			return swedish;
+		case 'es':
+			return spanish;
+		case 'vi':
+			return vietnam;
+		case 'uk':
+			return ukranian;
+		case 'zhHans':
+			return zhHans;
+		case 'zhHant':
+			return zhHant;
+		case 'ja':
+			return ja;
+		default:
+			return english;
+	}
+};
+
 export {
-	english,
-	french,
-	finnish,
-	german,
-	swedish,
-	spanish,
-	vietnam,
-	ukranian,
-	zhHans,
-	zhHant,
-	ja,
-	Translation
+	Translation,
+	languages,
+	getTranslation
 };
