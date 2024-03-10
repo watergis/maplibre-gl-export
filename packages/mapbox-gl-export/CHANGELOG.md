@@ -1,5 +1,11 @@
 # @watergis/mapbox-gl-export
 
+## 3.0.1
+
+### Patch Changes
+
+- f7b81d9: refactor: Use Translations, PrintableAreaManager and CrosshairManager from maplibre-gl-export at mapbox-gl-export
+
 ## 3.0.0
 
 ### Major Changes
