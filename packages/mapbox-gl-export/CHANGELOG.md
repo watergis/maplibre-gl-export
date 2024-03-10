@@ -1,5 +1,12 @@
 # @watergis/mapbox-gl-export
 
+## 3.0.2
+
+### Patch Changes
+
+- 7d86d84: - feat: add languageName prop in Translation interface
+  - fix: remove PrintableArea when the control is removed from map instance.
+
 ## 3.0.1
 
 ### Patch Changes
