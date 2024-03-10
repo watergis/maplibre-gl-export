@@ -49,8 +49,4 @@ const getTranslation = (lang: languages) => {
 	}
 };
 
-export {
-	Translation,
-	languages,
-	getTranslation
-};
+export { Translation, languages, getTranslation };

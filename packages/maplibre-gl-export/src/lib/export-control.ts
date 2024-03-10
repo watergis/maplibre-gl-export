@@ -1,11 +1,7 @@
 import { ControlPosition, IControl, Map as MaplibreMap } from 'maplibre-gl';
 import CrosshairManager from './crosshair-manager';
 import PrintableAreaManager from './printable-area-manager';
-import {
-	Translation,
-	getTranslation,
-	type languages
-} from './local';
+import { Translation, getTranslation, type languages } from './local';
 import MapGenerator, { Size, Format, PageOrientation, DPI, Unit } from './map-generator';
 
 type Options = {
