@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { addProtocol, Map, NavigationControl } from 'maplibre-gl';
+	import { addProtocol, Map } from 'maplibre-gl';
 	import {
 		MaplibreExportControl,
 		Size,
@@ -10,7 +10,6 @@
 	} from '@watergis/maplibre-gl-export';
 	import { Protocol } from 'pmtiles';
 	import { onMount } from 'svelte';
-	import 'maplibre-gl/dist/maplibre-gl.css';
 	import '@watergis/maplibre-gl-export/dist/maplibre-gl-export.css';
 	import LanguageSelector from '$lib/LanguageSelector.svelte';
 
@@ -48,7 +47,6 @@
 			zoom: 12,
 			hash: true
 		});
-		map.addControl(new NavigationControl({}), 'top-right');
 
 		initExportControl();
 	});
@@ -57,6 +55,10 @@
 		initExportControl();
 	};
 </script>
+
+<svelte:head>
+	<link rel="stylesheet" href="https://unpkg.com/maplibre-gl/dist/maplibre-gl.css" />
+</svelte:head>
 
 <div id="map" />
 

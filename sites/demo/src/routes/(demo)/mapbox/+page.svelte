@@ -1,5 +1,5 @@
 <script lang="ts">
-	import mapboxgl, { Map, NavigationControl } from 'mapbox-gl';
+	import mapboxgl, { Map } from 'mapbox-gl';
 	import {
 		MapboxExportControl,
 		Size,
@@ -9,7 +9,6 @@
 		type Language
 	} from '@watergis/mapbox-gl-export';
 	import { onMount } from 'svelte';
-	import 'mapbox-gl/dist/mapbox-gl.css';
 	import '@watergis/mapbox-gl-export/dist/mapbox-gl-export.css';
 	import LanguageSelector from '$lib/LanguageSelector.svelte';
 	import { PUBLIC_MAPBOX_ACCESSTOKEN } from '$env/static/public';
@@ -49,13 +48,17 @@
 			// style: 'https://narwassco.github.io/mapbox-stylefiles/unvt/style.json',
 			center: [35.87063, -1.08551],
 			zoom: 12,
-			hash: true
+			hash: true,
+			accessToken: PUBLIC_MAPBOX_ACCESSTOKEN
 		});
-		map.addControl(new NavigationControl({}), 'top-right');
 
 		initExportControl();
 	});
 </script>
+
+<svelte:head>
+	<link href="https://api.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.css" rel="stylesheet" />
+</svelte:head>
 
 <div id="map"></div>
 
