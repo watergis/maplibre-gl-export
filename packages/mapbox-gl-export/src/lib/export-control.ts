@@ -1,20 +1,11 @@
 import { IControl, Map as MapboxMap } from 'mapbox-gl';
-import CrosshairManager from './crosshair-manager';
-import PrintableAreaManager from './printable-area-manager';
 import {
-	english,
-	french,
-	finnish,
-	german,
-	swedish,
-	spanish,
-	vietnam,
-	ukranian,
-	zhHans,
-	zhHant,
-	ja,
-	Translation
-} from './local';
+	CrosshairManager,
+	PrintableAreaManager,
+	type Translation,
+	type languages,
+	getTranslation
+} from '@watergis/maplibre-gl-export';
 import MapGenerator, { Size, Format, PageOrientation, DPI, Unit } from './map-generator';
 
 type Options = {
@@ -25,7 +16,7 @@ type Options = {
 	Crosshair?: boolean;
 	PrintableArea: boolean;
 	accessToken?: string;
-	Local?: 'de' | 'en' | 'fr' | 'fi' | 'sv' | 'es' | 'vi' | 'uk' | 'zhHans' | 'zhHant' | 'ja';
+	Local?: languages;
 	AllowedSizes?: ('LETTER' | 'A2' | 'A3' | 'A4' | 'A5' | 'A6' | 'B2' | 'B3' | 'B4' | 'B5' | 'B6')[];
 	Filename?: string;
 };
@@ -85,32 +76,8 @@ export default class MapboxExportControl implements IControl {
 	}
 
 	public getTranslation(): Translation {
-		switch (this.options.Local) {
-			case 'de':
-				return german;
-			case 'en':
-				return english;
-			case 'fr':
-				return french;
-			case 'fi':
-				return finnish;
-			case 'sv':
-				return swedish;
-			case 'es':
-				return spanish;
-			case 'vi':
-				return vietnam;
-			case 'uk':
-				return ukranian;
-			case 'zhHans':
-				return zhHans;
-			case 'zhHant':
-				return zhHant;
-			case 'ja':
-				return ja;
-			default:
-				return english;
-		}
+		const lang: languages = this.options.Local ?? 'en';
+		return getTranslation(lang);
 	}
 
 	public onAdd(map: MapboxMap): HTMLElement {
