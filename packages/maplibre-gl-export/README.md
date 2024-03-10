@@ -1,7 +1,6 @@
 # maplibre-gl-export
 
-![build](https://github.com/watergis/maplibre-gl-export/workflows/build/badge.svg)
-![GitHub](https://img.shields.io/github/license/watergis/maplibre-gl-export)
+[![version](https://img.shields.io/npm/v/@watergis/maplibre-gl-export.svg)](https://www.npmjs.com/package/@watergis/maplibre-gl-export)
 
 This module adds control which can export PDF and images. It was forked from [mapbox-gl-export](https://github.com/watergis/mapbox-gl-export).
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import mapboxgl, { Map } from 'mapbox-gl';
+	import mapboxgl, { Map, NavigationControl } from 'mapbox-gl';
 	import {
 		MapboxExportControl,
 		Size,
@@ -36,6 +36,8 @@
 			PrintableArea: true,
 			Local: language
 		});
+
+		map.addControl(new NavigationControl(), 'bottom-right');
 
 		map.addControl(exportControl, 'top-right');
 	};

@@ -11,5 +11,8 @@ export default defineConfig({
 				greedy: [/^hljs-/]
 			}
 		})
-	]
+	],
+	ssr: {
+		noExternal: ['maplibre-gl', 'mapbox-gl']
+	}
 });
