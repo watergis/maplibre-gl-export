@@ -35,7 +35,7 @@ importers:
         version: 3.1.0
       '@types/node':
         specifier: ^20.11.25
-        version: 20.11.26
+        version: 20.11.27
       '@typescript-eslint/eslint-plugin':
         specifier: ^7.1.1
         version: 7.2.0(@typescript-eslint/parser@7.2.0)(eslint@8.57.0)(typescript@5.4.2)
@@ -80,7 +80,7 @@ importers:
         version: 5.4.2
       vite:
         specifier: ^5.1.5
-        version: 5.1.6(@types/node@20.11.26)(sass@1.71.1)
+        version: 5.1.6(@types/node@20.11.27)(sass@1.71.1)
 
   packages/maplibre-gl-export:
     dependencies:
@@ -102,7 +102,7 @@ importers:
         version: 3.1.0
       '@types/node':
         specifier: ^20.11.25
-        version: 20.11.26
+        version: 20.11.27
       '@typescript-eslint/eslint-plugin':
         specifier: ^7.1.1
         version: 7.2.0(@typescript-eslint/parser@7.2.0)(eslint@8.57.0)(typescript@5.4.2)
@@ -147,7 +147,7 @@ importers:
         version: 5.4.2
       vite:
         specifier: ^5.1.5
-        version: 5.1.6(@types/node@20.11.26)(sass@1.71.1)
+        version: 5.1.6(@types/node@20.11.27)(sass@1.71.1)
 
   sites/demo:
     dependencies:
@@ -184,7 +184,7 @@ importers:
         version: 3.1.0
       '@types/node':
         specifier: 20.11.26
-        version: 20.11.26
+        version: 20.11.27
       '@typescript-eslint/eslint-plugin':
         specifier: ^7.0.0
         version: 7.2.0(@typescript-eslint/parser@7.2.0)(eslint@8.57.0)(typescript@5.4.2)
@@ -244,7 +244,7 @@ importers:
         version: 5.4.2
       vite:
         specifier: ^5.0.3
-        version: 5.1.6(@types/node@20.11.26)(sass@1.71.1)
+        version: 5.1.6(@types/node@20.11.27)(sass@1.71.1)
       vite-plugin-tailwind-purgecss:
         specifier: 0.2.0
         version: 0.2.0(vite@5.1.6)
@@ -1040,7 +1040,7 @@ packages:
       sirv: 2.0.4
       svelte: 4.2.12
       tiny-glob: 0.2.9
-      vite: 5.1.6(@types/node@20.11.26)(sass@1.71.1)
+      vite: 5.1.6(@types/node@20.11.27)(sass@1.71.1)
     dev: true
 
   /@sveltejs/vite-plugin-svelte-inspector@2.0.0(@sveltejs/vite-plugin-svelte@3.0.2)(svelte@4.2.12)(vite@5.1.6):
@@ -1054,7 +1054,7 @@ packages:
       '@sveltejs/vite-plugin-svelte': 3.0.2(svelte@4.2.12)(vite@5.1.6)
       debug: 4.3.4
       svelte: 4.2.12
-      vite: 5.1.6(@types/node@20.11.26)(sass@1.71.1)
+      vite: 5.1.6(@types/node@20.11.27)(sass@1.71.1)
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -1073,7 +1073,7 @@ packages:
       magic-string: 0.30.8
       svelte: 4.2.12
       svelte-hmr: 0.15.3(svelte@4.2.12)
-      vite: 5.1.6(@types/node@20.11.26)(sass@1.71.1)
+      vite: 5.1.6(@types/node@20.11.27)(sass@1.71.1)
       vitefu: 0.2.5(vite@5.1.6)
     transitivePeerDependencies:
       - supports-color
@@ -1161,8 +1161,8 @@ packages:
     resolution: {integrity: sha512-J8xLz7q2OFulZ2cyGTLE1TbbZcjpno7FaN6zdJNrgAdrJ+DZzh/uFR6YrTb4C+nXakvud8Q4+rbhoIWlYQbUFQ==}
     dev: true
 
-  /@types/node@20.11.26:
-    resolution: {integrity: sha512-YwOMmyhNnAWijOBQweOJnQPl068Oqd4K3OFbTc6AHJwzweUwwWG3GIFY74OKks2PJUDkQPeddOQES9mLn1CTEQ==}
+  /@types/node@20.11.27:
+    resolution: {integrity: sha512-qyUZfMnCg1KEz57r7pzFtSGt49f6RPkPBis3Vo4PbS7roQEDn22hiHzl/Lo1q4i4hDEgBJmBF/NTNg2XR0HbFg==}
     dependencies:
       undici-types: 5.26.5
     dev: true
@@ -5105,10 +5105,10 @@ packages:
     dependencies:
       estree-walker: 3.0.3
       purgecss: 6.0.0-alpha.0
-      vite: 5.1.6(@types/node@20.11.26)(sass@1.71.1)
+      vite: 5.1.6(@types/node@20.11.27)(sass@1.71.1)
     dev: true
 
-  /vite@5.1.6(@types/node@20.11.26)(sass@1.71.1):
+  /vite@5.1.6(@types/node@20.11.27)(sass@1.71.1):
     resolution: {integrity: sha512-yYIAZs9nVfRJ/AiOLCA91zzhjsHUgMjB+EigzFb6W2XTLO8JixBCKCjvhKZaye+NKYHCrkv3Oh50dH9EdLU2RA==}
     engines: {node: ^18.0.0 || >=20.0.0}
     hasBin: true
@@ -5136,7 +5136,7 @@ packages:
       terser:
         optional: true
     dependencies:
-      '@types/node': 20.11.26
+      '@types/node': 20.11.27
       esbuild: 0.19.12
       postcss: 8.4.35
       rollup: 4.12.1
@@ -5153,7 +5153,7 @@ packages:
       vite:
         optional: true
     dependencies:
-      vite: 5.1.6(@types/node@20.11.26)(sass@1.71.1)
+      vite: 5.1.6(@types/node@20.11.27)(sass@1.71.1)
     dev: true
 
   /vt-pbf@3.1.3:
