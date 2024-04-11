@@ -196,14 +196,21 @@ export default class MapGenerator {
 			// @ts-ignore
 			transformRequest: (this.map as unknown)._requestManager._transformRequestFn
 		});
-
-		// comment this statement because an error is occured since maplibre v3. images[key].data has no value (null)
-		// it looks working well in my style. let's see how it works without this code
-		// the below code was added by https://github.com/watergis/maplibre-gl-export/pull/18.
-		// const images = (this.map.style.imageManager || {}).images || [];
-		// Object.keys(images).forEach((key) => {
-		// 	renderMap.addImage(key, images[key].data);
-		// });
+		
+		// Attempt to load images that were loaded in source map using addImage(). This does not load sprite images.
+		// Modification based on https://github.com/watergis/maplibre-gl-export/pull/18
+		const images = (this.map.style.imageManager || {}).images || [];
+		for (const key of Object.keys(images)) {
+			const _image = images[key];
+			
+			if (_image?.data) {				
+				try {
+					renderMap.addImage(key, _image?.data);
+				} catch(err) {
+					console.error(`Error adding image: ${err.message}`);
+				}
+			}
+		}
 
 		renderMap.once('idle', () => {
 			const canvas = renderMap.getCanvas();
