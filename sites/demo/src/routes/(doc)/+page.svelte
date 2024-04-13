@@ -1,8 +1,7 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
+
 	import { CodeBlock, Tab, TabGroup } from '@skeletonlabs/skeleton';
-	import hljs from 'highlight.js/lib/core';
-	import shell from 'highlight.js/lib/languages/shell';
-	hljs.registerLanguage('shell', shell);
 
 	let tabs = [
 		{ label: 'Maplibre GL Export', value: 'maplibre' },
@@ -15,19 +14,51 @@
 		{ label: 'CDN', value: 'cdn' }
 	];
 	let importTypeTabSet: string = imprtTypeTabs[0].value;
+
+	let maplibreExportVersion = 'latest';
+	let mapboxExportVersion = 'latest';
+
+	const getMaplibreExportVersion = async () => {
+		const res = await fetch('https://registry.npmjs.org/@watergis/maplibre-gl-export/latest');
+		if (!res.ok) {
+			return;
+		}
+		const json = await res.json();
+		maplibreExportVersion = json.version;
+	};
+
+	const getMapboxExportVersion = async () => {
+		const res = await fetch('https://registry.npmjs.org/@watergis/mapbox-gl-export/latest');
+		if (!res.ok) {
+			return;
+		}
+		const json = await res.json();
+		mapboxExportVersion = json.version;
+	};
+
+	onMount(() => {
+		getMaplibreExportVersion();
+		getMapboxExportVersion();
+	});
 </script>
 
 <div class="container h-full mx-auto flex justify-center items-center">
 	<div class="space-y-10 flex flex-col items-center px-2">
 		<div class="text-center">
-			<h2 class="h2 pb-6">Welcome to Maplibre/Mapbox GL Export</h2>
+			<h2 class="h2 pt-4 pb-6">Welcome to Maplibre/Mapbox GL Export</h2>
 
-			<div class="flex justify-center space-x-2">
+			<div class="flex justify-center space-x-2 pb-4">
 				<p>
-					GL Export is a Maplibre/Mapbox GL JS plugin that can export a map image in various image
-					format such as PNG, JPEG, PDF and SVG
+					Maplibre/Mapbox GL Export is a Maplibre/Mapbox GL JS plugin that can export a map image in
+					various image format such as PNG, JPEG, PDF and SVG without any server!
 				</p>
 			</div>
+
+			<img
+				class="h-auto max-w-full rounded-lg"
+				src="/assets/plugin-overview.png"
+				alt="Overview of Plugin"
+			/>
 		</div>
 
 		<div class="flex justify-center space-x-2">
@@ -63,25 +94,13 @@
 				<p>Getting start with installing the package</p>
 
 				<p class="pt-6 pb-4">npm</p>
-				<CodeBlock
-					language="shell"
-					lineNumbers
-					code={`npm install --save-dev @watergis/${tabSet}-gl-export`}
-				/>
+				<CodeBlock language="shell" code={`npm install --save-dev @watergis/${tabSet}-gl-export`} />
 
 				<p class="pt-6 pb-4">yarn</p>
-				<CodeBlock
-					language="shell"
-					lineNumbers
-					code={`yarn add --dev @watergis/${tabSet}-gl-export`}
-				/>
+				<CodeBlock language="shell" code={`yarn add --dev @watergis/${tabSet}-gl-export`} />
 
 				<p class="pt-6 pb-4">pnpm</p>
-				<CodeBlock
-					language="shell"
-					lineNumbers
-					code={`pnpm add --save-dev @watergis/${tabSet}-gl-export`}
-				/>
+				<CodeBlock language="shell" code={`pnpm add --save-dev @watergis/${tabSet}-gl-export`} />
 
 				<h3 class="h3 pt-6 pb-4">Usage</h3>
 
@@ -132,8 +151,8 @@ ${
 <script src='https://api.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.js'></script>
 <link href='https://api.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.css' rel='stylesheet' />
 
-<link href="https://cdn.jsdelivr.net/npm/@watergis/mapbox-gl-export@3.0.4/dist/mapbox-gl-export.css" rel="stylesheet" />
-<script src="https://cdn.jsdelivr.net/npm/@watergis/mapbox-gl-export@3.0.4/dist/mapbox-gl-export.umd.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/@watergis/mapbox-gl-export@${mapboxExportVersion}/dist/mapbox-gl-export.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/@watergis/mapbox-gl-export@${mapboxExportVersion}/dist/mapbox-gl-export.umd.js"></script>
 
 <script>
 	mapboxgl.accessToken = 'Your access token'
@@ -151,14 +170,13 @@ ${
 		Local: 'fr',
 		accessToken: mapboxgl.accessToken
 	}), 'top-right');
-</script>
-`
+</script>`
 		: `
 <script src='https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.js'></script>
 <link href='https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.css' rel='stylesheet' />
 
-<link href="https://cdn.jsdelivr.net/npm/@watergis/maplibre-gl-export@3.2.4/dist/maplibre-gl-export.css" rel="stylesheet" />
-<script src="https://cdn.jsdelivr.net/npm/@watergis/maplibre-gl-export@3.2.4/dist/maplibre-gl-export.umd.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/@watergis/maplibre-gl-export@${maplibreExportVersion}/dist/maplibre-gl-export.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/@watergis/maplibre-gl-export@${maplibreExportVersion}/dist/maplibre-gl-export.umd.js"></script>
 
 <script>
 	const map = new maplibregl.Map({
@@ -174,8 +192,7 @@ ${
 		PrintableArea: true,
 		Local: 'fr'
 	}), 'top-right');
-</script>
-`
+</script>`
 }
 			`}
 				/>

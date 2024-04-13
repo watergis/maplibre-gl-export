@@ -24,6 +24,8 @@
 	let exportControl: MaplibreExportControl;
 
 	const initExportControl = () => {
+		if (!$mapStore) return;
+		if (!$languageStore) return;
 		if (exportControl) {
 			$mapStore.removeControl(exportControl);
 		}
@@ -58,7 +60,7 @@
 		initExportControl();
 
 		languageStore.subscribe(() => {
-			initExportControl;
+			initExportControl();
 		});
 	});
 </script>
