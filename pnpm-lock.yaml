@@ -20,9 +20,6 @@ importers:
       js-loading-overlay:
         specifier: ^1.2.0
         version: 1.2.0
-      jspdf:
-        specifier: ^2.5.1
-        version: 2.5.1
       mapbox-gl:
         specifier: ^3.2.0
         version: 3.2.0
