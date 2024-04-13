@@ -75,7 +75,7 @@
 
 			<img
 				class="h-auto max-w-full rounded-lg"
-				src="/assets/plugin-overview.png"
+				src="/assets/plugin-overview.webp"
 				alt="Overview of Plugin"
 			/>
 		</div>
