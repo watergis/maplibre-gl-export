@@ -1,4 +1,6 @@
-const translation = {
+import { Translation } from '../interfaces/Translation';
+
+const translation: Translation = {
 	PageSize: 'ページサイズ',
 	PageOrientation: 'ページ方向',
 	Format: 'フォーマット',

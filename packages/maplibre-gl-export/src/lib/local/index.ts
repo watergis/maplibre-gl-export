@@ -9,19 +9,9 @@ import ukranian from './uk';
 import zhHans from './zhHans';
 import zhHant from './zhHant';
 import ja from './ja';
+import { Language } from '../interfaces/Language';
 
-type Translation = {
-	PageSize: string;
-	PageOrientation: string;
-	Format: string;
-	DPI: string;
-	Generate: string;
-	LanguageName: string;
-};
-
-type languages = 'de' | 'en' | 'fr' | 'fi' | 'sv' | 'es' | 'vi' | 'uk' | 'zhHans' | 'zhHant' | 'ja';
-
-const getTranslation = (lang: languages) => {
+export const getTranslation = (lang: Language) => {
 	switch (lang) {
 		case 'de':
 			return german;
@@ -49,5 +39,3 @@ const getTranslation = (lang: languages) => {
 			return english;
 	}
 };
-
-export { Translation, languages, getTranslation };

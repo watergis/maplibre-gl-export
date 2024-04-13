@@ -49,9 +49,21 @@
 
 	let control: LanguageControl | undefined;
 	let controlGroup: HTMLDivElement;
-	let languages = ['en', 'fr', 'fi', 'de', 'sv', 'es', 'vi', 'uk', 'zhHans', 'zhHant', 'ja'];
+	let languages: Language[] = [
+		'en',
+		'fr',
+		'fi',
+		'de',
+		'sv',
+		'es',
+		'vi',
+		'uk',
+		'zhHans',
+		'zhHant',
+		'ja'
+	];
 
-	const handleClickLanguage = (lang: string) => {
+	const handleClickLanguage = (lang: Language) => {
 		language = lang;
 		dispatch('change', {
 			language

@@ -8,7 +8,8 @@
 	"exports": {
 		".": {
 			"import": "./dist/mapbox-gl-export.es.js",
-			"require": "./dist/mapbox-gl-export.umd.js"
+			"require": "./dist/mapbox-gl-export.umd.js",
+			"types": "./dist/types/index.d.ts"
 		},
 		"./dist/mapbox-gl-export.css": {
 			"import": "./dist/mapbox-gl-export.css",

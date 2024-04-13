@@ -1,3 +1,20 @@
+<script lang="ts">
+	import {
+		LANGUAGE_CONTEXT_KEY,
+		MAPSTORE_CONTEXT_KEY,
+		createLanguageStore,
+		createMapStore
+	} from '$lib/stores';
+	import { setContext } from 'svelte';
+	import LanguageSelector from '$lib/LanguageSelector.svelte';
+
+	const mapStore = createMapStore();
+	setContext(MAPSTORE_CONTEXT_KEY, mapStore);
+
+	const languageStore = createLanguageStore();
+	setContext(LANGUAGE_CONTEXT_KEY, languageStore);
+</script>
+
 <svelte:head>
 	<link
 		rel="stylesheet"
@@ -21,3 +38,7 @@
 >
 
 <slot />
+
+{#if $mapStore}
+	<LanguageSelector bind:map={$mapStore} bind:language={$languageStore} position="bottom-left" />
+{/if}
