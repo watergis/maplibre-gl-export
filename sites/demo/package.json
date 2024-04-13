@@ -27,7 +27,7 @@
 		"@watergis/mapbox-gl-export": "workspace:^",
 		"@watergis/maplibre-gl-export": "workspace:^",
 		"autoprefixer": "10.4.19",
-		"eslint": "^8.56.0",
+		"eslint": "^9.0.0",
 		"eslint-config-prettier": "^9.1.0",
 		"eslint-plugin-svelte": "^2.35.1",
 		"mapbox-gl": "^3.2.0",
