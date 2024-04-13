@@ -74,6 +74,8 @@
 {/if}
 
 <style lang="scss">
+	@import 'maplibre-gl/dist/maplibre-gl.css';
+
 	#map {
 		position: absolute;
 		top: 0;

@@ -2,6 +2,7 @@
 node_modules
 /build
 /.svelte-kit
+/.netlify
 /package
 .env
 .env.*
@@ -11,3 +12,4 @@ node_modules
 pnpm-lock.yaml
 package-lock.json
 yarn.lock
+

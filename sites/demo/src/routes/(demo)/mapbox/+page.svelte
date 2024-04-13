@@ -12,6 +12,7 @@
 	import '@watergis/mapbox-gl-export/dist/mapbox-gl-export.css';
 	import LanguageSelector from '$lib/LanguageSelector.svelte';
 	import { PUBLIC_MAPBOX_ACCESSTOKEN } from '$env/static/public';
+	import 'mapbox-gl/dist/mapbox-gl.css';
 
 	let map: Map;
 
@@ -57,10 +58,6 @@
 		initExportControl();
 	});
 </script>
-
-<svelte:head>
-	<link href="https://api.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.css" rel="stylesheet" />
-</svelte:head>
 
 <div id="map"></div>
 
