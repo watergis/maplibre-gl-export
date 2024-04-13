@@ -1,4 +1,6 @@
-const translation = {
+import { Translation } from '../interfaces/Translation';
+
+const translation: Translation = {
 	PageSize: 'Розмір сторінки',
 	PageOrientation: 'Орієнтація сторінки',
 	Format: 'Формат',
