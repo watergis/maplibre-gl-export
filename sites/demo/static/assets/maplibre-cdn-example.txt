@@ -1,0 +1,21 @@
+<script src='https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.js'></script>
+<link href='https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.css' rel='stylesheet' />
+
+<link href="https://cdn.jsdelivr.net/npm/@watergis/maplibre-gl-export@{maplibreExportVersion}/dist/maplibre-gl-export.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/@watergis/maplibre-gl-export@{maplibreExportVersion}/dist/maplibre-gl-export.umd.js"></script>
+
+<script>
+	const map = new maplibregl.Map({
+		container: 'map',
+		style: 'Your style file',
+	});
+	map.addControl(new MaplibreExportControl.MaplibreExportControl({
+		PageSize: MaplibreExportControl.Size.A4,
+		PageOrientation: MaplibreExportControl.PageOrientation.Landscape,
+		Format: MaplibreExportControl.Format.PNG,
+		DPI: MaplibreExportControl.DPI[300],
+		Crosshair: true,
+		PrintableArea: true,
+		Local: 'fr'
+	}), 'top-right');
+</script>

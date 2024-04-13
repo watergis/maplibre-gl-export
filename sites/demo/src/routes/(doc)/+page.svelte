@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-
 	import { CodeBlock, Tab, TabGroup } from '@skeletonlabs/skeleton';
 
 	let tabs = [
@@ -17,6 +16,8 @@
 
 	let maplibreExportVersion = 'latest';
 	let mapboxExportVersion = 'latest';
+	let maplibreCdnExample = '';
+	let mapboxCdnExample = '';
 
 	const getMaplibreExportVersion = async () => {
 		const res = await fetch('https://registry.npmjs.org/@watergis/maplibre-gl-export/latest');
@@ -36,9 +37,27 @@
 		mapboxExportVersion = json.version;
 	};
 
+	const getMaplibreCdnExample = async () => {
+		const res = await fetch('/assets/maplibre-cdn-example.txt');
+		if (!res.ok) {
+			return;
+		}
+		maplibreCdnExample = await res.text();
+	};
+
+	const getMapboxCdnExample = async () => {
+		const res = await fetch('/assets/mapbox-cdn-example.txt');
+		if (!res.ok) {
+			return;
+		}
+		mapboxCdnExample = await res.text();
+	};
+
 	onMount(() => {
 		getMaplibreExportVersion();
 		getMapboxExportVersion();
+		getMaplibreCdnExample();
+		getMapboxCdnExample();
 	});
 </script>
 
@@ -70,9 +89,9 @@
 				<Tab bind:group={tabSet} name={tab.value} value={tab.value}>
 					{tab.label}
 					{#if tab.value === 'maplibre'}
-					({maplibreExportVersion})
+						({maplibreExportVersion})
 					{:else}
-					({mapboxExportVersion})
+						({mapboxExportVersion})
 					{/if}
 				</Tab>
 			{/each}
@@ -154,52 +173,8 @@ map.addControl(exportControl, 'top-right');
 					code={`
 ${
 	tabSet === 'mapbox'
-		? `
-<script src='https://api.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.js'></script>
-<link href='https://api.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.css' rel='stylesheet' />
-
-<link href="https://cdn.jsdelivr.net/npm/@watergis/mapbox-gl-export@${mapboxExportVersion}/dist/mapbox-gl-export.css" rel="stylesheet" />
-<script src="https://cdn.jsdelivr.net/npm/@watergis/mapbox-gl-export@${mapboxExportVersion}/dist/mapbox-gl-export.umd.js"></script>
-
-<script>
-	mapboxgl.accessToken = 'Your access token'
-	const map = new mapboxgl.Map({
-		container: 'map',
-		style: 'Your style file',
-	});
-	map.addControl(new MapboxExportControl.MapboxExportControl({
-		PageSize: MapboxExportControl.Size.A4,
-		PageOrientation: MapboxExportControl.PageOrientation.Landscape,
-		Format: MapboxExportControl.Format.PNG,
-		DPI: MapboxExportControl.DPI[300],
-		Crosshair: true,
-		PrintableArea: true,
-		Local: 'fr',
-		accessToken: mapboxgl.accessToken
-	}), 'top-right');
-</script>`
-		: `
-<script src='https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.js'></script>
-<link href='https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.css' rel='stylesheet' />
-
-<link href="https://cdn.jsdelivr.net/npm/@watergis/maplibre-gl-export@${maplibreExportVersion}/dist/maplibre-gl-export.css" rel="stylesheet" />
-<script src="https://cdn.jsdelivr.net/npm/@watergis/maplibre-gl-export@${maplibreExportVersion}/dist/maplibre-gl-export.umd.js"></script>
-
-<script>
-	const map = new maplibregl.Map({
-		container: 'map',
-		style: 'Your style file',
-	});
-	map.addControl(new MaplibreExportControl.MaplibreExportControl({
-		PageSize: MaplibreExportControl.Size.A4,
-		PageOrientation: MaplibreExportControl.PageOrientation.Landscape,
-		Format: MaplibreExportControl.Format.PNG,
-		DPI: MaplibreExportControl.DPI[300],
-		Crosshair: true,
-		PrintableArea: true,
-		Local: 'fr'
-	}), 'top-right');
-</script>`
+		? `${mapboxCdnExample.replace(/{mapboxExportVersion}/g, mapboxExportVersion)}`
+		: `${maplibreCdnExample.replace(/{maplibreExportVersion}/g, maplibreExportVersion)}`
 }
 			`}
 				/>
