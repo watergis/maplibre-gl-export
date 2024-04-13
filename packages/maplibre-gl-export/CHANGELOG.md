@@ -1,5 +1,12 @@
 # @watergis/maplibre-gl-export
 
+## 3.2.4
+
+### Patch Changes
+
+- eba7503: refactor: Extends MaplibreExportControl to MapboxExportContorl to use the same logic and UI. Fixed type error for languages
+- eba7503: fix: fixed class name to get page size
+
 ## 3.2.3
 
 ### Patch Changes
