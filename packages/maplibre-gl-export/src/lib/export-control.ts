@@ -2,19 +2,18 @@ import { ControlPosition, IControl, Map as MaplibreMap } from 'maplibre-gl';
 import CrosshairManager from './crosshair-manager';
 import PrintableAreaManager from './printable-area-manager';
 import { Translation, getTranslation, type languages } from './local';
-import MapGenerator, { Size, Format, PageOrientation, DPI, Unit } from './map-generator';
-
-type Options = {
-	PageSize?: [number, number];
-	PageOrientation?: string;
-	Format?: string;
-	DPI?: number;
-	Crosshair?: boolean;
-	PrintableArea?: boolean;
-	Local?: languages;
-	AllowedSizes?: ('LETTER' | 'A2' | 'A3' | 'A4' | 'A5' | 'A6' | 'B2' | 'B3' | 'B4' | 'B5' | 'B6')[];
-	Filename?: string;
-};
+import MapGenerator from './map-generator';
+import {
+	Format,
+	type ControlOptions,
+	FormatType,
+	Unit,
+	SizeType,
+	Size,
+	PageOrientation,
+	DPI,
+	DPIType
+} from './interfaces';
 
 /**
  * Mapbox GL Export Control.
@@ -33,8 +32,8 @@ export default class MaplibreExportControl implements IControl {
 
 	private exportButton: HTMLButtonElement;
 
-	private options: Options = {
-		PageSize: Size.A4 as [number, number],
+	private options: ControlOptions = {
+		PageSize: Size.A4 as SizeType,
 		PageOrientation: PageOrientation.Landscape,
 		Format: Format.PDF,
 		DPI: DPI[300],
@@ -57,7 +56,7 @@ export default class MaplibreExportControl implements IControl {
 		Filename: 'map'
 	};
 
-	constructor(options: Options) {
+	constructor(options: ControlOptions) {
 		if (options) {
 			this.options = Object.assign(this.options, options);
 		}
@@ -168,8 +167,8 @@ export default class MaplibreExportControl implements IControl {
 			const mapGenerator = new MapGenerator(
 				map,
 				pageSizeValue,
-				Number(dpiType.value),
-				formatType.value,
+				Number(dpiType.value) as DPIType,
+				formatType.value as FormatType,
 				Unit.mm,
 				this.options.Filename
 			);

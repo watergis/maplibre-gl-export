@@ -4,22 +4,18 @@ import {
 	PrintableAreaManager,
 	type Translation,
 	type languages,
-	getTranslation
+	getTranslation,
+	Size,
+	SizeType,
+	PageOrientation,
+	Format,
+	DPI,
+	Unit,
+	DPIType,
+	FormatType
 } from '@watergis/maplibre-gl-export';
-import MapGenerator, { Size, Format, PageOrientation, DPI, Unit } from './map-generator';
-
-type Options = {
-	PageSize: [number, number];
-	PageOrientation: string;
-	Format: string;
-	DPI: number;
-	Crosshair?: boolean;
-	PrintableArea: boolean;
-	accessToken?: string;
-	Local?: languages;
-	AllowedSizes?: ('LETTER' | 'A2' | 'A3' | 'A4' | 'A5' | 'A6' | 'B2' | 'B3' | 'B4' | 'B5' | 'B6')[];
-	Filename?: string;
-};
+import { ControlOptions } from './interfaces';
+import MapGenerator from './map-generator';
 
 /**
  * Mapbox GL Export Control.
@@ -38,8 +34,8 @@ export default class MapboxExportControl implements IControl {
 
 	private exportButton: HTMLButtonElement;
 
-	private options: Options = {
-		PageSize: Size.A4 as [number, number],
+	private options: ControlOptions = {
+		PageSize: Size.A4 as SizeType,
 		PageOrientation: PageOrientation.Landscape,
 		Format: Format.PDF,
 		DPI: DPI[300],
@@ -63,7 +59,7 @@ export default class MapboxExportControl implements IControl {
 		accessToken: undefined
 	};
 
-	constructor(options: Options) {
+	constructor(options: ControlOptions) {
 		if (options) {
 			this.options = Object.assign(this.options, options);
 		}
@@ -115,7 +111,7 @@ export default class MapboxExportControl implements IControl {
 			sizes,
 			this.getTranslation().PageSize,
 			'page-size',
-			this.options.PageSize,
+			this.options.PageSize as [number, number],
 			(data: { [key: string]: unknown }, key) => JSON.stringify(data[key])
 		);
 		table.appendChild(tr1);
@@ -124,7 +120,7 @@ export default class MapboxExportControl implements IControl {
 			PageOrientation,
 			this.getTranslation().PageOrientation,
 			'page-orientaiton',
-			this.options.PageOrientation,
+			this.options.PageOrientation as string,
 			(data: { [key: string]: unknown }, key) => data[key]
 		);
 		table.appendChild(tr2);
@@ -133,7 +129,7 @@ export default class MapboxExportControl implements IControl {
 			Format,
 			this.getTranslation().Format,
 			'format-type',
-			this.options.Format,
+			this.options.Format as string,
 			(data: { [key: string]: unknown }, key) => data[key]
 		);
 		table.appendChild(tr3);
@@ -142,7 +138,7 @@ export default class MapboxExportControl implements IControl {
 			DPI,
 			this.getTranslation().DPI,
 			'dpi-type',
-			this.options.DPI,
+			this.options.DPI as number,
 			(data: { [key: string]: unknown }, key) => data[key]
 		);
 		table.appendChild(tr4);
@@ -174,8 +170,8 @@ export default class MapboxExportControl implements IControl {
 			const mapGenerator = new MapGenerator(
 				map,
 				pageSizeValue,
-				Number(dpiType.value),
-				formatType.value,
+				Number(dpiType.value) as DPIType,
+				formatType.value as FormatType,
 				Unit.mm,
 				this.options.Filename,
 				this.options.accessToken
