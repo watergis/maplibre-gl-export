@@ -67,7 +67,14 @@
 
 		<TabGroup>
 			{#each tabs as tab}
-				<Tab bind:group={tabSet} name={tab.value} value={tab.value}>{tab.label}</Tab>
+				<Tab bind:group={tabSet} name={tab.value} value={tab.value}>
+					{tab.label}
+					{#if tab.value === 'maplibre'}
+					({maplibreExportVersion})
+					{:else}
+					({mapboxExportVersion})
+					{/if}
+				</Tab>
 			{/each}
 		</TabGroup>
 
