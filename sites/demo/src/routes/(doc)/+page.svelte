@@ -1,58 +1,139 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { CodeBlock, Tab, TabGroup } from '@skeletonlabs/skeleton';
-	import hljs from 'highlight.js/lib/core';
-	import shell from 'highlight.js/lib/languages/shell';
-	hljs.registerLanguage('shell', shell);
 
 	let tabs = [
 		{ label: 'Maplibre GL Export', value: 'maplibre' },
 		{ label: 'Mapbox GL Export', value: 'mapbox' }
 	];
 	let tabSet: string = tabs[0].value;
+
+	let imprtTypeTabs = [
+		{ label: 'NPM', value: 'npm' },
+		{ label: 'CDN', value: 'cdn' }
+	];
+	let importTypeTabSet: string = imprtTypeTabs[0].value;
+
+	let maplibreExportVersion = 'latest';
+	let mapboxExportVersion = 'latest';
+	let maplibreCdnExample = '';
+	let mapboxCdnExample = '';
+
+	const getMaplibreExportVersion = async () => {
+		const res = await fetch('https://registry.npmjs.org/@watergis/maplibre-gl-export/latest');
+		if (!res.ok) {
+			return;
+		}
+		const json = await res.json();
+		maplibreExportVersion = json.version;
+	};
+
+	const getMapboxExportVersion = async () => {
+		const res = await fetch('https://registry.npmjs.org/@watergis/mapbox-gl-export/latest');
+		if (!res.ok) {
+			return;
+		}
+		const json = await res.json();
+		mapboxExportVersion = json.version;
+	};
+
+	const getMaplibreCdnExample = async () => {
+		const res = await fetch('/assets/maplibre-cdn-example.txt');
+		if (!res.ok) {
+			return;
+		}
+		maplibreCdnExample = await res.text();
+	};
+
+	const getMapboxCdnExample = async () => {
+		const res = await fetch('/assets/mapbox-cdn-example.txt');
+		if (!res.ok) {
+			return;
+		}
+		mapboxCdnExample = await res.text();
+	};
+
+	onMount(() => {
+		getMaplibreExportVersion();
+		getMapboxExportVersion();
+		getMaplibreCdnExample();
+		getMapboxCdnExample();
+	});
 </script>
 
 <div class="container h-full mx-auto flex justify-center items-center">
 	<div class="space-y-10 flex flex-col items-center px-2">
 		<div class="text-center">
-			<h2 class="h2 pb-6">Welcome to Maplibre/Mapbox GL Export</h2>
+			<h2 class="h2 pt-4 pb-6">Welcome to Maplibre/Mapbox GL Export</h2>
 
-			<div class="flex justify-center space-x-2">
+			<div class="flex justify-center space-x-2 pb-4">
 				<p>
-					GL Export is a Maplibre/Mapbox GL JS plugin that can export a map image in various image
-					format such as PNG, JPEG, PDF and SVG
+					Maplibre/Mapbox GL Export is a Maplibre/Mapbox GL JS plugin that can export a map image in
+					various image format such as PNG, JPEG, PDF and SVG without any server!
 				</p>
 			</div>
+
+			<img
+				class="h-auto max-w-full rounded-lg"
+				src="/assets/plugin-overview.webp"
+				alt="Overview of Plugin"
+			/>
 		</div>
 
 		<div class="flex justify-center space-x-2">
-			<p>Select your map libary</p>
+			<p>Select your map library</p>
 		</div>
 
 		<TabGroup>
 			{#each tabs as tab}
-				<Tab bind:group={tabSet} name={tab.value} value={tab.value}>{tab.label}</Tab>
+				<Tab bind:group={tabSet} name={tab.value} value={tab.value}>
+					{tab.label}
+					{#if tab.value === 'maplibre'}
+						({maplibreExportVersion})
+					{:else}
+						({mapboxExportVersion})
+					{/if}
+				</Tab>
 			{/each}
 		</TabGroup>
 
 		<div class="space-y-2">
 			<div class="flex justify-center space-x-2">
-				<a class="btn variant-filled" href="/{tabSet}" target="_blank" rel="noreferrer">
-					Open DEMO
+				<a
+					class="btn variant-filled-primary capitalize"
+					href="/{tabSet}"
+					target="_blank"
+					rel="noreferrer"
+				>
+					Open {tabSet} DEMO
 				</a>
 			</div>
 
-			<h3 class="h3 pt-6">Install</h3>
-			<p>Getting start with installing the package</p>
+			<TabGroup>
+				{#each imprtTypeTabs as tab}
+					<Tab bind:group={importTypeTabSet} name={tab.value} value={tab.value}>{tab.label}</Tab>
+				{/each}
+			</TabGroup>
 
-			<CodeBlock language="shell" lineNumbers code={`pnpm i -D @watergis/${tabSet}-gl-export`} />
+			<div hidden={importTypeTabSet !== 'npm'}>
+				<h3 class="h3 pt-6 pb-4">Install</h3>
+				<p>Getting start with installing the package</p>
 
-			<h3 class="h3 pt-6">Usage</h3>
-			<p>Add Export Control to your map!</p>
+				<p class="pt-6 pb-4">npm</p>
+				<CodeBlock language="shell" code={`npm install --save-dev @watergis/${tabSet}-gl-export`} />
 
-			<CodeBlock
-				language="ts"
-				lineNumbers
-				code={`
+				<p class="pt-6 pb-4">yarn</p>
+				<CodeBlock language="shell" code={`yarn add --dev @watergis/${tabSet}-gl-export`} />
+
+				<p class="pt-6 pb-4">pnpm</p>
+				<CodeBlock language="shell" code={`pnpm add --save-dev @watergis/${tabSet}-gl-export`} />
+
+				<h3 class="h3 pt-6 pb-4">Usage</h3>
+
+				<CodeBlock
+					language="ts"
+					lineNumbers
+					code={`
 import {  Map } from '${tabSet}-gl';
 import '${tabSet}-gl/dist/${tabSet}-gl.css';
 import {
@@ -80,13 +161,28 @@ const exportControl = new ${tabSet === 'maplibre' ? 'Maplibre' : 'Mapbox'}Export
 });
 map.addControl(exportControl, 'top-right');
 			`}
-			/>
+				/>
+			</div>
 
-			<h3 class="h3 pt-6">API</h3>
+			<div hidden={importTypeTabSet !== 'cdn'}>
+				<h3 class="h3 pt-6">Usage</h3>
 
-			<div class="flex justify-center space-x-2">
+				<CodeBlock
+					language="html"
+					lineNumbers
+					code={`
+${
+	tabSet === 'mapbox'
+		? `${mapboxCdnExample.replace(/{mapboxExportVersion}/g, mapboxExportVersion)}`
+		: `${maplibreCdnExample.replace(/{maplibreExportVersion}/g, maplibreExportVersion)}`
+}
+			`}
+				/>
+			</div>
+
+			<div class="flex justify-center space-x-2 py-6">
 				<a
-					class="btn variant-filled"
+					class="btn variant-filled-secondary"
 					href="https://github.com/watergis/maplibre-gl-export/tree/main/packages/{tabSet}-gl-export#options"
 					target="_blank"
 					rel="noreferrer">See documentation</a
