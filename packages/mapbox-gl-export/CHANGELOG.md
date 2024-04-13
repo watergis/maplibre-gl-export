@@ -1,5 +1,11 @@
 # @watergis/mapbox-gl-export
 
+## 3.0.4
+
+### Patch Changes
+
+- eba7503: refactor: Extends MaplibreExportControl to MapboxExportContorl to use the same logic and UI. Fixed type error for languages
+
 ## 3.0.3
 
 ### Patch Changes
