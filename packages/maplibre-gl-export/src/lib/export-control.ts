@@ -306,7 +306,7 @@ export default class MaplibreExportControl implements IControl {
 			return;
 		}
 		const pageSize: HTMLSelectElement = <HTMLSelectElement>(
-			document.getElementById('export-page-size')
+			document.getElementById('mapbox-gl-export-page-size')
 		);
 		const pageOrientation: HTMLSelectElement = <HTMLSelectElement>(
 			document.getElementById('mapbox-gl-export-page-orientation')
