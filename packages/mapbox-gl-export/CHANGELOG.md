@@ -1,5 +1,11 @@
 # @watergis/mapbox-gl-export
 
+## 3.0.3
+
+### Patch Changes
+
+- 93722dd: refactor: import interfaces from maplibre-gl-export
+
 ## 3.0.2
 
 ### Patch Changes

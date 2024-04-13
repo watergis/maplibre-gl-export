@@ -1,5 +1,11 @@
 # @watergis/maplibre-gl-export
 
+## 3.2.3
+
+### Patch Changes
+
+- 93722dd: refactor: export interfaces from maplibre-gl-export
+
 ## 3.2.2
 
 ### Patch Changes
