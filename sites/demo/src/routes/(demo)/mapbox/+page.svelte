@@ -5,27 +5,29 @@
 		Size,
 		PageOrientation,
 		Format,
-		DPI,
-		type Language
+		DPI
 	} from '@watergis/mapbox-gl-export';
-	import { onMount } from 'svelte';
+	import { getContext, onMount } from 'svelte';
 	import '@watergis/mapbox-gl-export/dist/mapbox-gl-export.css';
-	import LanguageSelector from '$lib/LanguageSelector.svelte';
 	import { PUBLIC_MAPBOX_ACCESSTOKEN } from '$env/static/public';
 	import 'mapbox-gl/dist/mapbox-gl.css';
+	import {
+		MAPSTORE_CONTEXT_KEY,
+		type LanguageStore,
+		type MapStore,
+		LANGUAGE_CONTEXT_KEY
+	} from '$lib/stores';
 
-	let map: Map;
+	const mapStore: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
+	const languageStore: LanguageStore = getContext(LANGUAGE_CONTEXT_KEY);
 
 	let exportControl: MapboxExportControl;
-	let language: Language = 'en';
-
-	const handleLanguageChanged = () => {
-		initExportControl();
-	};
 
 	const initExportControl = () => {
+		if (!$mapStore) return;
+		if (!$languageStore) return;
 		if (exportControl) {
-			map.removeControl(exportControl);
+			$mapStore.removeControl(exportControl);
 		}
 
 		exportControl = new MapboxExportControl({
@@ -35,17 +37,17 @@
 			DPI: DPI[96],
 			Crosshair: true,
 			PrintableArea: true,
-			Local: language
+			Local: $languageStore
 		});
 
-		map.addControl(new NavigationControl(), 'bottom-right');
+		($mapStore as Map).addControl(new NavigationControl(), 'bottom-right');
 
-		map.addControl(exportControl, 'top-right');
+		$mapStore.addControl(exportControl, 'top-right');
 	};
 
 	onMount(() => {
 		mapboxgl.accessToken = PUBLIC_MAPBOX_ACCESSTOKEN;
-		map = new Map({
+		$mapStore = new Map({
 			container: 'map',
 			style: 'mapbox://styles/mapbox/streets-v11',
 			// style: 'https://narwassco.github.io/mapbox-stylefiles/unvt/style.json',
@@ -56,19 +58,14 @@
 		});
 
 		initExportControl();
+
+		languageStore.subscribe(() => {
+			initExportControl();
+		});
 	});
 </script>
 
 <div id="map"></div>
-
-{#if map}
-	<LanguageSelector
-		bind:map
-		bind:language
-		on:change={handleLanguageChanged}
-		position="bottom-left"
-	/>
-{/if}
 
 <style lang="scss">
 	#map {

@@ -5,23 +5,27 @@
 		Size,
 		PageOrientation,
 		Format,
-		DPI,
-		type Language
+		DPI
 	} from '@watergis/maplibre-gl-export';
 	import { Protocol } from 'pmtiles';
-	import { onMount } from 'svelte';
+	import { getContext, onMount } from 'svelte';
 	import '@watergis/maplibre-gl-export/dist/maplibre-gl-export.css';
-	import LanguageSelector from '$lib/LanguageSelector.svelte';
 	import 'maplibre-gl/dist/maplibre-gl.css';
+	import {
+		MAPSTORE_CONTEXT_KEY,
+		type LanguageStore,
+		type MapStore,
+		LANGUAGE_CONTEXT_KEY
+	} from '$lib/stores';
 
-	let map: Map;
+	const mapStore: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
+	const languageStore: LanguageStore = getContext(LANGUAGE_CONTEXT_KEY);
 
 	let exportControl: MaplibreExportControl;
-	let language: Language = 'en';
 
 	const initExportControl = () => {
 		if (exportControl) {
-			map.removeControl(exportControl);
+			$mapStore.removeControl(exportControl);
 		}
 
 		exportControl = new MaplibreExportControl({
@@ -31,17 +35,17 @@
 			DPI: DPI[96],
 			Crosshair: true,
 			PrintableArea: true,
-			Local: language
+			Local: $languageStore
 		});
 
-		map.addControl(exportControl, 'top-right');
+		$mapStore.addControl(exportControl, 'top-right');
 	};
 
 	onMount(() => {
 		const protocol = new Protocol();
 		addProtocol('pmtiles', protocol.tile);
 
-		map = new Map({
+		$mapStore = new Map({
 			container: 'map',
 			style: 'https://narwassco.github.io/mapbox-stylefiles/unvt/style.json',
 			center: [35.87063, -1.08551],
@@ -49,26 +53,17 @@
 			hash: true
 		});
 
-		map.addControl(new NavigationControl(), 'bottom-right');
+		$mapStore.addControl(new NavigationControl(), 'bottom-right');
 
 		initExportControl();
+
+		languageStore.subscribe(() => {
+			initExportControl;
+		});
 	});
-
-	const handleLanguageChanged = () => {
-		initExportControl();
-	};
 </script>
 
 <div id="map" />
-
-{#if map}
-	<LanguageSelector
-		bind:map
-		bind:language
-		on:change={handleLanguageChanged}
-		position="bottom-left"
-	/>
-{/if}
 
 <style lang="scss">
 	#map {
