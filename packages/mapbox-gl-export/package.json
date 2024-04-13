@@ -69,7 +69,6 @@
 	},
 	"dependencies": {
 		"js-loading-overlay": "^1.2.0",
-		"jspdf": "^2.5.1",
 		"mapbox-gl": "^3.2.0"
 	}
 }
