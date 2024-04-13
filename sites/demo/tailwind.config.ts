@@ -18,7 +18,7 @@ export default {
 		typography,
 		skeleton({
 			themes: {
-				preset: [ { name: "vintage", enhancements: true }] 
+				preset: [{ name: 'wintry', enhancements: true }]
 			}
 		})
 	]

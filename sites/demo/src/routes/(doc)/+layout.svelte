@@ -24,9 +24,9 @@
 
 	export let data: PageData;
 
-	onMount(()=>{
+	onMount(() => {
 		autoModeWatcher();
-	})
+	});
 </script>
 
 <svelte:head>
@@ -43,7 +43,7 @@
 
 <!-- App Shell -->
 <AppShell>
-	<svelte:fragment slot="header" >
+	<svelte:fragment slot="header">
 		<!-- App Bar -->
 		<AppBar>
 			<svelte:fragment slot="lead">
