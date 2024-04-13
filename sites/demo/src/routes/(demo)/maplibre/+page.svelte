@@ -12,6 +12,7 @@
 	import { onMount } from 'svelte';
 	import '@watergis/maplibre-gl-export/dist/maplibre-gl-export.css';
 	import LanguageSelector from '$lib/LanguageSelector.svelte';
+	import 'maplibre-gl/dist/maplibre-gl.css';
 
 	let map: Map;
 
@@ -58,10 +59,6 @@
 	};
 </script>
 
-<svelte:head>
-	<link rel="stylesheet" href="https://unpkg.com/maplibre-gl/dist/maplibre-gl.css" />
-</svelte:head>
-
 <div id="map" />
 
 {#if map}
@@ -74,8 +71,6 @@
 {/if}
 
 <style lang="scss">
-	@import 'maplibre-gl/dist/maplibre-gl.css';
-
 	#map {
 		position: absolute;
 		top: 0;
