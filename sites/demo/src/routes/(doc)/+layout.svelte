@@ -1,6 +1,7 @@
 <script lang="ts">
 	import '../../app.postcss';
-	import { AppShell, AppBar } from '@skeletonlabs/skeleton';
+	import { AppShell, AppBar, LightSwitch } from '@skeletonlabs/skeleton';
+	import { autoModeWatcher } from '@skeletonlabs/skeleton';
 
 	// Highlight JS
 	import hljs from 'highlight.js/lib/core';
@@ -12,6 +13,7 @@
 	import typescript from 'highlight.js/lib/languages/typescript';
 	import shell from 'highlight.js/lib/languages/shell';
 	import type { PageData } from './$types';
+	import { onMount } from 'svelte';
 
 	hljs.registerLanguage('xml', xml); // for HTML
 	hljs.registerLanguage('css', css);
@@ -21,6 +23,10 @@
 	storeHighlightJs.set(hljs);
 
 	export let data: PageData;
+
+	onMount(()=>{
+		autoModeWatcher();
+	})
 </script>
 
 <svelte:head>
@@ -37,13 +43,15 @@
 
 <!-- App Shell -->
 <AppShell>
-	<svelte:fragment slot="header">
+	<svelte:fragment slot="header" >
 		<!-- App Bar -->
 		<AppBar>
 			<svelte:fragment slot="lead">
 				<strong class="text-xl uppercase">Maplibre/Mapbox GL Export</strong>
 			</svelte:fragment>
 			<svelte:fragment slot="trail">
+				<LightSwitch />
+
 				<a
 					class="btn btn-sm variant-ghost-surface"
 					href="https://twitter.com/j_igarashi"

@@ -64,7 +64,7 @@
 <div class="container h-full mx-auto flex justify-center items-center">
 	<div class="space-y-10 flex flex-col items-center px-2">
 		<div class="text-center">
-			<h2 class="h2 pt-4 pb-6">Welcome to Maplibre/Mapbox GL Export</h2>
+			<h2 class="h1 pt-4 pb-6">Welcome to Maplibre/Mapbox GL Export</h2>
 
 			<div class="flex justify-center space-x-2 pb-4">
 				<p>
@@ -121,13 +121,13 @@
 				<h3 class="h3 pt-6 pb-4">Install</h3>
 				<p>Getting start with installing the package</p>
 
-				<p class="pt-6 pb-4">npm</p>
+				<h4 class="h4 pt-6 pb-4">npm</h4>
 				<CodeBlock language="shell" code={`npm install --save-dev @watergis/${tabSet}-gl-export`} />
 
-				<p class="pt-6 pb-4">yarn</p>
+				<h4 class="h4 pt-6 pb-4">yarn</h4>
 				<CodeBlock language="shell" code={`yarn add --dev @watergis/${tabSet}-gl-export`} />
 
-				<p class="pt-6 pb-4">pnpm</p>
+				<h4 class="h4 pt-6 pb-4">pnpm</h4>
 				<CodeBlock language="shell" code={`pnpm add --save-dev @watergis/${tabSet}-gl-export`} />
 
 				<h3 class="h3 pt-6 pb-4">Usage</h3>
