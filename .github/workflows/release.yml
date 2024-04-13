@@ -17,16 +17,20 @@ jobs:
       pull-requests: write # to create pull request (changesets/action)
     name: Release
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20]
+
     steps:
       - name: checkout code repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - uses: pnpm/action-setup@v3.0.0
-      - name: Setup Node.js
+      - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
-          node-version: 18.x
+          node-version: ${{ matrix.node-version }}
           cache: pnpm
 
       - name: install dependencies

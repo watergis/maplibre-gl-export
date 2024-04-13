@@ -1,6 +1,6 @@
 import { type Map as MaplibreMap } from 'maplibre-gl';
 import { type Map as MapboxMap } from 'mapbox-gl';
-import { Unit } from './map-generator';
+import { Unit } from './interfaces';
 
 export default class PrintableAreaManager {
 	private map: MaplibreMap | MapboxMap | undefined;

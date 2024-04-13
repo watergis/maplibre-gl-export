@@ -30,57 +30,15 @@
 import { jsPDF } from 'jspdf';
 import { accessToken, Map as MapboxMap } from 'mapbox-gl';
 import 'js-loading-overlay';
-
-export const Format = {
-	JPEG: 'jpg',
-	PNG: 'png',
-	PDF: 'pdf',
-	SVG: 'svg'
-} as const;
-type Format = (typeof Format)[keyof typeof Format];
-
-export const Unit = {
-	// don't use inch unit. because page size setting is using mm unit.
-	in: 'in',
-	mm: 'mm'
-} as const;
-type Unit = (typeof Unit)[keyof typeof Unit];
-
-export const Size = {
-	// A0, A1, B0, B1 are not working well.
-	// A0: [1189, 841],
-	// A1: [841, 594],
-	LETTER: [279, 216], // 8.5x11 - works
-	//TABLOID: [432,279] // 11x17 - not working currently prints to 11.68x8.27 in landscape
-	A2: [594, 420],
-	A3: [420, 297],
-	A4: [297, 210],
-	A5: [210, 148],
-	A6: [148, 105],
-	// B0: [1414, 1000],
-	// B1: [1000, 707],
-	B2: [707, 500],
-	B3: [500, 353],
-	B4: [353, 250],
-	B5: [250, 176],
-	B6: [176, 125]
-} as const;
-type Size = (typeof Size)[keyof typeof Size];
-
-export const PageOrientation = {
-	Landscape: 'landscape',
-	Portrait: 'portrait'
-} as const;
-type PageOrientation = (typeof PageOrientation)[keyof typeof PageOrientation];
-
-export const DPI = {
-	72: 72,
-	96: 96,
-	200: 200,
-	300: 300,
-	400: 400
-} as const;
-type DPI = (typeof DPI)[keyof typeof DPI];
+import {
+	DPIType,
+	Format,
+	FormatType,
+	Size,
+	SizeType,
+	Unit,
+	UnitType
+} from '@watergis/maplibre-gl-export';
 
 export default class MapGenerator {
 	private map: MapboxMap;
@@ -89,11 +47,11 @@ export default class MapGenerator {
 
 	private height: number;
 
-	private dpi: number;
+	private dpi: DPIType;
 
-	private format: string;
+	private format: FormatType;
 
-	private unit: Unit;
+	private unit: UnitType;
 
 	private fileName: string;
 
@@ -110,10 +68,10 @@ export default class MapGenerator {
 	 */
 	constructor(
 		map: MapboxMap,
-		size: Size = Size.A4,
-		dpi = 300,
-		format: string = Format.PNG.toString(),
-		unit: Unit = Unit.mm,
+		size: SizeType = Size.A4,
+		dpi: DPIType = 300,
+		format: FormatType = Format.PNG,
+		unit: UnitType = Unit.mm,
 		fileName = 'map',
 		accesstoken?: string
 	) {
