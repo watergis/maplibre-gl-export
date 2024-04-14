@@ -1,3 +1,5 @@
+/* eslint-disable no-undef*/
+
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_ACCESSTOKEN;
 const map = new mapboxgl.Map({
 	container: 'map',
