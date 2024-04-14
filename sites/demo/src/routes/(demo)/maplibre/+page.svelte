@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { addProtocol, Map, NavigationControl } from 'maplibre-gl';
+	import { addProtocol, Map, NavigationControl, TerrainControl } from 'maplibre-gl';
 	import {
 		MaplibreExportControl,
 		Size,
@@ -49,13 +49,32 @@
 
 		$mapStore = new Map({
 			container: 'map',
-			style: 'https://narwassco.github.io/mapbox-stylefiles/unvt/style.json',
-			center: [35.87063, -1.08551],
-			zoom: 12,
+			// narok vector style
+			// style: 'https://narwassco.github.io/mapbox-stylefiles/unvt/style.json',
+			// center: [35.87063, -1.08551],
+			// zoom: 12,
+			// terrain testing with Bing aerial
+			style: 'https://unpkg.com/@undp-data/style@latest/dist/aerialstyle.json',
+			center: [0, 0],
+			zoom: 1,
 			hash: true
 		});
 
-		$mapStore.addControl(new NavigationControl(), 'bottom-right');
+		$mapStore.addControl(new NavigationControl({ visualizePitch: true }), 'bottom-right');
+
+		$mapStore.once('load', () => {
+			if ($mapStore.getSource('terrarium')) {
+				($mapStore as Map).addControl(
+					new TerrainControl({
+						source: 'terrarium',
+						exaggeration: 1
+					}),
+					'bottom-right'
+				);
+
+				$mapStore.setMaxPitch(85);
+			}
+		});
 
 		initExportControl();
 
