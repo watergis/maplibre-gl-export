@@ -79,6 +79,10 @@ export abstract class MapGeneratorBase {
 		style: StyleSpecification | mapboxgl.Style
 	): MaplibreMap | MapboxMap;
 
+	protected renderMapPost(renderMap: MaplibreMap | MapboxMap) {
+		return renderMap;
+	}
+
 	/**
 	 * Generate and download Map image
 	 */
@@ -136,9 +140,10 @@ export abstract class MapGeneratorBase {
 		}
 
 		// Render map
-		const renderMap = this.getRenderedMap(container, style);
+		let renderMap = this.getRenderedMap(container, style);
 
 		renderMap.once('idle', () => {
+			renderMap = this.renderMapPost(renderMap);
 			const canvas = renderMap.getCanvas();
 			const fileName = `${this.fileName}.${this_.format}`;
 			switch (this_.format) {

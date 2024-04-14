@@ -40,8 +40,6 @@
 			Local: $languageStore
 		});
 
-		($mapStore as Map).addControl(new NavigationControl(), 'bottom-right');
-
 		$mapStore.addControl(exportControl, 'top-right');
 	};
 
@@ -56,6 +54,8 @@
 			hash: true,
 			accessToken: PUBLIC_MAPBOX_ACCESSTOKEN
 		});
+
+		($mapStore as Map).addControl(new NavigationControl(), 'bottom-right');
 
 		initExportControl();
 

@@ -26,7 +26,7 @@ export default class MapGenerator extends MapGeneratorBase {
 
 	protected getRenderedMap(container: HTMLElement, style: StyleSpecification) {
 		// Render map
-		const renderMap = new MaplibreMap({
+		const renderMap: MaplibreMap = new MaplibreMap({
 			container,
 			style,
 			center: this.map.getCenter(),
@@ -43,6 +43,13 @@ export default class MapGenerator extends MapGeneratorBase {
 			transformRequest: (this.map as unknown)._requestManager._transformRequestFn
 		});
 
+		const terrain = (this.map as MaplibreMap).getTerrain();
+		if (terrain) {
+			// if terrain is enabled, restore pitch correctly
+			renderMap.setMaxPitch(85);
+			renderMap.setPitch(this.map.getPitch());
+		}
+
 		// comment this statement because an error is occured since maplibre v3. images[key].data has no value (null)
 		// it looks working well in my style. let's see how it works without this code
 		// the below code was added by https://github.com/watergis/maplibre-gl-export/pull/18.
@@ -50,6 +57,19 @@ export default class MapGenerator extends MapGeneratorBase {
 		// Object.keys(images).forEach((key) => {
 		// 	renderMap.addImage(key, images[key].data);
 		// });
+
+		return renderMap;
+	}
+
+	protected renderMapPost(renderMap: MaplibreMap) {
+		const terrain = (this.map as MaplibreMap).getTerrain();
+		if (terrain) {
+			// if terrain is enabled, set terrain for rendered map object
+			renderMap.setTerrain({
+				source: terrain.source,
+				exaggeration: terrain.exaggeration
+			});
+		}
 
 		return renderMap;
 	}

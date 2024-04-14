@@ -1,4 +1,4 @@
-import maplibregl, { Map, NavigationControl } from 'maplibre-gl';
+import maplibregl, { Map, NavigationControl, TerrainControl } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { MaplibreExportControl, Size, PageOrientation, Format, DPI } from './src/lib/index';
 import './src/scss/maplibre-gl-export.scss';
@@ -9,12 +9,18 @@ maplibregl.addProtocol('pmtiles', protocol.tile);
 
 const map = new Map({
 	container: 'map',
-	style: 'https://narwassco.github.io/mapbox-stylefiles/unvt/style.json',
-	center: [35.87063, -1.08551],
-	zoom: 12,
+	// narok vector style
+	// style: 'https://narwassco.github.io/mapbox-stylefiles/unvt/style.json',
+	// center: [35.87063, -1.08551],
+	// zoom: 12,
+	// terrain testing with Bing aerial
+	style: 'https://unpkg.com/@undp-data/style@latest/dist/aerialstyle.json',
+	center: [0, 0],
+	zoom: 1,
 	hash: true
 });
-map.addControl(new NavigationControl({}), 'top-right');
+
+map.addControl(new NavigationControl({ visualizePitch: true }), 'top-right');
 map.addControl(
 	new MaplibreExportControl({
 		PageSize: Size.A3,
@@ -27,3 +33,17 @@ map.addControl(
 	}),
 	'top-right'
 );
+
+map.once('load', () => {
+	if (map.getSource('terrarium')) {
+		map.addControl(
+			new TerrainControl({
+				source: 'terrarium',
+				exaggeration: 1
+			}),
+			'top-right'
+		);
+
+		map.setMaxPitch(85);
+	}
+});
