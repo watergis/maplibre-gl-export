@@ -67,15 +67,13 @@
 			<h2 class="h1 pt-4 pb-6">Welcome to Maplibre/Mapbox GL Export</h2>
 
 			<div class="flex justify-center space-x-2 pb-4">
-				<p>
-					Maplibre/Mapbox GL Export is a Maplibre/Mapbox GL JS plugin that can export a map image in
-					various image format such as PNG, JPEG, PDF and SVG without any server!
-				</p>
+				Maplibre/Mapbox GL Export is a Maplibre/Mapbox GL JS plugin that can export a map image in
+				various image format such as PNG, JPEG, PDF and SVG without any server!
 			</div>
 
 			<div class="flex justify-center space-x-2">
 				<img
-					class=" h-auto max-w-xl rounded-lg"
+					class=" h-auto max-w-sm md:max-w-lg rounded-lg"
 					src="/assets/plugin-overview.webp"
 					alt="Overview of Plugin"
 				/>
@@ -117,7 +115,7 @@
 				{/each}
 			</TabGroup>
 
-			<div hidden={importTypeTabSet !== 'npm'}>
+			<div class="p-4" hidden={importTypeTabSet !== 'npm'}>
 				<h3 class="h3 pt-6 pb-4">Install</h3>
 				<p>Getting start with installing the package</p>
 
