@@ -1,0 +1,61 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>Example</title>
+		<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+		<link
+			rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.3/gh-fork-ribbon.min.css"
+		/>
+		<script src="https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.js"></script>
+		<link href="https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.css" rel="stylesheet" />
+
+		<link href="./dist/maplibre-gl-export.css" rel="stylesheet" />
+		<script src="./dist/maplibre-gl-export.umd.js"></script>
+
+		<style>
+			body {
+				margin: 0;
+				padding: 0;
+			}
+			#map {
+				position: absolute;
+				top: 0;
+				bottom: 0;
+				width: 100%;
+				z-index: 10;
+			}
+		</style>
+	</head>
+	<body>
+		<a
+			class="github-fork-ribbon left-top"
+			href="https://github.com/watergis/maplibre-gl-export"
+			data-ribbon="Fork me on GitHub"
+			title="Fork me on GitHub"
+			>Fork me on GitHub</a
+		>
+		<div id="map"></div>
+		<script>
+			const map = new maplibregl.Map({
+				container: 'map',
+				style: 'https://demotiles.maplibre.org/style.json',
+				center: [0, 0],
+				zoom: 1
+			});
+			map.addControl(
+				new MaplibreExportControl.MaplibreExportControl({
+					PageSize: MaplibreExportControl.Size.A4,
+					PageOrientation: MaplibreExportControl.PageOrientation.Landscape,
+					Format: MaplibreExportControl.Format.PNG,
+					DPI: MaplibreExportControl.DPI[300],
+					Crosshair: true,
+					PrintableArea: true,
+					Local: 'en'
+				}),
+				'top-right'
+			);
+		</script>
+	</body>
+</html>
