@@ -1,5 +1,11 @@
 # @watergis/maplibre-gl-export
 
+## 3.3.0
+
+### Minor Changes
+
+- 1c9327a: feat: apply maplibre terrain mode for image exporting if it is used.
+
 ## 3.2.4
 
 ### Patch Changes
