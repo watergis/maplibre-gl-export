@@ -28,7 +28,7 @@ import JS and CSS from CDN.
 ```html
 <link href="https://cdn.jsdelivr.net/npm/@watergis/maplibre-gl-export@3.3.0/dist/maplibre-gl-export.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/@watergis/maplibre-gl-export@3.3.0/dist/maplibre-gl-export.umd.js"></script>
-``
+```
 
 See the sample code [here](./index_cdn.html).
 
