@@ -14,24 +14,25 @@ yarn add @watergis/maplibre-gl-export --save
 
 ## Use CDN
 
+import JS and CSS from CDN.
+
+- from unpkg.com
+
 ```html
-<link href="https://www.unpkg.com/@watergis/maplibre-gl-export@3.0.1/dist/maplibre-gl-export.css" rel="stylesheet" />
-<script src="https://unpkg.com/maplibre-gl@1.15.2/dist/maplibre-gl.js"></script>
-<script src="https://www.unpkg.com/@watergis/maplibre-gl-export@3.0.1/dist/maplibre-gl-export.umd.js"></script>
-<script>
-  map.addControl(new MaplibreExportControl.MaplibreExportControl({
-    PageSize: MaplibreExportControl.Size.A4,
-    PageOrientation: MaplibreExportControl.PageOrientation.Landscape,
-    Format: MaplibreExportControl.Format.PNG,
-    DPI: MaplibreExportControl.DPI[300],
-    Crosshair: true,
-    PrintableArea: true,
-    Local: 'fr'
-  }), 'top-right');
-</script>
+<link href="https://www.unpkg.com/@watergis/maplibre-gl-export@3.3.0/dist/maplibre-gl-export.css" rel="stylesheet" />
+<script src="https://www.unpkg.com/@watergis/maplibre-gl-export@3.3.0/dist/maplibre-gl-export.umd.js"></script>
 ```
 
-Furthermore, you may download specific version's scripts and css locally from [release](https://github.com/watergis/maplibre-gl-export/releases) page.
+- from jsdelivr
+
+```html
+<link href="https://cdn.jsdelivr.net/npm/@watergis/maplibre-gl-export@3.3.0/dist/maplibre-gl-export.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/@watergis/maplibre-gl-export@3.3.0/dist/maplibre-gl-export.umd.js"></script>
+``
+
+See the sample code [here](./index_cdn.html).
+
+Alternatively, you can use `latest` tag for CDN instead of specific version (But any breaking changes may be in the future).
 
 ## Demo:
 

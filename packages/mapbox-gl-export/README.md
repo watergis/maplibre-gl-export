@@ -18,23 +18,25 @@ npm i @watergis/mapbox-gl-export --save
 
 ## Use CDN
 
+import JS and CSS from CDN.
+
+- from unpkg.com
+
 ```html
-<link href="https://www.unpkg.com/@watergis/mapbox-gl-export@latest/dist/mapbox-gl-export.css" rel="stylesheet" />
-<script src='https://api.mapbox.com/mapbox-gl-js/v1.13.1/mapbox-gl.js'></script>
-<script src="https://www.unpkg.com/@watergis/mapbox-gl-export@latest/dist/mapbox-gl-export.umd.js"></script>
-<script>
-  map.addControl(new MapboxExportControl({
-      PageSize: Size.A3,
-      PageOrientation: PageOrientation.Portrait,
-      Format: Format.PNG,
-      DPI: DPI[96],
-      Crosshair: true,
-      PrintableArea: true,
-  }), 'top-right');
-</script>
+<link href="https://www.unpkg.com/@watergis/mapbox-gl-export@3.0.4/dist/mapbox-gl-export.css" rel="stylesheet" />
+<script src="https://www.unpkg.com/@watergis/mapbox-gl-export@3.0.4/dist/mapbox-gl-export.umd.js"></script>
 ```
 
-Furthermore, you may download specific version's scripts and css locally from [release](https://github.com/watergis/maplibre-gl-export/releases) page.
+- from jsdelivr
+
+```html
+<link href="https://cdn.jsdelivr.net/npm/@watergis/mapbox-gl-export@3.0.4/dist/mapbox-gl-export.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/@watergis/mapbox-gl-export@3.0.4/dist/mapbox-gl-export.umd.js"></script>
+``
+
+See the sample code of [html](./index_cdn.html) and [JS](./index_cdn.js).
+
+Alternatively, you can use `latest` tag for CDN instead of specific version (But any breaking changes may be in the future).
 
 ## Demo
 
