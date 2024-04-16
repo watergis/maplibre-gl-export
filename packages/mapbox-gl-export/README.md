@@ -32,7 +32,7 @@ import JS and CSS from CDN.
 ```html
 <link href="https://cdn.jsdelivr.net/npm/@watergis/mapbox-gl-export@3.0.4/dist/mapbox-gl-export.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/@watergis/mapbox-gl-export@3.0.4/dist/mapbox-gl-export.umd.js"></script>
-``
+```
 
 See the sample code of [html](./index_cdn.html) and [JS](./index_cdn.js).
 
