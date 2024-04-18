@@ -1,5 +1,20 @@
 # @watergis/maplibre-gl-export
 
+## 3.4.0
+
+### Minor Changes
+
+- 7639be0: feat: export markers as circle layer if they are added to map object. `markerCirclePaint` option is added to allow changing default circle style for marker. The default marker style is:
+
+  ```json
+  {
+    "circle-radius": 8,
+    "circle-color": "red",
+    "circle-stroke-width": 1,
+    "circle-stroke-color": "black"
+  }
+  ```
+
 ## 3.3.0
 
 ### Minor Changes
