@@ -57,8 +57,6 @@ export abstract class MapGeneratorBase {
 
 	protected markerClassName: string;
 
-	protected markerImageName = 'export-plugin-marker';
-
 	protected markerCirclePaint: CirclePaint;
 
 	/**
