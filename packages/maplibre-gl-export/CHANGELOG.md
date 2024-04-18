@@ -1,5 +1,12 @@
 # @watergis/maplibre-gl-export
 
+## 3.4.1
+
+### Patch Changes
+
+- 4b16e32: fix: enabled addImage code for maplibre-gl-export again
+- 352c82d: refactor: removed unused variable from MapGeneratorBase class
+
 ## 3.4.0
 
 ### Minor Changes
