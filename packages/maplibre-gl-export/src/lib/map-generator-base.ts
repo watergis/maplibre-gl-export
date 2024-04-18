@@ -106,7 +106,7 @@ export abstract class MapGeneratorBase {
 
 	protected renderMarkers(renderMap: MaplibreMap | MapboxMap) {
 		const markers = this.getMarkers();
-		for (var i = 0; i < markers.length; i++) {
+		for (let i = 0; i < markers.length; i++) {
 			const marker = markers.item(i);
 			if (!marker) continue;
 			const style = marker.getAttribute('style');
