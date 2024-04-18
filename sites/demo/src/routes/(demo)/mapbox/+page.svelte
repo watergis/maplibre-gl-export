@@ -1,5 +1,5 @@
 <script lang="ts">
-	import mapboxgl, { Map, NavigationControl } from 'mapbox-gl';
+	import mapboxgl, { Map, Marker, NavigationControl } from 'mapbox-gl';
 	import {
 		MapboxExportControl,
 		Size,
@@ -49,13 +49,16 @@
 			container: 'map',
 			style: 'mapbox://styles/mapbox/streets-v11',
 			// style: 'https://narwassco.github.io/mapbox-stylefiles/unvt/style.json',
-			center: [35.87063, -1.08551],
-			zoom: 12,
+			center: [0, 0],
+			zoom: 1,
 			hash: true,
 			accessToken: PUBLIC_MAPBOX_ACCESSTOKEN
 		});
 
 		($mapStore as Map).addControl(new NavigationControl(), 'bottom-right');
+
+		new Marker().setLngLat([37.30467, -0.15943]).addTo($mapStore);
+		new Marker().setLngLat([30.0824, -1.9385]).addTo($mapStore);
 
 		initExportControl();
 

@@ -29,9 +29,16 @@
 
 import { jsPDF } from 'jspdf';
 import { Map as MaplibreMap, StyleSpecification } from 'maplibre-gl';
-import { Map as MapboxMap } from 'mapbox-gl';
+import { CirclePaint, Map as MapboxMap } from 'mapbox-gl';
 import 'js-loading-overlay';
 import { DPIType, Format, FormatType, Size, SizeType, Unit, UnitType } from './interfaces';
+
+export const defaultMarkerCirclePaint: CirclePaint = {
+	'circle-radius': 8,
+	'circle-color': 'red',
+	'circle-stroke-width': 1,
+	'circle-stroke-color': 'black'
+};
 
 export abstract class MapGeneratorBase {
 	protected map: MaplibreMap | MapboxMap;
@@ -48,6 +55,12 @@ export abstract class MapGeneratorBase {
 
 	protected fileName: string;
 
+	protected markerClassName: string;
+
+	protected markerImageName = 'export-plugin-marker';
+
+	protected markerCirclePaint: CirclePaint;
+
 	/**
 	 * Constructor
 	 * @param map MaplibreMap object
@@ -63,7 +76,9 @@ export abstract class MapGeneratorBase {
 		dpi: DPIType = 300,
 		format: FormatType = Format.PNG,
 		unit: UnitType = Unit.mm,
-		fileName = 'map'
+		fileName = 'map',
+		markerClassName = 'maplibregl-marker',
+		markerCirclePaint = defaultMarkerCirclePaint
 	) {
 		this.map = map;
 		this.width = size[0];
@@ -72,6 +87,8 @@ export abstract class MapGeneratorBase {
 		this.format = format;
 		this.unit = unit;
 		this.fileName = fileName;
+		this.markerClassName = markerClassName;
+		this.markerCirclePaint = markerCirclePaint;
 	}
 
 	protected abstract getRenderedMap(
@@ -80,6 +97,44 @@ export abstract class MapGeneratorBase {
 	): MaplibreMap | MapboxMap;
 
 	protected renderMapPost(renderMap: MaplibreMap | MapboxMap) {
+		return renderMap;
+	}
+
+	private getMarkers() {
+		return this.map.getCanvasContainer().getElementsByClassName(this.markerClassName);
+	}
+
+	protected renderMarkers(renderMap: MaplibreMap | MapboxMap) {
+		const markers = this.getMarkers();
+		for (let i = 0; i < markers.length; i++) {
+			const marker = markers.item(i);
+			if (!marker) continue;
+			const style = marker.getAttribute('style');
+			if (!style) continue;
+			const translateRegex = /translate\(([^,]+)px,\s*([^,]+)px\)/;
+			const match = style.match(translateRegex);
+			if (!match) continue;
+			const translateX = parseInt(match[1]);
+			const translateY = parseInt(match[2]);
+
+			const lngLat = this.map.unproject([translateX, translateY]);
+
+			const markerId = `point${i}`;
+			renderMap.addSource(markerId, {
+				type: 'geojson',
+				data: {
+					type: 'Point',
+					coordinates: [lngLat.lng, lngLat.lat]
+				}
+			});
+
+			(renderMap as MapboxMap).addLayer({
+				id: markerId,
+				source: markerId,
+				type: 'circle',
+				paint: this.markerCirclePaint
+			});
+		}
 		return renderMap;
 	}
 
@@ -144,39 +199,56 @@ export abstract class MapGeneratorBase {
 
 		renderMap.once('idle', () => {
 			renderMap = this.renderMapPost(renderMap);
-			const canvas = renderMap.getCanvas();
-			const fileName = `${this.fileName}.${this_.format}`;
-			switch (this_.format) {
-				case Format.PNG:
-					this_.toPNG(canvas, fileName);
-					break;
-				case Format.JPEG:
-					this_.toJPEG(canvas, fileName);
-					break;
-				case Format.PDF:
-					this_.toPDF(renderMap, fileName);
-					break;
-				case Format.SVG:
-					this_.toSVG(canvas, fileName);
-					break;
-				default:
-					console.error(`Invalid file format: ${this_.format}`);
-					break;
+			const markers = this.getMarkers();
+			if (markers.length === 0) {
+				this.exportImage(renderMap, hidden, actualPixelRatio);
+			} else {
+				renderMap = this.renderMarkers(renderMap);
+				renderMap.once('idle', () => {
+					this.exportImage(renderMap, hidden, actualPixelRatio);
+				});
 			}
-
-			renderMap.remove();
-			hidden.parentNode?.removeChild(hidden);
-			Object.defineProperty(window, 'devicePixelRatio', {
-				get() {
-					return actualPixelRatio;
-				}
-			});
-			hidden.remove();
-
-			// eslint-disable-next-line
-			// @ts-ignore
-			JsLoadingOverlay.hide();
 		});
+	}
+
+	private exportImage(
+		renderMap: MaplibreMap | MapboxMap,
+		hiddenDiv: HTMLElement,
+		actualPixelRatio: number
+	) {
+		const canvas = renderMap.getCanvas();
+
+		const fileName = `${this.fileName}.${this.format}`;
+		switch (this.format) {
+			case Format.PNG:
+				this.toPNG(canvas, fileName);
+				break;
+			case Format.JPEG:
+				this.toJPEG(canvas, fileName);
+				break;
+			case Format.PDF:
+				this.toPDF(renderMap, fileName);
+				break;
+			case Format.SVG:
+				this.toSVG(canvas, fileName);
+				break;
+			default:
+				console.error(`Invalid file format: ${this.format}`);
+				break;
+		}
+
+		renderMap.remove();
+		hiddenDiv.parentNode?.removeChild(hiddenDiv);
+		Object.defineProperty(window, 'devicePixelRatio', {
+			get() {
+				return actualPixelRatio;
+			}
+		});
+		hiddenDiv.remove();
+
+		// eslint-disable-next-line
+		// @ts-ignore
+		JsLoadingOverlay.hide();
 	}
 
 	/**

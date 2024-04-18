@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { addProtocol, Map, NavigationControl, TerrainControl } from 'maplibre-gl';
+	import { addProtocol, Map, Marker, NavigationControl, TerrainControl } from 'maplibre-gl';
 	import {
 		MaplibreExportControl,
 		Size,
@@ -61,6 +61,9 @@
 		});
 
 		$mapStore.addControl(new NavigationControl({ visualizePitch: true }), 'bottom-right');
+
+		new Marker().setLngLat([37.30467, -0.15943]).addTo($mapStore);
+		new Marker().setLngLat([30.0824, -1.9385]).addTo($mapStore);
 
 		$mapStore.once('load', () => {
 			if ($mapStore.getSource('terrarium')) {
