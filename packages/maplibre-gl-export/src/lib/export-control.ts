@@ -18,6 +18,7 @@ import {
 	UnitType,
 	type Language
 } from './interfaces';
+import { defaultMarkerCirclePaint } from './map-generator-base';
 
 /**
  * Maplibre GL Export Control.
@@ -57,7 +58,8 @@ export default class MaplibreExportControl implements IControl {
 			| 'B5'
 			| 'B6'
 		)[],
-		Filename: 'map'
+		Filename: 'map',
+		markerCirclePaint: defaultMarkerCirclePaint
 	};
 
 	protected MAPLIB_CSS_PREFIX: string = 'maplibregl';
@@ -192,7 +194,15 @@ export default class MaplibreExportControl implements IControl {
 		unit: UnitType,
 		filename?: string
 	) {
-		const mapGenerator = new MapGenerator(map as MaplibreMap, size, dpi, format, unit, filename);
+		const mapGenerator = new MapGenerator(
+			map as MaplibreMap,
+			size,
+			dpi,
+			format,
+			unit,
+			filename,
+			this.options.markerCirclePaint
+		);
 		mapGenerator.generate();
 	}
 

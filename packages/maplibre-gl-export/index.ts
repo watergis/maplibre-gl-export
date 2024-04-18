@@ -35,6 +35,8 @@ map.addControl(
 );
 
 map.once('load', () => {
+	new maplibregl.Marker().setLngLat([37.30467, -0.15943]).addTo(map);
+
 	if (map.getSource('terrarium')) {
 		map.addControl(
 			new TerrainControl({

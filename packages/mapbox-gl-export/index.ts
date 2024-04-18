@@ -23,3 +23,5 @@ map.addControl(
 	}),
 	'top-right'
 );
+
+new mapboxgl.Marker().setLngLat([37.30467, -0.15943]).addTo(map);

@@ -1,6 +1,7 @@
 import mapboxgl, { accessToken, Map as MapboxMap } from 'mapbox-gl';
 import 'js-loading-overlay';
 import {
+	defaultMarkerCirclePaint,
 	DPIType,
 	Format,
 	FormatType,
@@ -30,9 +31,10 @@ export default class MapGenerator extends MapGeneratorBase {
 		format: FormatType = Format.PNG,
 		unit: UnitType = Unit.mm,
 		fileName = 'map',
+		markerCirclePaint = defaultMarkerCirclePaint,
 		accesstoken?: string
 	) {
-		super(map, size, dpi, format, unit, fileName);
+		super(map, size, dpi, format, unit, fileName, 'mapboxgl-marker', markerCirclePaint);
 		this.accesstoken = accesstoken;
 	}
 

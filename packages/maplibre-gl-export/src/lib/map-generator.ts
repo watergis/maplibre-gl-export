@@ -1,7 +1,7 @@
 import { Map as MaplibreMap, StyleSpecification } from 'maplibre-gl';
 import 'js-loading-overlay';
 import { DPIType, Format, FormatType, Size, SizeType, Unit, UnitType } from './interfaces';
-import { MapGeneratorBase } from './map-generator-base';
+import { MapGeneratorBase, defaultMarkerCirclePaint } from './map-generator-base';
 
 export default class MapGenerator extends MapGeneratorBase {
 	/**
@@ -19,9 +19,10 @@ export default class MapGenerator extends MapGeneratorBase {
 		dpi: DPIType = 300,
 		format: FormatType = Format.PNG,
 		unit: UnitType = Unit.mm,
-		fileName = 'map'
+		fileName = 'map',
+		markerCirclePaint = defaultMarkerCirclePaint
 	) {
-		super(map, size, dpi, format, unit, fileName);
+		super(map, size, dpi, format, unit, fileName, 'maplibregl-marker', markerCirclePaint);
 	}
 
 	protected getRenderedMap(container: HTMLElement, style: StyleSpecification) {

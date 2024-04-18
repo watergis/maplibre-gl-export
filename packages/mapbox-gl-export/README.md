@@ -132,6 +132,17 @@ You can specify default option as follows.
 - Filename
   - file name template, file part
   - default `map` for i.e `map.pdf`
+- markerCirclePaint: The plugin will convert marker SVG to circle layer to be exported.
+  - Circle paint property setting. As default, the following paint setting will be applied
+
+```json
+{
+  "circle-radius": 8,
+  "circle-color": "red",
+  "circle-stroke-width": 1,
+  "circle-stroke-color": "black"
+}
+```
 
 ## Attribution
 
