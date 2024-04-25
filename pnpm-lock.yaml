@@ -153,8 +153,8 @@ importers:
         version: 11.9.0
     devDependencies:
       '@skeletonlabs/skeleton':
-        specifier: 2.9.1
-        version: 2.9.1(svelte@4.2.15)
+        specifier: 2.9.2
+        version: 2.9.2(svelte@4.2.15)
       '@skeletonlabs/tw-plugin':
         specifier: 0.4.0
         version: 0.4.0(tailwindcss@3.4.3)
@@ -1012,8 +1012,8 @@ packages:
     engines: {node: '>=18'}
     dev: true
 
-  /@skeletonlabs/skeleton@2.9.1(svelte@4.2.15):
-    resolution: {integrity: sha512-cWDYfhZ8kIahPxvoT9xmwb3utIgtDpVQddNoQHnssxZZbqefl5z3cvWbuvvqEjewDxwKq4Zw4MtPcaT9nxojmQ==}
+  /@skeletonlabs/skeleton@2.9.2(svelte@4.2.15):
+    resolution: {integrity: sha512-yBRSyxx9eyLsQXqEuYb5YyqE+CY+IfyTroaqfQ4OmqDcIulMivqU7lY58bmLMGHC/g9lzliFkeY4UO4ssaWVpA==}
     peerDependencies:
       svelte: ^3.56.0 || ^4.0.0
     dependencies:
