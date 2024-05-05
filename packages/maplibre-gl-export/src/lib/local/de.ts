@@ -6,7 +6,7 @@ const translation: Translation = {
 	Format: 'Dateiformat',
 	DPI: 'Druckauflösung',
 	Generate: 'Erstellen',
-	LanguageName: 'German',
+	LanguageName: 'Deutsch',
 	LanguageCode: 'de'
 };
 

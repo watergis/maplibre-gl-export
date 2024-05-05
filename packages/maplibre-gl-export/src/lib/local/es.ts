@@ -6,7 +6,7 @@ const translation: Translation = {
 	Format: 'Formato',
 	DPI: 'DPI',
 	Generate: 'Generar',
-	LanguageName: 'Spanish',
+	LanguageName: 'Española',
 	LanguageCode: 'es'
 };
 

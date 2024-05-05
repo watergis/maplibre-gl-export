@@ -6,7 +6,7 @@ const translation: Translation = {
 	Format: 'Định dạng',
 	DPI: 'Mật độ điểm ảnh (DPI)',
 	Generate: 'Tạo',
-	LanguageName: 'Vietnam',
+	LanguageName: 'Tiếng Việt',
 	LanguageCode: 'vi'
 };
 
