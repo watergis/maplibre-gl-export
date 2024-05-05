@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { CodeBlock, Tab, TabGroup } from '@skeletonlabs/skeleton';
+	import { CodeBlock, RadioGroup, RadioItem, Tab, TabGroup } from '@skeletonlabs/skeleton';
 	import { AvailableLanguages, Languages } from '@watergis/maplibre-gl-export';
 
 	let tabs = [
@@ -21,6 +21,13 @@
 	let mapboxCdnExample = '';
 
 	let selectedLanguage = 'en';
+	let mapboxToken = 'Your access token';
+	let packageManager = 'npm';
+
+	$: styleUrl =
+		tabSet === 'maplibre'
+			? 'https://demotiles.maplibre.org/style.json'
+			: 'mapbox://styles/mapbox/streets-v11';
 
 	const getMaplibreExportVersion = async () => {
 		const res = await fetch('https://registry.npmjs.org/@watergis/maplibre-gl-export/latest');
@@ -154,7 +161,7 @@
 		</div>
 
 		<div class="flex justify-center space-x-2">
-			<p>Select your map library</p>
+			<p>Select map library</p>
 		</div>
 
 		<TabGroup>
@@ -202,18 +209,44 @@
 				{/each}
 			</TabGroup>
 
+			<div class="px-2" hidden={tabSet !== 'mapbox'}>
+				<h3 class="h3 pt-6 pb-4">Mapbox access token</h3>
+				<label class="label">
+					<span>Paste your mapbox access token here</span>
+					<input
+						class="input"
+						type="text"
+						placeholder="Your access token"
+						bind:value={mapboxToken}
+					/>
+				</label>
+			</div>
+
 			<div class="p-2" hidden={importTypeTabSet !== 'npm'}>
 				<h3 class="h3 pt-6 pb-4">Install</h3>
 				<p>Getting start with installing the package</p>
 
-				<h4 class="h4 pt-6 pb-4">npm</h4>
-				<CodeBlock language="shell" code={`npm install --save-dev @watergis/${tabSet}-gl-export`} />
+				<RadioGroup active="variant-filled-primary" hover="hover:variant-soft-primary">
+					<RadioItem bind:group={packageManager} name="justify" value={'npm'}>npm</RadioItem>
+					<RadioItem bind:group={packageManager} name="justify" value={'yarn'}>yarn</RadioItem>
+					<RadioItem bind:group={packageManager} name="justify" value={'pnpm'}>pnpm</RadioItem>
+				</RadioGroup>
 
-				<h4 class="h4 pt-6 pb-4">yarn</h4>
-				<CodeBlock language="shell" code={`yarn add --dev @watergis/${tabSet}-gl-export`} />
-
-				<h4 class="h4 pt-6 pb-4">pnpm</h4>
-				<CodeBlock language="shell" code={`pnpm add --save-dev @watergis/${tabSet}-gl-export`} />
+				<div class="pt-2">
+					{#if packageManager === 'npm'}
+						<CodeBlock
+							language="shell"
+							code={`npm install --save-dev @watergis/${tabSet}-gl-export`}
+						/>
+					{:else if packageManager === 'yarn'}
+						<CodeBlock language="shell" code={`yarn add --dev @watergis/${tabSet}-gl-export`} />
+					{:else if packageManager === 'pnpm'}
+						<CodeBlock
+							language="shell"
+							code={`pnpm add --save-dev @watergis/${tabSet}-gl-export`}
+						/>
+					{/if}
+				</div>
 
 				<h3 class="h3 pt-6 pb-4">Usage</h3>
 
@@ -234,10 +267,10 @@ import {
 } from '@watergis/${tabSet}-gl-export';
 import '@watergis/${tabSet}-gl-export/dist/${tabSet}-gl-export.css';
 
-${tabSet === 'mapbox' ? `mapboxgl.accessToken='your mapbox access token'` : ''}
+${tabSet === 'mapbox' ? `mapboxgl.accessToken='${mapboxToken}'` : ''}
 const map = new Map({
 	container: 'map',
-	style: 'Your style file',
+	style: '${styleUrl}',
 });
 
 const exportControl = new ${tabSet === 'maplibre' ? 'Maplibre' : 'Mapbox'}ExportControl({
@@ -248,7 +281,7 @@ const exportControl = new ${tabSet === 'maplibre' ? 'Maplibre' : 'Mapbox'}Export
 	Crosshair: true,
 	PrintableArea: true,
 	Local: '${selectedLanguage}',
-	${tabSet === 'mapbox' ? `accessToken: 'your mapbox access token',` : ''}
+	${tabSet === 'mapbox' ? `accessToken: '${mapboxToken}',` : ''}
 });
 map.addControl(exportControl, 'top-right');
 			`}
@@ -266,8 +299,15 @@ map.addControl(exportControl, 'top-right');
 					code={`
 ${
 	tabSet === 'mapbox'
-		? `${mapboxCdnExample.replace(/{mapboxExportVersion}/g, mapboxExportVersion).replace(/{language}/g, selectedLanguage)}`
-		: `${maplibreCdnExample.replace(/{maplibreExportVersion}/g, maplibreExportVersion).replace(/{language}/g, selectedLanguage)}`
+		? `${mapboxCdnExample
+				.replace(/{mapboxExportVersion}/g, mapboxExportVersion)
+				.replace(/{language}/g, selectedLanguage)
+				.replace(/{style}/g, styleUrl)
+				.replace(/{accesstoken}/g, mapboxToken)}`
+		: `${maplibreCdnExample
+				.replace(/{maplibreExportVersion}/g, maplibreExportVersion)
+				.replace(/{language}/g, selectedLanguage)
+				.replace(/{style}/g, styleUrl)}`
 }
 			`}
 				/>
