@@ -7,6 +7,8 @@
 
 This monorepo manages the source code and demo page for `@watergis/maplibre-gl-export` and `@watergis/mapbox-gl-export`.
 
+![plugin-image](./sites/demo/static/assets/plugin-overview.webp)
+
 ## Repositories
 
 | repository | version | description | changelog |

@@ -1,23 +1,49 @@
-<script src='https://api.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.js'></script>
-<link href='https://api.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.css' rel='stylesheet' />
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>Example</title>
+		
+		<script src='https://api.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.js'></script>
+		<link href='https://api.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.css' rel='stylesheet' />
 
-<link href="https://cdn.jsdelivr.net/npm/@watergis/mapbox-gl-export@{mapboxExportVersion}/dist/mapbox-gl-export.css" rel="stylesheet" />
-<script src="https://cdn.jsdelivr.net/npm/@watergis/mapbox-gl-export@{mapboxExportVersion}/dist/mapbox-gl-export.umd.js"></script>
+		<link href="https://cdn.jsdelivr.net/npm/@watergis/mapbox-gl-export@{mapboxExportVersion}/dist/mapbox-gl-export.css" rel="stylesheet" />
+		<script src="https://cdn.jsdelivr.net/npm/@watergis/mapbox-gl-export@{mapboxExportVersion}/dist/mapbox-gl-export.umd.js"></script>
 
-<script>
-	mapboxgl.accessToken = 'Your access token'
-	const map = new mapboxgl.Map({
-		container: 'map',
-		style: 'Your style file',
-	});
-	map.addControl(new MapboxExportControl.MapboxExportControl({
-		PageSize: MapboxExportControl.Size.A4,
-		PageOrientation: MapboxExportControl.PageOrientation.Landscape,
-		Format: MapboxExportControl.Format.PNG,
-		DPI: MapboxExportControl.DPI[300],
-		Crosshair: true,
-		PrintableArea: true,
-		Local: '{language}',
-		accessToken: mapboxgl.accessToken
-	}), 'top-right');
-</script>
+		<style>
+			body {
+				margin: 0;
+				padding: 0;
+			}
+			#map {
+				position: absolute;
+				top: 0;
+				bottom: 0;
+				width: 100%;
+				z-index: 10;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="map"></div>
+
+		<script>
+			mapboxgl.accessToken = '{accesstoken}'
+			const map = new mapboxgl.Map({
+				container: 'map',
+				style: '{style}',
+			});
+			map.addControl(new MapboxExportControl.MapboxExportControl({
+				PageSize: MapboxExportControl.Size.A4,
+				PageOrientation: MapboxExportControl.PageOrientation.Landscape,
+				Format: MapboxExportControl.Format.PNG,
+				DPI: MapboxExportControl.DPI[300],
+				Crosshair: true,
+				PrintableArea: true,
+				Local: '{language}',
+				accessToken: mapboxgl.accessToken
+			}), 'top-right');
+		</script>
+	</body>
+</html>
