@@ -1,0 +1,48 @@
+name: "New Feature Request"
+description: "Suggest an idea for this project"
+title: "[FEATURE] "
+labels: [enhancement]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this feature request! Before filling this feature request, please make sure that:
+        - You have the latest version of the project.
+        - You have searched the [issues](https://github.com/UNDP-Data/geohub/issues) for similar feature requests.
+
+  - type: dropdown
+    id: plugins
+    attributes:
+      label: Select plugins which related to this issue
+      multiple: true
+      options:
+        - maplibre-gl-export
+        - mapbox-gl-export
+        - Documentation
+    validations:
+      required: true
+
+  - type: textarea
+    id: feature-description
+    attributes:
+      label: "Feature Description"
+      description: "A clear and concise description of what the feature is."
+    validations:
+      required: true
+
+  - type: textarea
+    id: feature-implementation
+    attributes:
+      label: "Feature Implementation"
+      description: "A clear and concise description of how the feature should be implemented."
+    validations:
+      required: false
+
+  - type: textarea
+    id: feature-alternatives
+    attributes:
+      label: "Feature Alternatives"
+      description: "A clear and concise description of any alternative solutions or features you've considered."
+    validations:
+      required: false

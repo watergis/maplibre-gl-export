@@ -15,20 +15,12 @@ This monorepo manages the source code and demo page for `@watergis/maplibre-gl-e
 |---|---|---|---|
 |[@watergis/maplibre-gl-export](./packages/maplibre-gl-export/)| [![version](https://img.shields.io/npm/v/@watergis/mapbox-gl-export.svg)](https://www.npmjs.com/package/@watergis/mapbox-gl-export) | To manage maplibre export plugin source code|[CHANGELOG](./packages/maplibre-gl-export/CHANGELOG.md)|
 |[@watergis/mapbox-gl-export](./packages/mapbox-gl-export/)| [![version](https://img.shields.io/npm/v/@watergis/maplibre-gl-export.svg)](https://www.npmjs.com/package/@watergis/maplibre-gl-export) | To manage mapbox export plugin source code|[CHANGELOG](./packages/mapbox-gl-export/CHANGELOG.md)|
-|[demo](./sites/demo/)| - | Demo website code for maplibre/mapbox export plugins |-|
-
-## Usage of the plugin
-
-See README.md for [maplibre-gl-export](./packages/maplibre-gl-export) or [mapbox-gl-export](./packages/mapbox-gl-export)
-
-## How to release
-
-It uses changeset to release. Please create release notes by the following command. Changeset will release package once the PR is merged into main branch.
-
-```zsh
-pnpm changeset
-```
+|[Demo & Documentation](./sites/demo/)| - | Demo website code for maplibre/mapbox export plugins |-|
 
 ## Contribution
 
-See [CONTRIBUTING](./.github/CONTRIBUTING.md)
+See [CONTRIBUTING](./CONTRIBUTING.md)
+
+## License
+
+[MIT License](LICENSE)
