@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { CodeBlock, Tab, TabGroup } from '@skeletonlabs/skeleton';
-	import { Languages } from '@watergis/maplibre-gl-export';
+	import { AvailableLanguages, Languages } from '@watergis/maplibre-gl-export';
 
 	let tabs = [
 		{ label: 'Maplibre GL Export', value: 'maplibre' },
@@ -55,6 +55,76 @@
 		}
 		mapboxCdnExample = await res.text();
 	};
+
+	const parameters = [
+		{
+			name: 'PageSize',
+			default: 'A4',
+			description: 'You can select from `A2` to `A6` or `B2` to `B6`'
+		},
+		{
+			name: 'PageOrientation',
+			default: 'landscape',
+			description: 'You can select `landscape` or `portrait`'
+		},
+		{
+			name: 'Format',
+			default: 'PDF',
+			description: 'You can select it from `jpg`, `png`, `svg` and `pdf`'
+		},
+		{
+			name: 'DPI',
+			default: '300',
+			description: 'You can select it from `72`, `96`, `200`, `300` and `400`.'
+		},
+		{
+			name: 'Crosshair',
+			default: 'false',
+			description:
+				'Display crosshair on the map. it helps to adjust the map center before printing. It accepts `true` and `false` value'
+		},
+		{
+			name: 'PritableArea',
+			default: 'false',
+			description:
+				'Display printable area on the map it helps to adjust pritable area before printing. . It accepts `true` and `false`'
+		},
+		{
+			name: 'Local',
+			default: 'en',
+			description: `Available from ${Languages.length} languages: ${AvailableLanguages.join(', ')}`
+		},
+		{
+			name: 'AllowedSizes',
+			default: "['LETTER','A2','A3','A4','A5','A6','B2','B3','B4','B5','B6']",
+			description:
+				"list of allowed page sizes for export. available values `'LETTER'`, `'A2'`, `'A3'`, `'A4'`, `'A5'`, `'A6'`, `'B2'`, `'B3'`, `'B4'`, `'B5'`, `'B6'`"
+		},
+		{
+			name: 'Filename',
+			default: 'map',
+			description:
+				'file name template, file part. Use default `map`, the file name will be like `map.pdf`'
+		},
+		{
+			name: 'markerCirclePaint',
+			default: `
+{
+	'circle-radius': 8,
+	'circle-color': 'red',
+	'circle-stroke-width': 1,
+	'circle-stroke-color': 'black'
+}
+			`,
+			description:
+				'The plugin will convert marker SVG to circle layer to be exported. Set your own circle paint property setting. As default, the following paint setting will be applied'
+		},
+		{
+			name: 'accessToken',
+			default: 'mapboxgl.accessToken is used as default',
+			description: 'Mapbox access token is required'
+		}
+	];
 
 	onMount(() => {
 		getMaplibreExportVersion();
@@ -112,13 +182,7 @@
 				</a>
 			</div>
 
-			<TabGroup>
-				{#each imprtTypeTabs as tab}
-					<Tab bind:group={importTypeTabSet} name={tab.value} value={tab.value}>{tab.label}</Tab>
-				{/each}
-			</TabGroup>
-
-			<div class="px-4">
+			<div class="px-2">
 				<h3 class="h3 pt-6 pb-4">Language</h3>
 				<p>{Languages.length} languages are available in the plugin.</p>
 				<br />
@@ -132,7 +196,13 @@
 				</label>
 			</div>
 
-			<div class="p-4" hidden={importTypeTabSet !== 'npm'}>
+			<TabGroup>
+				{#each imprtTypeTabs as tab}
+					<Tab bind:group={importTypeTabSet} name={tab.value} value={tab.value}>{tab.label}</Tab>
+				{/each}
+			</TabGroup>
+
+			<div class="p-2" hidden={importTypeTabSet !== 'npm'}>
 				<h3 class="h3 pt-6 pb-4">Install</h3>
 				<p>Getting start with installing the package</p>
 
@@ -153,7 +223,7 @@
 					language="ts"
 					lineNumbers
 					code={`
-import {  Map } from '${tabSet}-gl';
+import {  ${tabSet === 'mapbox' ? 'mapboxgl, ' : ''}Map } from '${tabSet}-gl';
 import '${tabSet}-gl/dist/${tabSet}-gl.css';
 import {
 	${tabSet === 'maplibre' ? 'Maplibre' : 'Mapbox'}ExportControl,
@@ -164,6 +234,7 @@ import {
 } from '@watergis/${tabSet}-gl-export';
 import '@watergis/${tabSet}-gl-export/dist/${tabSet}-gl-export.css';
 
+${tabSet === 'mapbox' ? `mapboxgl.accessToken='your mapbox access token'` : ''}
 const map = new Map({
 	container: 'map',
 	style: 'Your style file',
@@ -176,7 +247,8 @@ const exportControl = new ${tabSet === 'maplibre' ? 'Maplibre' : 'Mapbox'}Export
 	DPI: DPI[96],
 	Crosshair: true,
 	PrintableArea: true,
-	Local: '${selectedLanguage}'
+	Local: '${selectedLanguage}',
+	${tabSet === 'mapbox' ? `accessToken: 'your mapbox access token',` : ''}
 });
 map.addControl(exportControl, 'top-right');
 			`}
@@ -201,12 +273,44 @@ ${
 				/>
 			</div>
 
+			<h3 class="h3 pt-6">Parameters</h3>
+
+			<p>
+				The first argment of the constructor can accept the various parameters to customize your own
+				settings.
+			</p>
+
+			<div class="table-container">
+				<table class="table table-hover">
+					<thead>
+						<tr>
+							<th>Parameter</th>
+							<th>Default value</th>
+							<th>Description</th>
+						</tr>
+					</thead>
+					<tbody>
+						{#each parameters as param}
+							{#if !(tabSet === 'maplibre' && param.name === 'accessToken')}
+								<tr>
+									<td>{param.name}</td>
+									<td>
+										{param.default}
+									</td>
+									<td>{param.description}</td>
+								</tr>
+							{/if}
+						{/each}
+					</tbody>
+				</table>
+			</div>
+
 			<div class="flex justify-center space-x-2 py-6">
 				<a
 					class="btn variant-filled-secondary"
 					href="https://github.com/watergis/maplibre-gl-export/tree/main/packages/{tabSet}-gl-export#options"
 					target="_blank"
-					rel="noreferrer">See documentation</a
+					rel="noreferrer">See implementation</a
 				>
 			</div>
 		</div>
