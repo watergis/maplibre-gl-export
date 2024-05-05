@@ -15,11 +15,10 @@ body:
     id: plugins
     attributes:
       label: Select plugins which related to this issue
-      multiple: false
+      multiple: true
       options:
         - maplibre-gl-export
         - mapbox-gl-export
-        - both maplibre-gl-export and mapbox-gl-export
         - Documentation
     validations:
       required: true
