@@ -26,7 +26,7 @@ export const Languages: Translation[] = [
 	zhHant,
 	ja,
 	pt
-]
+];
 
 export const AvailableLanguages = [
 	'en',
@@ -44,5 +44,5 @@ export const AvailableLanguages = [
 ] as const;
 
 export const getTranslation = (lang: Language) => {
-	return Languages.find(l=>l.LanguageCode === lang) ?? english
+	return Languages.find((l) => l.LanguageCode === lang) ?? english;
 };

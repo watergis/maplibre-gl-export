@@ -16,10 +16,10 @@
 	const languageStore = createLanguageStore();
 	setContext(LANGUAGE_CONTEXT_KEY, languageStore);
 
-	onMount(()=>{
-		const lang =  $page.url.searchParams.get('language') as Language ?? 'en';
-		languageStore.set(lang)
-	})
+	onMount(() => {
+		const lang = ($page.url.searchParams.get('language') as Language) ?? 'en';
+		languageStore.set(lang);
+	});
 </script>
 
 <svelte:head>

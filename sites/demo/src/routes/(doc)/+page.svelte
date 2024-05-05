@@ -20,7 +20,7 @@
 	let maplibreCdnExample = '';
 	let mapboxCdnExample = '';
 
-	let selectedLanguage = 'en'
+	let selectedLanguage = 'en';
 
 	const getMaplibreExportVersion = async () => {
 		const res = await fetch('https://registry.npmjs.org/@watergis/maplibre-gl-export/latest');
@@ -121,12 +121,12 @@
 			<div class="px-4">
 				<h3 class="h3 pt-6 pb-4">Language</h3>
 				<p>{Languages.length} languages are available in the plugin.</p>
-				<br>
+				<br />
 				<label class="label">
 					<span>Select your language</span>
 					<select class="select" bind:value={selectedLanguage}>
 						{#each Languages as lang}
-						<option value="{lang.LanguageCode}">{lang.LanguageName} ({lang.LanguageCode})</option>
+							<option value={lang.LanguageCode}>{lang.LanguageName} ({lang.LanguageCode})</option>
 						{/each}
 					</select>
 				</label>

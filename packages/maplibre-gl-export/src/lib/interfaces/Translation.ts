@@ -5,5 +5,5 @@ export type Translation = {
 	DPI: string;
 	Generate: string;
 	LanguageName: string;
-	LanguageCode: string
+	LanguageCode: string;
 };
