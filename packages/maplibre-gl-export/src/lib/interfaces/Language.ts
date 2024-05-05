@@ -9,7 +9,8 @@ export const AvailableLanguages = [
 	'uk',
 	'zhHans',
 	'zhHant',
-	'ja'
+	'ja',
+	'pt'
 ] as const;
 
 export type Language = (typeof AvailableLanguages)[number];
