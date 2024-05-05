@@ -6,7 +6,8 @@ const translation: Translation = {
 	Format: 'Format',
 	DPI: 'DPI',
 	Generate: 'Generera',
-	LanguageName: 'Swedish'
+	LanguageName: 'Swedish',
+	LanguageCode: 'sv'
 };
 
 export default translation;

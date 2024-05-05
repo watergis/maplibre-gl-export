@@ -11,34 +11,38 @@ import zhHant from './zhHant';
 import ja from './ja';
 import pt from './pt';
 import { Language } from '../interfaces/Language';
+import { Translation } from '../interfaces/Translation';
+
+export const Languages: Translation[] = [
+	english,
+	french,
+	finnish,
+	german,
+	swedish,
+	spanish,
+	vietnam,
+	ukranian,
+	zhHans,
+	zhHant,
+	ja,
+	pt
+]
+
+export const AvailableLanguages = [
+	'en',
+	'fr',
+	'fi',
+	'de',
+	'sv',
+	'es',
+	'vi',
+	'uk',
+	'zhHans',
+	'zhHant',
+	'ja',
+	'pt'
+] as const;
 
 export const getTranslation = (lang: Language) => {
-	switch (lang) {
-		case 'de':
-			return german;
-		case 'en':
-			return english;
-		case 'fr':
-			return french;
-		case 'fi':
-			return finnish;
-		case 'sv':
-			return swedish;
-		case 'es':
-			return spanish;
-		case 'vi':
-			return vietnam;
-		case 'uk':
-			return ukranian;
-		case 'zhHans':
-			return zhHans;
-		case 'zhHant':
-			return zhHant;
-		case 'ja':
-			return ja;
-		case 'pt':
-			return pt;
-		default:
-			return english;
-	}
+	return Languages.find(l=>l.LanguageCode === lang) ?? english
 };

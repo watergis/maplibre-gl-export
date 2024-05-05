@@ -6,7 +6,8 @@ const translation: Translation = {
 	Format: 'フォーマット',
 	DPI: 'DPI（解像度）',
 	Generate: '出力',
-	LanguageName: 'Japanese'
+	LanguageName: 'Japanese',
+	LanguageCode: 'ja'
 };
 
 export default translation;

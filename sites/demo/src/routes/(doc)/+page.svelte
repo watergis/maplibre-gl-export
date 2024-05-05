@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { CodeBlock, Tab, TabGroup } from '@skeletonlabs/skeleton';
+	import { Languages } from '@watergis/maplibre-gl-export';
 
 	let tabs = [
 		{ label: 'Maplibre GL Export', value: 'maplibre' },
@@ -18,6 +19,8 @@
 	let mapboxExportVersion = 'latest';
 	let maplibreCdnExample = '';
 	let mapboxCdnExample = '';
+
+	let selectedLanguage = 'en'
 
 	const getMaplibreExportVersion = async () => {
 		const res = await fetch('https://registry.npmjs.org/@watergis/maplibre-gl-export/latest');
@@ -101,7 +104,7 @@
 			<div class="flex justify-center space-x-2">
 				<a
 					class="btn variant-filled-primary capitalize"
-					href="/{tabSet}"
+					href="/{tabSet}?language={selectedLanguage}"
 					target="_blank"
 					rel="noreferrer"
 				>
@@ -114,6 +117,20 @@
 					<Tab bind:group={importTypeTabSet} name={tab.value} value={tab.value}>{tab.label}</Tab>
 				{/each}
 			</TabGroup>
+
+			<div class="px-4">
+				<h3 class="h3 pt-6 pb-4">Language</h3>
+				<p>{Languages.length} languages are available in the plugin.</p>
+				<br>
+				<label class="label">
+					<span>Select your language</span>
+					<select class="select" bind:value={selectedLanguage}>
+						{#each Languages as lang}
+						<option value="{lang.LanguageCode}">{lang.LanguageName} ({lang.LanguageCode})</option>
+						{/each}
+					</select>
+				</label>
+			</div>
 
 			<div class="p-4" hidden={importTypeTabSet !== 'npm'}>
 				<h3 class="h3 pt-6 pb-4">Install</h3>
@@ -129,6 +146,8 @@
 				<CodeBlock language="shell" code={`pnpm add --save-dev @watergis/${tabSet}-gl-export`} />
 
 				<h3 class="h3 pt-6 pb-4">Usage</h3>
+
+				<p>Copy and past the below code.</p>
 
 				<CodeBlock
 					language="ts"
@@ -157,7 +176,7 @@ const exportControl = new ${tabSet === 'maplibre' ? 'Maplibre' : 'Mapbox'}Export
 	DPI: DPI[96],
 	Crosshair: true,
 	PrintableArea: true,
-	Local: 'en'
+	Local: '${selectedLanguage}'
 });
 map.addControl(exportControl, 'top-right');
 			`}
@@ -167,14 +186,16 @@ map.addControl(exportControl, 'top-right');
 			<div hidden={importTypeTabSet !== 'cdn'}>
 				<h3 class="h3 pt-6">Usage</h3>
 
+				<p>Copy and past the below code.</p>
+
 				<CodeBlock
 					language="html"
 					lineNumbers
 					code={`
 ${
 	tabSet === 'mapbox'
-		? `${mapboxCdnExample.replace(/{mapboxExportVersion}/g, mapboxExportVersion)}`
-		: `${maplibreCdnExample.replace(/{maplibreExportVersion}/g, maplibreExportVersion)}`
+		? `${mapboxCdnExample.replace(/{mapboxExportVersion}/g, mapboxExportVersion).replace(/{language}/g, selectedLanguage)}`
+		: `${maplibreCdnExample.replace(/{maplibreExportVersion}/g, maplibreExportVersion).replace(/{language}/g, selectedLanguage)}`
 }
 			`}
 				/>

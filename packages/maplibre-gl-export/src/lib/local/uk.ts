@@ -6,7 +6,8 @@ const translation: Translation = {
 	Format: 'Формат',
 	DPI: 'DPI',
 	Generate: 'Згенерувати',
-	LanguageName: 'Ukranian'
+	LanguageName: 'Ukranian',
+	LanguageCode: 'uk'
 };
 
 export default translation;

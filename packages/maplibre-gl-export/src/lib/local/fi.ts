@@ -6,7 +6,8 @@ const translation: Translation = {
 	Format: 'Muoto',
 	DPI: 'DPI',
 	Generate: 'Generoi',
-	LanguageName: 'Finish'
+	LanguageName: 'Finish',
+	LanguageCode: 'fi'
 };
 
 export default translation;
