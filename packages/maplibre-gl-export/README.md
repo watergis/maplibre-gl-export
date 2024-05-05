@@ -6,12 +6,6 @@ This module adds control which can export PDF and images. It was forked from [ma
 
 This module is using source code of [mpetroff/print-maps](https://github.com/mpetroff/print-maps). I just adopted this library to normal Mapbox GL Plugin. Thanks so much to develop this library!
 
-## Installation
-
-```bash
-pnpm add --save-dev @watergis/maplibre-gl-export
-```
-
 ## Demo & usage
 
 See [documentation](https://maplibre-gl-export.water-gis.com/).
@@ -33,23 +27,3 @@ For print output or if you can’t include links, use this text-only attribution
 `© NARWASSCO, Ltd.` is default example of map data by `Narok Water and Sewerage Services Co., Ltd.`, Kenya. If you don't use current map, you don't need to use this attribution.
 
 Also, default example is using base map by United Nation Vector Tile Toolkit. That is why `Powered by the United Nations Vector Tile Toolkit` is included in above.
-
-## Development
-
-```
-pnpm lint
-pnpm format
-pnpm dev
-```
-
-open [http://localhost:5173](http://localhost:5173).
-
-If there are any changes on source code, it will be reflected automatically.
-
-## Build package
-
-```
-pnpm build
-```
-
-The modules will be generated under `dist` folder.
