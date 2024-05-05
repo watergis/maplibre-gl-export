@@ -9,6 +9,7 @@ import ukranian from './uk';
 import zhHans from './zhHans';
 import zhHant from './zhHant';
 import ja from './ja';
+import pt from './pt';
 import { Language } from '../interfaces/Language';
 
 export const getTranslation = (lang: Language) => {
@@ -35,6 +36,8 @@ export const getTranslation = (lang: Language) => {
 			return zhHant;
 		case 'ja':
 			return ja;
+		case 'pt':
+			return pt;
 		default:
 			return english;
 	}
