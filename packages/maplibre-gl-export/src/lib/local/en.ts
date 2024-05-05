@@ -6,7 +6,8 @@ const translation: Translation = {
 	Format: 'Format',
 	DPI: 'DPI',
 	Generate: 'Generate',
-	LanguageName: 'English'
+	LanguageName: 'English',
+	LanguageCode: 'en'
 };
 
 export default translation;

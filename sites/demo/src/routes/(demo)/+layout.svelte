@@ -5,14 +5,21 @@
 		createLanguageStore,
 		createMapStore
 	} from '$lib/stores';
-	import { setContext } from 'svelte';
+	import { onMount, setContext } from 'svelte';
 	import LanguageSelector from '$lib/LanguageSelector.svelte';
+	import { page } from '$app/stores';
+	import type { Language } from '@watergis/maplibre-gl-export';
 
 	const mapStore = createMapStore();
 	setContext(MAPSTORE_CONTEXT_KEY, mapStore);
 
 	const languageStore = createLanguageStore();
 	setContext(LANGUAGE_CONTEXT_KEY, languageStore);
+
+	onMount(() => {
+		const lang = ($page.url.searchParams.get('language') as Language) ?? 'en';
+		languageStore.set(lang);
+	});
 </script>
 
 <svelte:head>

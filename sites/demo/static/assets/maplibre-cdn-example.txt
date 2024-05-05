@@ -16,6 +16,6 @@
 		DPI: MaplibreExportControl.DPI[300],
 		Crosshair: true,
 		PrintableArea: true,
-		Local: 'fr'
+		Local: '{language}'
 	}), 'top-right');
 </script>

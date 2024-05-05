@@ -17,7 +17,7 @@
 		DPI: MapboxExportControl.DPI[300],
 		Crosshair: true,
 		PrintableArea: true,
-		Local: 'fr',
+		Local: '{language}',
 		accessToken: mapboxgl.accessToken
 	}), 'top-right');
 </script>
