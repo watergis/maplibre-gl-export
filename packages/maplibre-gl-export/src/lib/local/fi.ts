@@ -6,7 +6,7 @@ const translation: Translation = {
 	Format: 'Muoto',
 	DPI: 'DPI',
 	Generate: 'Generoi',
-	LanguageName: 'Finish',
+	LanguageName: 'Suomalainen',
 	LanguageCode: 'fi'
 };
 

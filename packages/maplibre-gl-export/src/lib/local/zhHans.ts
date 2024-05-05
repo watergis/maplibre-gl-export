@@ -6,7 +6,7 @@ const translation: Translation = {
 	Format: '格式',
 	DPI: '像素',
 	Generate: '导出',
-	LanguageName: 'Chinese simplified',
+	LanguageName: '简体字',
 	LanguageCode: 'zhHans'
 };
 
