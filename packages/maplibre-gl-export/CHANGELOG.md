@@ -1,5 +1,17 @@
 # @watergis/maplibre-gl-export
 
+## 3.5.0
+
+### Minor Changes
+
+- 85470db: feat: added Portuguese language which the translation was contributed by @leoneljdias via https://github.com/watergis/maplibre-gl-export/pull/133
+
+### Patch Changes
+
+- 1a9b3d8: fix: use local language name for Translation object
+- 64d39b0: refactor: export AvailableLanguages as an array from mapblire-gl-export
+- a86c079: fix: add LanguageCode in Translation interface
+
 ## 3.4.1
 
 ### Patch Changes
