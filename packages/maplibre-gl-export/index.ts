@@ -17,10 +17,12 @@ const map = new Map({
 	style: 'https://unpkg.com/@undp-data/style@latest/dist/aerialstyle.json',
 	center: [0, 0],
 	zoom: 1,
-	hash: true
+	hash: true,
+	attributionControl: false
 });
 
 map.addControl(new NavigationControl({ visualizePitch: true }), 'top-right');
+map.addControl(new maplibregl.AttributionControl({ compact: false }), 'bottom-right');
 map.addControl(
 	new MaplibreExportControl({
 		PageSize: Size.A3,
