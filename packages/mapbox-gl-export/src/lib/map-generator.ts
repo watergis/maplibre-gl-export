@@ -1,6 +1,7 @@
 import mapboxgl, { accessToken, Map as MapboxMap } from 'mapbox-gl';
 import 'js-loading-overlay';
 import {
+	defaultAttributionStyle,
 	defaultMarkerCirclePaint,
 	DPIType,
 	Format,
@@ -32,9 +33,21 @@ export default class MapGenerator extends MapGeneratorBase {
 		unit: UnitType = Unit.mm,
 		fileName = 'map',
 		markerCirclePaint = defaultMarkerCirclePaint,
+		attributionStyle = defaultAttributionStyle,
 		accesstoken?: string
 	) {
-		super(map, size, dpi, format, unit, fileName, 'mapboxgl-marker', markerCirclePaint);
+		super(
+			map,
+			size,
+			dpi,
+			format,
+			unit,
+			fileName,
+			'mapboxgl-marker',
+			markerCirclePaint,
+			'mapboxgl-ctrl-attrib-inner',
+			attributionStyle
+		);
 		this.accesstoken = accesstoken;
 	}
 
@@ -51,7 +64,7 @@ export default class MapGenerator extends MapGeneratorBase {
 			interactive: false,
 			preserveDrawingBuffer: true,
 			fadeDuration: 0,
-			attributionControl: false,
+			// attributionControl: false,
 			// hack to read transfrom request callback function
 			// eslint-disable-next-line
 			// @ts-ignore

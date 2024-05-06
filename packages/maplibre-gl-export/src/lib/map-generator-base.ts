@@ -28,16 +28,39 @@
  */
 
 import { jsPDF } from 'jspdf';
-import { Map as MaplibreMap, StyleSpecification } from 'maplibre-gl';
+import {
+	Map as MaplibreMap,
+	PointLike,
+	SourceSpecification,
+	StyleSpecification,
+	SymbolLayerSpecification
+} from 'maplibre-gl';
 import { CirclePaint, Map as MapboxMap } from 'mapbox-gl';
 import 'js-loading-overlay';
-import { DPIType, Format, FormatType, Size, SizeType, Unit, UnitType } from './interfaces';
+import {
+	AttributionStyle,
+	DPIType,
+	Format,
+	FormatType,
+	Size,
+	SizeType,
+	Unit,
+	UnitType
+} from './interfaces';
 
 export const defaultMarkerCirclePaint: CirclePaint = {
 	'circle-radius': 8,
 	'circle-color': 'red',
 	'circle-stroke-width': 1,
 	'circle-stroke-color': 'black'
+};
+
+export const defaultAttributionStyle: AttributionStyle = {
+	textSize: 16,
+	textHaloColor: '#FFFFFF',
+	textHaloWidth: 0.8,
+	textColor: '#000000',
+	fallbackTextFont: ['Open Sans Regular']
 };
 
 export abstract class MapGeneratorBase {
@@ -59,6 +82,10 @@ export abstract class MapGeneratorBase {
 
 	protected markerCirclePaint: CirclePaint;
 
+	protected attributionClassName: string;
+
+	protected attributionStyle: AttributionStyle;
+
 	/**
 	 * Constructor
 	 * @param map MaplibreMap object
@@ -76,7 +103,9 @@ export abstract class MapGeneratorBase {
 		unit: UnitType = Unit.mm,
 		fileName = 'map',
 		markerClassName = 'maplibregl-marker',
-		markerCirclePaint = defaultMarkerCirclePaint
+		markerCirclePaint = defaultMarkerCirclePaint,
+		attributionClassName = 'maplibregl-ctrl-attrib-inner',
+		attributionStyle = defaultAttributionStyle
 	) {
 		this.map = map;
 		this.width = size[0];
@@ -87,6 +116,8 @@ export abstract class MapGeneratorBase {
 		this.fileName = fileName;
 		this.markerClassName = markerClassName;
 		this.markerCirclePaint = markerCirclePaint;
+		this.attributionClassName = attributionClassName;
+		this.attributionStyle = attributionStyle;
 	}
 
 	protected abstract getRenderedMap(
@@ -196,17 +227,125 @@ export abstract class MapGeneratorBase {
 		let renderMap = this.getRenderedMap(container, style);
 
 		renderMap.once('idle', () => {
-			renderMap = this.renderMapPost(renderMap);
-			const markers = this.getMarkers();
-			if (markers.length === 0) {
-				this.exportImage(renderMap, hidden, actualPixelRatio);
-			} else {
-				renderMap = this.renderMarkers(renderMap);
+			const isAttributionAdded = this.addAttributions(renderMap);
+			if (isAttributionAdded) {
 				renderMap.once('idle', () => {
-					this.exportImage(renderMap, hidden, actualPixelRatio);
+					renderMap = this.renderMapPost(renderMap);
+					const markers = this.getMarkers();
+					if (markers.length === 0) {
+						this.exportImage(renderMap, hidden, actualPixelRatio);
+					} else {
+						renderMap = this.renderMarkers(renderMap);
+						renderMap.once('idle', () => {
+							this.exportImage(renderMap, hidden, actualPixelRatio);
+						});
+					}
 				});
+			} else {
+				renderMap = this.renderMapPost(renderMap);
+				const markers = this.getMarkers();
+				if (markers.length === 0) {
+					this.exportImage(renderMap, hidden, actualPixelRatio);
+				} else {
+					renderMap = this.renderMarkers(renderMap);
+					renderMap.once('idle', () => {
+						this.exportImage(renderMap, hidden, actualPixelRatio);
+					});
+				}
 			}
 		});
+	}
+
+	private stripHtml(htmlString: string) {
+		const tempElement = document.createElement('div');
+		tempElement.innerHTML = htmlString;
+		return tempElement.textContent || tempElement.innerText || '';
+	}
+
+	private addAttributions(renderMap: MaplibreMap | MapboxMap) {
+		const glyphs = this.map.getStyle().glyphs;
+		// skip if glyphs is not available in style.
+		if (!glyphs) return false;
+
+		const containerDiv = renderMap.getContainer();
+		const width = parseInt(containerDiv.style.width.replace('px', '')) - 5;
+		const height = parseInt(containerDiv.style.height.replace('px', '')) - 5;
+		const pixels = [width, height] as PointLike;
+		const lngLat = (renderMap as MaplibreMap).unproject(pixels);
+
+		const attrElements = containerDiv.getElementsByClassName(this.attributionClassName);
+		const attributions: string[] = [];
+		if (attrElements?.length > 0) {
+			// try getting attribution from html elements
+			const attrs = attrElements.item(0);
+			if (attrs) {
+				for (let i = 0; i < attrs.children.length; i++) {
+					const child = attrs.children.item(i);
+					if (!child) continue;
+					attributions.push(this.stripHtml(child.outerHTML));
+				}
+			}
+		} else {
+			// if not, try to make attribution from style
+			const sources = this.map.getStyle().sources;
+			Object.keys(sources).forEach((key) => {
+				const src: SourceSpecification = sources[key] as SourceSpecification;
+				if ('attribution' in src) {
+					const attribution = src.attribution as string;
+					attributions.push(this.stripHtml(attribution));
+				}
+			});
+		}
+
+		if (attributions.length === 0) return false;
+
+		let attributionText = attributions.join(' | ');
+
+		const attributionId = `attribution`;
+		renderMap.addSource(attributionId, {
+			type: 'geojson',
+			data: {
+				type: 'Feature',
+				geometry: {
+					type: 'Point',
+					coordinates: [lngLat.lng, lngLat.lat]
+				},
+				properties: {
+					attribution: attributionText
+				}
+			}
+		});
+
+		const fontLayers = this.map
+			.getStyle()
+			.layers.filter(
+				(l) => l.type === 'symbol' && l.layout && 'text-font' in l.layout
+			) as SymbolLayerSpecification[];
+		const font: string[] =
+			fontLayers.length > 0 && fontLayers[0].layout
+				? (fontLayers[0].layout['text-font'] as string[])
+				: this.attributionStyle.fallbackTextFont;
+
+		(renderMap as MapboxMap).addLayer({
+			id: attributionId,
+			source: attributionId,
+			type: 'symbol',
+			layout: {
+				'text-field': ['get', 'attribution'],
+				'text-font': font,
+				'text-max-width': parseInt(`${width / this.attributionStyle.textSize}`),
+				'text-anchor': 'bottom-right',
+				'text-justify': 'right',
+				'text-size': this.attributionStyle.textSize
+			},
+			paint: {
+				'text-halo-color': this.attributionStyle.textHaloColor,
+				'text-halo-width': this.attributionStyle.textHaloWidth,
+				'text-color': this.attributionStyle.textColor
+			}
+		});
+
+		return true;
 	}
 
 	private exportImage(

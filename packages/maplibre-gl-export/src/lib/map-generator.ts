@@ -1,7 +1,11 @@
 import { Map as MaplibreMap, StyleSpecification } from 'maplibre-gl';
 import 'js-loading-overlay';
 import { DPIType, Format, FormatType, Size, SizeType, Unit, UnitType } from './interfaces';
-import { MapGeneratorBase, defaultMarkerCirclePaint } from './map-generator-base';
+import {
+	MapGeneratorBase,
+	defaultAttributionStyle,
+	defaultMarkerCirclePaint
+} from './map-generator-base';
 
 export default class MapGenerator extends MapGeneratorBase {
 	/**
@@ -20,9 +24,21 @@ export default class MapGenerator extends MapGeneratorBase {
 		format: FormatType = Format.PNG,
 		unit: UnitType = Unit.mm,
 		fileName = 'map',
-		markerCirclePaint = defaultMarkerCirclePaint
+		markerCirclePaint = defaultMarkerCirclePaint,
+		attributionStyle = defaultAttributionStyle
 	) {
-		super(map, size, dpi, format, unit, fileName, 'maplibregl-marker', markerCirclePaint);
+		super(
+			map,
+			size,
+			dpi,
+			format,
+			unit,
+			fileName,
+			'maplibregl-marker',
+			markerCirclePaint,
+			'maplibregl-ctrl-attrib-inner',
+			attributionStyle
+		);
 	}
 
 	protected getRenderedMap(container: HTMLElement, style: StyleSpecification) {
@@ -37,7 +53,7 @@ export default class MapGenerator extends MapGeneratorBase {
 			interactive: false,
 			preserveDrawingBuffer: true,
 			fadeDuration: 0,
-			attributionControl: false,
+			// attributionControl: false,
 			// hack to read transfrom request callback function
 			// eslint-disable-next-line
 			// @ts-ignore
