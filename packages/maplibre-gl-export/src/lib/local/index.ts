@@ -4,6 +4,7 @@ import finnish from './fi';
 import german from './de';
 import swedish from './sv';
 import spanish from './es';
+import catalan from './ca';
 import vietnam from './vi';
 import ukranian from './uk';
 import zhHans from './zhHans';
@@ -20,6 +21,7 @@ export const Languages: Translation[] = [
 	german,
 	swedish,
 	spanish,
+	catalan,
 	vietnam,
 	ukranian,
 	zhHans,
@@ -35,6 +37,7 @@ export const AvailableLanguages = [
 	'de',
 	'sv',
 	'es',
+	'ca',
 	'vi',
 	'uk',
 	'zhHans',
