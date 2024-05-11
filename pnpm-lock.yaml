@@ -153,8 +153,8 @@ importers:
         version: 11.9.0
     devDependencies:
       '@skeletonlabs/skeleton':
-        specifier: 2.9.2
-        version: 2.9.2(svelte@4.2.15)
+        specifier: 2.10.0
+        version: 2.10.0(svelte@4.2.15)
       '@skeletonlabs/tw-plugin':
         specifier: 0.4.0
         version: 0.4.0(tailwindcss@3.4.3)
@@ -653,8 +653,8 @@ packages:
     resolution: {integrity: sha512-LtoMMhxAlorcGhmFYI+LhPgbPZCkgP6ra1YL604EeF6U98pLlQ3iWIGMdWSC+vWmPBWBNgmDBAhnAobLROJmwg==}
     engines: {node: '>=18'}
 
-  '@skeletonlabs/skeleton@2.9.2':
-    resolution: {integrity: sha512-yBRSyxx9eyLsQXqEuYb5YyqE+CY+IfyTroaqfQ4OmqDcIulMivqU7lY58bmLMGHC/g9lzliFkeY4UO4ssaWVpA==}
+  '@skeletonlabs/skeleton@2.10.0':
+    resolution: {integrity: sha512-jPdDT9PCkGmlUgsgNvR99bK6N2pWG2GfdapwWqDVZkKIhTsLz4TeJNF3H26Pfkicoj4hNz486+WYa7iSpbn80g==}
     peerDependencies:
       svelte: ^3.56.0 || ^4.0.0
 
@@ -3492,7 +3492,7 @@ snapshots:
 
   '@sindresorhus/merge-streams@2.3.0': {}
 
-  '@skeletonlabs/skeleton@2.9.2(svelte@4.2.15)':
+  '@skeletonlabs/skeleton@2.10.0(svelte@4.2.15)':
     dependencies:
       esm-env: 1.0.0
       svelte: 4.2.15
