@@ -1,5 +1,11 @@
 # @watergis/mapbox-gl-export
 
+## 3.4.0
+
+### Minor Changes
+
+- bf0467a: feat: add Catalan language contributed by @lstiz
+
 ## 3.3.0
 
 ### Minor Changes
