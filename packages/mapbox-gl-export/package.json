@@ -56,7 +56,7 @@
 		"@typescript-eslint/parser": "^7.1.1",
 		"@watergis/maplibre-gl-export": "workspace:^",
 		"autoprefixer": "^10.4.18",
-		"eslint": "^8.57.0",
+		"eslint": "^9.0.0",
 		"eslint-config-prettier": "^9.1.0",
 		"eslint-plugin-import": "^2.29.1",
 		"path": "^0.12.7",
