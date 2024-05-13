@@ -1,5 +1,11 @@
 # @watergis/maplibre-gl-export
 
+## 3.7.0
+
+### Minor Changes
+
+- bf0467a: feat: add Catalan language contributed by @lstiz
+
 ## 3.6.0
 
 ### Minor Changes
