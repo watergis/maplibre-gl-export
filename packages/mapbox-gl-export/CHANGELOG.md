@@ -1,5 +1,11 @@
 # @watergis/mapbox-gl-export
 
+## 3.4.1
+
+### Patch Changes
+
+- 6dd9820: fix: add check for actual image data before calling addImage by @jmbarbier
+
 ## 3.4.0
 
 ### Minor Changes
