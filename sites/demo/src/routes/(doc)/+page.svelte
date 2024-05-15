@@ -154,121 +154,112 @@
 	});
 </script>
 
-<div class="container h-full mx-auto flex justify-center items-center">
-	<div class="space-y-10 flex flex-col items-center px-2">
-		<div class="text-center">
-			<h2 class="h1 pt-4 pb-6">Welcome to Maplibre/Mapbox GL Export</h2>
+<div class="px-4">
+	<div class="text-center">
+		<h2 class="h1 pt-4 pb-6">Welcome to Maplibre/Mapbox GL Export</h2>
 
-			<div class="flex justify-center space-x-2 pb-4">
-				Maplibre/Mapbox GL Export is a Maplibre/Mapbox GL JS plugin that can export a map image in
-				various image format such as PNG, JPEG, PDF and SVG without any server!
-			</div>
-
-			<div class="flex justify-center space-x-2">
-				<img
-					class=" h-auto max-w-sm md:max-w-lg rounded-lg"
-					src="/assets/plugin-overview.webp"
-					alt="Overview of Plugin"
-				/>
-			</div>
+		<div class="flex justify-center space-x-2 pb-4">
+			Maplibre/Mapbox GL Export is a Maplibre/Mapbox GL JS plugin that can export a map image in
+			various image format such as PNG, JPEG, PDF and SVG without any server!
 		</div>
 
 		<div class="flex justify-center space-x-2">
-			<p>Select map library</p>
+			<img
+				class=" h-auto max-w-sm md:max-w-lg rounded-lg"
+				src="/assets/plugin-overview.webp"
+				alt="Overview of Plugin"
+			/>
+		</div>
+	</div>
+
+	<div class="space-y-2">
+		<div class="px-2">
+			<h3 class="h3 pt-6 pb-4">Select a map library</h3>
+
+			<RadioGroup active="variant-filled-primary" hover="hover:variant-soft-primary">
+				{#each tabs as tab}
+					<RadioItem bind:group={tabSet} name="justify" value={tab.value}>
+						{tab.label}
+						{#if tab.value === 'maplibre'}
+							({maplibreExportVersion})
+						{:else}
+							({mapboxExportVersion})
+						{/if}
+					</RadioItem>
+				{/each}
+			</RadioGroup>
+
+			<h3 class="h3 pt-6 pb-4">Demo</h3>
+
+			<a
+				class="btn variant-filled-primary capitalize"
+				href="/{tabSet}?language={selectedLanguage}"
+				target="_blank"
+				rel="noreferrer"
+			>
+				Open {tabSet} DEMO
+			</a>
+		</div>
+
+		<div class="px-2">
+			<h3 class="h3 pt-6 pb-4">Language</h3>
+			<p>{Languages.length} languages are available in the plugin.</p>
+			<br />
+			<label class="label">
+				<span>Select your language</span>
+				<select class="select" bind:value={selectedLanguage}>
+					{#each Languages as lang}
+						<option value={lang.LanguageCode}>{lang.LanguageName} ({lang.LanguageCode})</option>
+					{/each}
+				</select>
+			</label>
 		</div>
 
 		<TabGroup>
-			{#each tabs as tab}
-				<Tab bind:group={tabSet} name={tab.value} value={tab.value}>
-					{tab.label}
-					{#if tab.value === 'maplibre'}
-						({maplibreExportVersion})
-					{:else}
-						({mapboxExportVersion})
-					{/if}
-				</Tab>
+			{#each imprtTypeTabs as tab}
+				<Tab bind:group={importTypeTabSet} name={tab.value} value={tab.value}>{tab.label}</Tab>
 			{/each}
 		</TabGroup>
 
-		<div class="space-y-2">
-			<div class="flex justify-center space-x-2">
-				<a
-					class="btn variant-filled-primary capitalize"
-					href="/{tabSet}?language={selectedLanguage}"
-					target="_blank"
-					rel="noreferrer"
-				>
-					Open {tabSet} DEMO
-				</a>
-			</div>
+		<div class="px-2" hidden={tabSet !== 'mapbox'}>
+			<h3 class="h3 pt-6 pb-4">Mapbox access token</h3>
+			<label class="label">
+				<span>Paste your mapbox access token here</span>
+				<input class="input" type="text" placeholder="Your access token" bind:value={mapboxToken} />
+			</label>
+		</div>
 
-			<div class="px-2">
-				<h3 class="h3 pt-6 pb-4">Language</h3>
-				<p>{Languages.length} languages are available in the plugin.</p>
-				<br />
-				<label class="label">
-					<span>Select your language</span>
-					<select class="select" bind:value={selectedLanguage}>
-						{#each Languages as lang}
-							<option value={lang.LanguageCode}>{lang.LanguageName} ({lang.LanguageCode})</option>
-						{/each}
-					</select>
-				</label>
-			</div>
+		<div class="p-2" hidden={importTypeTabSet !== 'npm'}>
+			<h3 class="h3 pt-6 pb-4">Install</h3>
+			<p>Getting start with installing the package</p>
 
-			<TabGroup>
-				{#each imprtTypeTabs as tab}
-					<Tab bind:group={importTypeTabSet} name={tab.value} value={tab.value}>{tab.label}</Tab>
-				{/each}
-			</TabGroup>
+			<RadioGroup active="variant-filled-primary" hover="hover:variant-soft-primary">
+				<RadioItem bind:group={packageManager} name="justify" value={'npm'}>npm</RadioItem>
+				<RadioItem bind:group={packageManager} name="justify" value={'yarn'}>yarn</RadioItem>
+				<RadioItem bind:group={packageManager} name="justify" value={'pnpm'}>pnpm</RadioItem>
+			</RadioGroup>
 
-			<div class="px-2" hidden={tabSet !== 'mapbox'}>
-				<h3 class="h3 pt-6 pb-4">Mapbox access token</h3>
-				<label class="label">
-					<span>Paste your mapbox access token here</span>
-					<input
-						class="input"
-						type="text"
-						placeholder="Your access token"
-						bind:value={mapboxToken}
+			<div class="pt-2">
+				{#if packageManager === 'npm'}
+					<CodeBlock
+						language="shell"
+						code={`npm install --save-dev @watergis/${tabSet}-gl-export`}
 					/>
-				</label>
+				{:else if packageManager === 'yarn'}
+					<CodeBlock language="shell" code={`yarn add --dev @watergis/${tabSet}-gl-export`} />
+				{:else if packageManager === 'pnpm'}
+					<CodeBlock language="shell" code={`pnpm add --save-dev @watergis/${tabSet}-gl-export`} />
+				{/if}
 			</div>
 
-			<div class="p-2" hidden={importTypeTabSet !== 'npm'}>
-				<h3 class="h3 pt-6 pb-4">Install</h3>
-				<p>Getting start with installing the package</p>
+			<h3 class="h3 pt-6 pb-4">Usage</h3>
 
-				<RadioGroup active="variant-filled-primary" hover="hover:variant-soft-primary">
-					<RadioItem bind:group={packageManager} name="justify" value={'npm'}>npm</RadioItem>
-					<RadioItem bind:group={packageManager} name="justify" value={'yarn'}>yarn</RadioItem>
-					<RadioItem bind:group={packageManager} name="justify" value={'pnpm'}>pnpm</RadioItem>
-				</RadioGroup>
+			<p>Copy and past the below code.</p>
 
-				<div class="pt-2">
-					{#if packageManager === 'npm'}
-						<CodeBlock
-							language="shell"
-							code={`npm install --save-dev @watergis/${tabSet}-gl-export`}
-						/>
-					{:else if packageManager === 'yarn'}
-						<CodeBlock language="shell" code={`yarn add --dev @watergis/${tabSet}-gl-export`} />
-					{:else if packageManager === 'pnpm'}
-						<CodeBlock
-							language="shell"
-							code={`pnpm add --save-dev @watergis/${tabSet}-gl-export`}
-						/>
-					{/if}
-				</div>
-
-				<h3 class="h3 pt-6 pb-4">Usage</h3>
-
-				<p>Copy and past the below code.</p>
-
-				<CodeBlock
-					language="ts"
-					lineNumbers
-					code={`
+			<CodeBlock
+				language="ts"
+				lineNumbers
+				code={`
 import {  ${tabSet === 'mapbox' ? 'mapboxgl, ' : ''}Map } from '${tabSet}-gl';
 import '${tabSet}-gl/dist/${tabSet}-gl.css';
 import {
@@ -298,18 +289,18 @@ const exportControl = new ${tabSet === 'maplibre' ? 'Maplibre' : 'Mapbox'}Export
 });
 map.addControl(exportControl, 'top-right');
 			`}
-				/>
-			</div>
+			/>
+		</div>
 
-			<div hidden={importTypeTabSet !== 'cdn'}>
-				<h3 class="h3 pt-6">Usage</h3>
+		<div hidden={importTypeTabSet !== 'cdn'}>
+			<h3 class="h3 pt-6">Usage</h3>
 
-				<p>Copy and past the below code.</p>
+			<p>Copy and past the below code.</p>
 
-				<CodeBlock
-					language="html"
-					lineNumbers
-					code={`
+			<CodeBlock
+				language="html"
+				lineNumbers
+				code={`
 ${
 	tabSet === 'mapbox'
 		? `${mapboxCdnExample
@@ -323,49 +314,48 @@ ${
 				.replace(/{style}/g, styleUrl)}`
 }
 			`}
-				/>
-			</div>
+			/>
+		</div>
 
-			<h3 class="h3 pt-6">Parameters</h3>
+		<h3 class="h3 pt-6">Parameters</h3>
 
-			<p>
-				The first argment of the constructor can accept the various parameters to customize your own
-				settings.
-			</p>
+		<p>
+			The first argment of the constructor can accept the various parameters to customize your own
+			settings.
+		</p>
 
-			<div class="table-container">
-				<table class="table table-hover">
-					<thead>
-						<tr>
-							<th>Parameter</th>
-							<th>Default value</th>
-							<th>Description</th>
-						</tr>
-					</thead>
-					<tbody>
-						{#each parameters as param}
-							{#if !(tabSet === 'maplibre' && param.name === 'accessToken')}
-								<tr>
-									<td>{param.name}</td>
-									<td>
-										{param.default}
-									</td>
-									<td>{param.description}</td>
-								</tr>
-							{/if}
-						{/each}
-					</tbody>
-				</table>
-			</div>
+		<div class="table-container">
+			<table class="table table-hover">
+				<thead>
+					<tr>
+						<th>Parameter</th>
+						<th>Default value</th>
+						<th>Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					{#each parameters as param}
+						{#if !(tabSet === 'maplibre' && param.name === 'accessToken')}
+							<tr>
+								<td>{param.name}</td>
+								<td>
+									{param.default}
+								</td>
+								<td>{param.description}</td>
+							</tr>
+						{/if}
+					{/each}
+				</tbody>
+			</table>
+		</div>
 
-			<div class="flex justify-center space-x-2 py-6">
-				<a
-					class="btn variant-filled-secondary"
-					href="https://github.com/watergis/maplibre-gl-export/tree/main/packages/{tabSet}-gl-export#options"
-					target="_blank"
-					rel="noreferrer">See implementation</a
-				>
-			</div>
+		<div class="flex justify-center space-x-2 py-6">
+			<a
+				class="btn variant-filled-secondary"
+				href="https://github.com/watergis/maplibre-gl-export/tree/main/packages/{tabSet}-gl-export#options"
+				target="_blank"
+				rel="noreferrer">See implementation</a
+			>
 		</div>
 	</div>
 </div>
