@@ -70,6 +70,7 @@ export default class MapGenerator extends MapGeneratorBase {
 		// the below code was added by https://github.com/watergis/maplibre-gl-export/pull/18.
 		const images = ((this.map as MaplibreMap).style.imageManager || {}).images || [];
 		Object.keys(images).forEach((key) => {
+			if (!images[key].data) return;
 			renderMap.addImage(key, images[key].data);
 		});
 
