@@ -31,7 +31,11 @@ map.addControl(
 		DPI: DPI[96],
 		Crosshair: true,
 		PrintableArea: true,
-		Local: 'en'
+		Local: 'en',
+		northIconOptions: {
+			position: 'top-right',
+			visibility: 'visible'
+		}
 	}),
 	'top-right'
 );

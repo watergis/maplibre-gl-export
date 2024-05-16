@@ -103,7 +103,20 @@
 		},
 		{
 			name: 'AllowedSizes',
-			default: "['LETTER','A2','A3','A4','A5','A6','B2','B3','B4','B5','B6']",
+			default: `
+[
+   "LETTER",
+   "A2",
+   "A3",
+   "A4",
+   "A5",
+   "A6",
+   "B2",
+   "B3",
+   "B4",
+   "B5",
+   "B6"
+]`,
 			description:
 				"list of allowed page sizes for export. available values `'LETTER'`, `'A2'`, `'A3'`, `'A4'`, `'A5'`, `'A6'`, `'B2'`, `'B3'`, `'B4'`, `'B5'`, `'B6'`"
 		},
@@ -138,6 +151,20 @@
 }`,
 			description:
 				'This plugin will try to add attribution to the bottom-right of the image as a maplibre symbol layer. The default style of attribution label can be changed per your preference. For fallbackTextFont property, it will only be used when font informaiton cannot be fetched from style object. If glyphs property is not set to your style object, attribution will not be added.'
+		},
+		{
+			name: 'northIconOptions',
+			default: `
+{
+	"image": "bring your own SVG string",
+	"imageName": "gl-export-north-icon",
+	"imageSizeFraction": 0.05,
+	"visibility": "visible",
+	"position": "top-right"
+}
+			`,
+			description:
+				'North icon options. It is shown at top-right of corner of exported map as default. The size of north icon is 5% of map width. You can customize icon image and other settings through this option. North icon is not rendered when zoom level is less than 2 and landscape mode since it appears twice.'
 		},
 		{
 			name: 'accessToken',
