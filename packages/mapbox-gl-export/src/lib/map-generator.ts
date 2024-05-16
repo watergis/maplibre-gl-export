@@ -3,6 +3,7 @@ import 'js-loading-overlay';
 import {
 	defaultAttributionStyle,
 	defaultMarkerCirclePaint,
+	defaultNorthIconOptions,
 	DPIType,
 	Format,
 	FormatType,
@@ -34,6 +35,7 @@ export default class MapGenerator extends MapGeneratorBase {
 		fileName = 'map',
 		markerCirclePaint = defaultMarkerCirclePaint,
 		attributionStyle = defaultAttributionStyle,
+		northIconOptions = defaultNorthIconOptions,
 		accesstoken?: string
 	) {
 		super(
@@ -46,7 +48,8 @@ export default class MapGenerator extends MapGeneratorBase {
 			'mapboxgl-marker',
 			markerCirclePaint,
 			'mapboxgl-ctrl-attrib-inner',
-			attributionStyle
+			attributionStyle,
+			northIconOptions
 		);
 		this.accesstoken = accesstoken;
 	}

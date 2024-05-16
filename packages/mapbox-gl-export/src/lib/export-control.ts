@@ -40,6 +40,7 @@ export default class MapboxExportControl extends MaplibreExportControl implement
 			filename,
 			this.options.markerCirclePaint,
 			this.options.attributionStyle,
+			this.options.northIconOptions,
 			this.accessToken
 		);
 		mapGenerator.generate();

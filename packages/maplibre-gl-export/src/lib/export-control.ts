@@ -18,7 +18,11 @@ import {
 	UnitType,
 	type Language
 } from './interfaces';
-import { defaultAttributionStyle, defaultMarkerCirclePaint } from './map-generator-base';
+import {
+	defaultAttributionStyle,
+	defaultMarkerCirclePaint,
+	defaultNorthIconOptions
+} from './map-generator-base';
 
 /**
  * Maplibre GL Export Control.
@@ -60,13 +64,15 @@ export default class MaplibreExportControl implements IControl {
 		)[],
 		Filename: 'map',
 		markerCirclePaint: defaultMarkerCirclePaint,
-		attributionStyle: defaultAttributionStyle
+		attributionStyle: defaultAttributionStyle,
+		northIconOptions: defaultNorthIconOptions
 	};
 
 	protected MAPLIB_CSS_PREFIX: string = 'maplibregl';
 
 	constructor(options: ControlOptions) {
 		if (options) {
+			options.northIconOptions = Object.assign(defaultNorthIconOptions, options.northIconOptions);
 			this.options = Object.assign(this.options, options);
 		}
 		this.onDocumentClick = this.onDocumentClick.bind(this);
@@ -203,7 +209,8 @@ export default class MaplibreExportControl implements IControl {
 			unit,
 			filename,
 			this.options.markerCirclePaint,
-			this.options.attributionStyle
+			this.options.attributionStyle,
+			this.options.northIconOptions
 		);
 		mapGenerator.generate();
 	}

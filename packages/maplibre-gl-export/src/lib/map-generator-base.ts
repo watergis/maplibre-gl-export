@@ -42,6 +42,7 @@ import {
 	DPIType,
 	Format,
 	FormatType,
+	NorthIconOptions,
 	Size,
 	SizeType,
 	Unit,
@@ -61,6 +62,14 @@ export const defaultAttributionStyle: AttributionStyle = {
 	textHaloWidth: 0.8,
 	textColor: '#000000',
 	fallbackTextFont: ['Open Sans Regular']
+};
+
+export const defaultNorthIconOptions: NorthIconOptions = {
+	image: `<svg width="800px" height="800px" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img" class="iconify iconify--gis" preserveAspectRatio="xMidYMid meet"><path d="M47.655 1.634l-35 95c-.828 2.24 1.659 4.255 3.68 2.98l33.667-21.228l33.666 21.228c2.02 1.271 4.503-.74 3.678-2.98l-35-95C51.907.514 51.163.006 50 .008c-1.163.001-1.99.65-2.345 1.626zm-.155 14.88v57.54L19.89 91.461z" fill="none" stroke="white" stroke-width="1.5"/><path d="M47.655 1.634l-35 95c-.828 2.24 1.659 4.255 3.68 2.98l33.667-21.228l33.666 21.228c2.02 1.271 4.503-.74 3.678-2.98l-35-95C51.907.514 51.163.006 50 .008c-1.163.001-1.99.65-2.345 1.626zm-.155 14.88v57.54L19.89 91.461z" fill="#000000" fill-rule="evenodd"></path></svg>`,
+	imageName: 'gl-export-north-icon',
+	imageSizeFraction: 0.05,
+	visibility: 'visible',
+	position: 'top-right'
 };
 
 export abstract class MapGeneratorBase {
@@ -86,6 +95,8 @@ export abstract class MapGeneratorBase {
 
 	protected attributionStyle: AttributionStyle;
 
+	protected northIconOptions: NorthIconOptions;
+
 	/**
 	 * Constructor
 	 * @param map MaplibreMap object
@@ -105,7 +116,8 @@ export abstract class MapGeneratorBase {
 		markerClassName = 'maplibregl-marker',
 		markerCirclePaint = defaultMarkerCirclePaint,
 		attributionClassName = 'maplibregl-ctrl-attrib-inner',
-		attributionStyle = defaultAttributionStyle
+		attributionStyle = defaultAttributionStyle,
+		northIconOptions = defaultNorthIconOptions
 	) {
 		this.map = map;
 		this.width = size[0];
@@ -118,6 +130,7 @@ export abstract class MapGeneratorBase {
 		this.markerCirclePaint = markerCirclePaint;
 		this.attributionClassName = attributionClassName;
 		this.attributionStyle = attributionStyle;
+		this.northIconOptions = northIconOptions;
 	}
 
 	protected abstract getRenderedMap(
@@ -226,10 +239,23 @@ export abstract class MapGeneratorBase {
 		// Render map
 		let renderMap = this.getRenderedMap(container, style);
 
-		renderMap.once('idle', () => {
-			const isAttributionAdded = this.addAttributions(renderMap);
-			if (isAttributionAdded) {
-				renderMap.once('idle', () => {
+		this.addNorthIconToMap(renderMap).then(() => {
+			renderMap.once('idle', () => {
+				const isAttributionAdded = this.addAttributions(renderMap);
+				if (isAttributionAdded) {
+					renderMap.once('idle', () => {
+						renderMap = this.renderMapPost(renderMap);
+						const markers = this.getMarkers();
+						if (markers.length === 0) {
+							this.exportImage(renderMap, hidden, actualPixelRatio);
+						} else {
+							renderMap = this.renderMarkers(renderMap);
+							renderMap.once('idle', () => {
+								this.exportImage(renderMap, hidden, actualPixelRatio);
+							});
+						}
+					});
+				} else {
 					renderMap = this.renderMapPost(renderMap);
 					const markers = this.getMarkers();
 					if (markers.length === 0) {
@@ -240,19 +266,8 @@ export abstract class MapGeneratorBase {
 							this.exportImage(renderMap, hidden, actualPixelRatio);
 						});
 					}
-				});
-			} else {
-				renderMap = this.renderMapPost(renderMap);
-				const markers = this.getMarkers();
-				if (markers.length === 0) {
-					this.exportImage(renderMap, hidden, actualPixelRatio);
-				} else {
-					renderMap = this.renderMarkers(renderMap);
-					renderMap.once('idle', () => {
-						this.exportImage(renderMap, hidden, actualPixelRatio);
-					});
 				}
-			}
+			});
 		});
 	}
 
@@ -262,15 +277,148 @@ export abstract class MapGeneratorBase {
 		return tempElement.textContent || tempElement.innerText || '';
 	}
 
+	/**
+	 * Get icon width against exported map size by using fraction rate
+	 * @param renderMap Map object
+	 * @param fraction adjust icon size by using this fraction rate. Default is 8%
+	 * @returns Icon width calculated
+	 */
+	private getIconWidth(renderMap: MaplibreMap | MapboxMap, fraction: number) {
+		const containerDiv = renderMap.getContainer();
+		const width = parseInt(containerDiv.style.width.replace('px', ''));
+		return parseInt(`${width * fraction}`);
+	}
+
+	/**
+	 * Get element position's pixel values based on selected position setting
+	 * @param renderMap Map object
+	 * @param position Position of element inserted
+	 * @param offset Offset value to adjust position
+	 * @returns Pixels [width, height]
+	 */
+	private getElementPosition(
+		renderMap: MaplibreMap | MapboxMap,
+		position: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right',
+		offset = 0
+	) {
+		const containerDiv = renderMap.getContainer();
+		let width = 0;
+		let height = 0;
+
+		switch (position) {
+			case 'top-left':
+				width = 0 + offset;
+				height = 0 + offset;
+				break;
+			case 'top-right':
+				width = parseInt(containerDiv.style.width.replace('px', '')) - offset;
+				height = 0 + offset;
+				break;
+			case 'bottom-left':
+				width = 0 + offset;
+				height = parseInt(containerDiv.style.height.replace('px', '')) - offset;
+				break;
+			case 'bottom-right':
+				width = parseInt(containerDiv.style.width.replace('px', '')) - offset;
+				height = parseInt(containerDiv.style.height.replace('px', '')) - offset;
+				break;
+			default:
+				break;
+		}
+
+		const pixels = [width, height] as PointLike;
+		return pixels;
+	}
+
+	/**
+	 * Add North Icon SVG to map object
+	 * @param renderMap Map object
+	 * @returns void
+	 */
+	private addNorthIconImage(renderMap: MaplibreMap | MapboxMap) {
+		const iconSize = this.getIconWidth(renderMap, this.northIconOptions.imageSizeFraction ?? 0.08);
+		return new Promise<void>((resolve) => {
+			const svgImage = new Image(iconSize, iconSize);
+			svgImage.onload = () => {
+				if (this.northIconOptions.imageName) {
+					renderMap.addImage(this.northIconOptions.imageName, svgImage);
+				}
+				resolve();
+			};
+			function svgStringToImageSrc(svgString: string) {
+				return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgString);
+			}
+			if (this.northIconOptions.image) {
+				svgImage.src = svgStringToImageSrc(this.northIconOptions.image);
+			}
+		});
+	}
+
+	/**
+	 * Add North Icon Symbol layer to renderMap object
+	 * @param renderMap Map object
+	 * @returns
+	 */
+	private addNorthIconToMap(renderMap: MaplibreMap | MapboxMap) {
+		let visibility: 'visible' | 'none' = this.northIconOptions.visibility ?? 'visible';
+		if (renderMap.getZoom() < 2 && (this.width > this.height)) {
+			// if zoom level is less than 2, it will appear twice.
+			visibility = 'none';
+		}
+		return new Promise<void>((resolve) => {
+			this.addNorthIconImage(renderMap).then(() => {
+				const iconSize = this.getIconWidth(
+					renderMap,
+					this.northIconOptions.imageSizeFraction ?? 0.08
+				);
+				const iconOffset = iconSize * 0.8;
+				const pixels = this.getElementPosition(
+					renderMap,
+					this.northIconOptions.position ?? 'top-right',
+					iconOffset
+				);
+				const lngLat = (renderMap as MaplibreMap).unproject(pixels);
+
+				const layerId = this.northIconOptions.imageName ?? 'gl-export-north-icon';
+				renderMap.addSource(layerId, {
+					type: 'geojson',
+					data: {
+						type: 'Feature',
+						geometry: {
+							type: 'Point',
+							coordinates: [lngLat.lng, lngLat.lat]
+						},
+						properties: {}
+					}
+				});
+
+				(renderMap as MapboxMap).addLayer({
+					id: layerId,
+					source: layerId,
+					type: 'symbol',
+					layout: {
+						'icon-image': layerId,
+						'icon-size': 1.0,
+						'icon-rotate': renderMap.getBearing() * -1,
+						'icon-allow-overlap': true,
+						'icon-ignore-placement': true,
+						visibility: visibility
+					},
+					paint: {}
+				});
+				resolve();
+			});
+		});
+	}
+
 	private addAttributions(renderMap: MaplibreMap | MapboxMap) {
 		const glyphs = this.map.getStyle().glyphs;
 		// skip if glyphs is not available in style.
 		if (!glyphs) return false;
 
 		const containerDiv = renderMap.getContainer();
-		const width = parseInt(containerDiv.style.width.replace('px', '')) - 5;
-		const height = parseInt(containerDiv.style.height.replace('px', '')) - 5;
-		const pixels = [width, height] as PointLike;
+		const pixels = this.getElementPosition(renderMap, 'bottom-right', 5);
+		const width = pixels[0];
 		const lngLat = (renderMap as MaplibreMap).unproject(pixels);
 
 		const attrElements = containerDiv.getElementsByClassName(this.attributionClassName);
@@ -326,6 +474,12 @@ export abstract class MapGeneratorBase {
 				? (fontLayers[0].layout['text-font'] as string[])
 				: this.attributionStyle.fallbackTextFont;
 
+		let visibility: 'visible' | 'none' = 'visible';
+		if (renderMap.getZoom() < 2 && (this.width > this.height)) {
+			// if zoom level is less than 2, it will appear twice.
+			visibility = 'none';
+		}
+
 		(renderMap as MapboxMap).addLayer({
 			id: attributionId,
 			source: attributionId,
@@ -336,7 +490,8 @@ export abstract class MapGeneratorBase {
 				'text-max-width': parseInt(`${width / this.attributionStyle.textSize}`),
 				'text-anchor': 'bottom-right',
 				'text-justify': 'right',
-				'text-size': this.attributionStyle.textSize
+				'text-size': this.attributionStyle.textSize,
+				visibility: visibility
 			},
 			paint: {
 				'text-halo-color': this.attributionStyle.textHaloColor,

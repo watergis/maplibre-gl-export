@@ -5,6 +5,14 @@ import { PageOrientationType } from './PageOrientation';
 import { SizeType } from './Size';
 import { AttributionStyle } from './AttributionStyle';
 
+export interface NorthIconOptions {
+	image?: string;
+	imageName?: string;
+	imageSizeFraction?: number;
+	visibility?: 'visible' | 'none';
+	position?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
+}
+
 export interface ControlOptions {
 	PageSize?: SizeType;
 	PageOrientation?: PageOrientationType;
@@ -17,4 +25,5 @@ export interface ControlOptions {
 	Filename?: string;
 	markerCirclePaint?: CirclePaint;
 	attributionStyle?: AttributionStyle;
+	northIconOptions?: NorthIconOptions;
 }
