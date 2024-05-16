@@ -361,7 +361,7 @@ export abstract class MapGeneratorBase {
 	 */
 	private addNorthIconToMap(renderMap: MaplibreMap | MapboxMap) {
 		let visibility: 'visible' | 'none' = this.northIconOptions.visibility ?? 'visible';
-		if (renderMap.getZoom() < 2 && (this.width > this.height)) {
+		if (renderMap.getZoom() < 2 && this.width > this.height) {
 			// if zoom level is less than 2, it will appear twice.
 			visibility = 'none';
 		}
@@ -475,7 +475,7 @@ export abstract class MapGeneratorBase {
 				: this.attributionStyle.fallbackTextFont;
 
 		let visibility: 'visible' | 'none' = 'visible';
-		if (renderMap.getZoom() < 2 && (this.width > this.height)) {
+		if (renderMap.getZoom() < 2 && this.width > this.height) {
 			// if zoom level is less than 2, it will appear twice.
 			visibility = 'none';
 		}
