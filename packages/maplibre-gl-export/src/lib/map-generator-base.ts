@@ -453,7 +453,7 @@ export abstract class MapGeneratorBase {
 
 		if (attributions.length === 0) return false;
 
-		let attributionText = attributions.join(' | ');
+		const attributionText = attributions.join(' | ');
 
 		const attributionId = `attribution`;
 		renderMap.addSource(attributionId, {
