@@ -1,5 +1,11 @@
 # @watergis/mapbox-gl-export
 
+## 3.5.1
+
+### Patch Changes
+
+- 26a1d32: fix: It has a breaking change on attribution options. `options.attributionStyle` is changed to `options.attributionOptions.style`. add `visibility` and `position` option into `options.attributionOptions`. Due to technical issue, only `top-right` or `bottom-right` position are supported currently.
+
 ## 3.5.0
 
 ### Minor Changes
@@ -72,10 +78,10 @@
 
   ```json
   {
-    "circle-radius": 8,
-    "circle-color": "red",
-    "circle-stroke-width": 1,
-    "circle-stroke-color": "black"
+  	"circle-radius": 8,
+  	"circle-color": "red",
+  	"circle-stroke-width": 1,
+  	"circle-stroke-color": "black"
   }
   ```
 
@@ -118,8 +124,8 @@
 
   ```html
   <link
-    href="https://www.unpkg.com/@watergis/mapbox-gl-export@latest/dist/mapbox-gl-export.css"
-    rel="stylesheet"
+  	href="https://www.unpkg.com/@watergis/mapbox-gl-export@latest/dist/mapbox-gl-export.css"
+  	rel="stylesheet"
   />
   <script src="https://www.unpkg.com/@watergis/mapbox-gl-export@latest/dist/mapbox-gl-export.umd.js"></script>
   ```
