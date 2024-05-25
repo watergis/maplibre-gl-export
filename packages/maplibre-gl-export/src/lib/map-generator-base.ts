@@ -38,6 +38,7 @@ import {
 import { CirclePaint, Map as MapboxMap } from 'mapbox-gl';
 import 'js-loading-overlay';
 import {
+	AttributionOptions,
 	AttributionStyle,
 	DPIType,
 	Format,
@@ -56,12 +57,16 @@ export const defaultMarkerCirclePaint: CirclePaint = {
 	'circle-stroke-color': 'black'
 };
 
-export const defaultAttributionStyle: AttributionStyle = {
-	textSize: 16,
-	textHaloColor: '#FFFFFF',
-	textHaloWidth: 0.8,
-	textColor: '#000000',
-	fallbackTextFont: ['Open Sans Regular']
+export const defaultAttributionOptions: AttributionOptions = {
+	style: {
+		textSize: 16,
+		textHaloColor: '#FFFFFF',
+		textHaloWidth: 0.8,
+		textColor: '#000000',
+		fallbackTextFont: ['Open Sans Regular']
+	},
+	visibility: 'visible',
+	position: 'bottom-right'
 };
 
 export const defaultNorthIconOptions: NorthIconOptions = {
@@ -93,7 +98,7 @@ export abstract class MapGeneratorBase {
 
 	protected attributionClassName: string;
 
-	protected attributionStyle: AttributionStyle;
+	protected attributionOptions: AttributionOptions;
 
 	protected northIconOptions: NorthIconOptions;
 
@@ -116,7 +121,7 @@ export abstract class MapGeneratorBase {
 		markerClassName = 'maplibregl-marker',
 		markerCirclePaint = defaultMarkerCirclePaint,
 		attributionClassName = 'maplibregl-ctrl-attrib-inner',
-		attributionStyle = defaultAttributionStyle,
+		attributionOptions = defaultAttributionOptions,
 		northIconOptions = defaultNorthIconOptions
 	) {
 		this.map = map;
@@ -129,7 +134,7 @@ export abstract class MapGeneratorBase {
 		this.markerClassName = markerClassName;
 		this.markerCirclePaint = markerCirclePaint;
 		this.attributionClassName = attributionClassName;
-		this.attributionStyle = attributionStyle;
+		this.attributionOptions = attributionOptions;
 		this.northIconOptions = northIconOptions;
 	}
 
@@ -417,7 +422,8 @@ export abstract class MapGeneratorBase {
 		if (!glyphs) return false;
 
 		const containerDiv = renderMap.getContainer();
-		const pixels = this.getElementPosition(renderMap, 'bottom-right', 5);
+		const elementPosition = this.attributionOptions.position ?? 'bottom-right';
+		const pixels = this.getElementPosition(renderMap, elementPosition, 5);
 		const width = pixels[0];
 		const lngLat = (renderMap as MaplibreMap).unproject(pixels);
 
@@ -472,13 +478,15 @@ export abstract class MapGeneratorBase {
 		const font: string[] =
 			fontLayers.length > 0 && fontLayers[0].layout
 				? (fontLayers[0].layout['text-font'] as string[])
-				: this.attributionStyle.fallbackTextFont;
+				: (this.attributionOptions.style?.fallbackTextFont as string[]);
 
-		let visibility: 'visible' | 'none' = 'visible';
+		let visibility: 'visible' | 'none' = this.attributionOptions.visibility ?? 'visible';
 		if (renderMap.getZoom() < 2 && this.width > this.height) {
 			// if zoom level is less than 2, it will appear twice.
 			visibility = 'none';
 		}
+
+		const attrStyle = this.attributionOptions.style as AttributionStyle;
 
 		(renderMap as MapboxMap).addLayer({
 			id: attributionId,
@@ -487,16 +495,17 @@ export abstract class MapGeneratorBase {
 			layout: {
 				'text-field': ['get', 'attribution'],
 				'text-font': font,
-				'text-max-width': parseInt(`${width / this.attributionStyle.textSize}`),
-				'text-anchor': 'bottom-right',
-				'text-justify': 'right',
-				'text-size': this.attributionStyle.textSize,
+				'text-max-width': parseInt(`${width / attrStyle.textSize}`),
+				'text-anchor': elementPosition,
+				'text-justify': ['top-right', 'bottom-right'].includes(elementPosition) ? 'right' : 'left',
+				'text-size': attrStyle.textSize,
+				'text-allow-overlap': true,
 				visibility: visibility
 			},
 			paint: {
-				'text-halo-color': this.attributionStyle.textHaloColor,
-				'text-halo-width': this.attributionStyle.textHaloWidth,
-				'text-color': this.attributionStyle.textColor
+				'text-halo-color': attrStyle.textHaloColor,
+				'text-halo-width': attrStyle.textHaloWidth,
+				'text-color': attrStyle.textColor
 			}
 		});
 

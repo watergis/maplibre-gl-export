@@ -3,7 +3,7 @@ import 'js-loading-overlay';
 import { DPIType, Format, FormatType, Size, SizeType, Unit, UnitType } from './interfaces';
 import {
 	MapGeneratorBase,
-	defaultAttributionStyle,
+	defaultAttributionOptions,
 	defaultMarkerCirclePaint,
 	defaultNorthIconOptions
 } from './map-generator-base';
@@ -26,7 +26,7 @@ export default class MapGenerator extends MapGeneratorBase {
 		unit: UnitType = Unit.mm,
 		fileName = 'map',
 		markerCirclePaint = defaultMarkerCirclePaint,
-		attributionStyle = defaultAttributionStyle,
+		attributionOptions = defaultAttributionOptions,
 		northIconOptions = defaultNorthIconOptions
 	) {
 		super(
@@ -39,7 +39,7 @@ export default class MapGenerator extends MapGeneratorBase {
 			'maplibregl-marker',
 			markerCirclePaint,
 			'maplibregl-ctrl-attrib-inner',
-			attributionStyle,
+			attributionOptions,
 			northIconOptions
 		);
 	}

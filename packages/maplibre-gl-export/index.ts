@@ -32,6 +32,10 @@ map.addControl(
 		Crosshair: true,
 		PrintableArea: true,
 		Local: 'en',
+		attributionOptions: {
+			position: 'bottom-right',
+			visibility: 'visible'
+		},
 		northIconOptions: {
 			position: 'top-right',
 			visibility: 'visible'

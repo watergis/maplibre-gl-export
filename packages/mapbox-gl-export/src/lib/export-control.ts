@@ -39,7 +39,7 @@ export default class MapboxExportControl extends MaplibreExportControl implement
 			unit,
 			filename,
 			this.options.markerCirclePaint,
-			this.options.attributionStyle,
+			this.options.attributionOptions,
 			this.options.northIconOptions,
 			this.accessToken
 		);
