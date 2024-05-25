@@ -19,7 +19,7 @@ import {
 	type Language
 } from './interfaces';
 import {
-	defaultAttributionStyle,
+	defaultAttributionOptions,
 	defaultMarkerCirclePaint,
 	defaultNorthIconOptions
 } from './map-generator-base';
@@ -64,7 +64,7 @@ export default class MaplibreExportControl implements IControl {
 		)[],
 		Filename: 'map',
 		markerCirclePaint: defaultMarkerCirclePaint,
-		attributionStyle: defaultAttributionStyle,
+		attributionOptions: defaultAttributionOptions,
 		northIconOptions: defaultNorthIconOptions
 	};
 
@@ -72,6 +72,10 @@ export default class MaplibreExportControl implements IControl {
 
 	constructor(options: ControlOptions) {
 		if (options) {
+			options.attributionOptions = Object.assign(
+				defaultAttributionOptions,
+				options.attributionOptions
+			);
 			options.northIconOptions = Object.assign(defaultNorthIconOptions, options.northIconOptions);
 			this.options = Object.assign(this.options, options);
 		}
@@ -209,7 +213,7 @@ export default class MaplibreExportControl implements IControl {
 			unit,
 			filename,
 			this.options.markerCirclePaint,
-			this.options.attributionStyle,
+			this.options.attributionOptions,
 			this.options.northIconOptions
 		);
 		mapGenerator.generate();

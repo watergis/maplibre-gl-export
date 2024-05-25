@@ -1,7 +1,13 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { CodeBlock, RadioGroup, RadioItem, Tab, TabGroup } from '@skeletonlabs/skeleton';
-	import { AvailableLanguages, Languages } from '@watergis/maplibre-gl-export';
+	import {
+		AvailableLanguages,
+		Languages,
+		defaultAttributionOptions,
+		defaultMarkerCirclePaint,
+		defaultNorthIconOptions
+	} from '@watergis/maplibre-gl-export';
 
 	let tabs = [
 		{ label: 'Maplibre GL Export', value: 'maplibre' },
@@ -62,6 +68,9 @@
 		}
 		mapboxCdnExample = await res.text();
 	};
+
+	const northOptions = defaultNorthIconOptions;
+	northOptions.image = 'bring your own SVG string';
 
 	const parameters = [
 		{
@@ -128,41 +137,19 @@
 		},
 		{
 			name: 'markerCirclePaint',
-			default: `
-{
-	'circle-radius': 8,
-	'circle-color': 'red',
-	'circle-stroke-width': 1,
-	'circle-stroke-color': 'black'
-}
-			`,
+			default: JSON.stringify(defaultMarkerCirclePaint, null, 2),
 			description:
 				'The plugin will convert marker SVG to circle layer to be exported. Set your own circle paint property setting. As default, the following paint setting will be applied'
 		},
 		{
-			name: 'attributionStyle',
-			default: `
-{
-	textSize: 16,
-	textHaloColor: '#FFFFFF',
-	textHaloWidth: 0.8,
-	textColor: '#000000',
-	fallbackTextFont: ['Open Sans Regular']
-}`,
+			name: 'attributionOptions',
+			default: JSON.stringify(defaultAttributionOptions, null, 2),
 			description:
-				'This plugin will try to add attribution to the bottom-right of the image as a maplibre symbol layer. The default style of attribution label can be changed per your preference. For fallbackTextFont property, it will only be used when font informaiton cannot be fetched from style object. If glyphs property is not set to your style object, attribution will not be added.'
+				'This plugin will try to add attribution to the bottom-right or top-right of the image as a maplibre symbol layer. The default style of attribution label can be changed per your preference. For fallbackTextFont property, it will only be used when font informaiton cannot be fetched from style object. If glyphs property is not set to your style object, attribution will not be added. You can hide it if none is set to visibility.'
 		},
 		{
 			name: 'northIconOptions',
-			default: `
-{
-	"image": "bring your own SVG string",
-	"imageName": "gl-export-north-icon",
-	"imageSizeFraction": 0.05,
-	"visibility": "visible",
-	"position": "top-right"
-}
-			`,
+			default: JSON.stringify(northOptions, null, 2),
 			description:
 				'North icon options. It is shown at top-right of corner of exported map as default. The size of north icon is 5% of map width. You can customize icon image and other settings through this option. North icon is not rendered when zoom level is less than 2 and landscape mode since it appears twice.'
 		},
