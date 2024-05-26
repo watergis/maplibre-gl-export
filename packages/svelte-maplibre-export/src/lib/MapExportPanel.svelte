@@ -19,8 +19,12 @@
 		defaultAttributionOptions,
 		defaultMarkerCirclePaint,
 		defaultNorthIconOptions,
+		getTranslation,
+		type AttributionOptions,
 		type DPIType,
 		type FormatType,
+		type Language,
+		type NorthIconOptions,
 		type PageOrientationType,
 		type SizeType
 	} from '@watergis/maplibre-gl-export';
@@ -41,6 +45,11 @@
 	export let dpi: DPIType = DPI[96];
 	export let format: FormatType = Format.PNG;
 	export let orientation: PageOrientationType = PageOrientation.Landscape;
+	export let local: Language = 'en';
+	export let filename = 'map';
+	export let markerCirclePaint = defaultMarkerCirclePaint;
+	export let attributionOptions: AttributionOptions = defaultAttributionOptions;
+	export let northIconOptions: NorthIconOptions = defaultNorthIconOptions;
 
 	const exportMap = () => {
 		const actualPaperSize = getActualPaperSize(paperSize, orientation);
@@ -50,19 +59,24 @@
 			dpi,
 			format,
 			Unit.mm,
-			'map',
-			defaultMarkerCirclePaint,
-			defaultAttributionOptions,
-			defaultNorthIconOptions
+			filename,
+			markerCirclePaint,
+			attributionOptions,
+			northIconOptions
 		);
 		mapGenerator.generate();
+	};
+
+	const getTranslationText = () => {
+		const lang: Language = local ?? 'en';
+		return getTranslation(lang);
 	};
 </script>
 
 <div class="export-container">
 	<div class="field">
 		<!-- svelte-ignore a11y-label-has-associated-control -->
-		<label class="label">Paper Size</label>
+		<label class="label">{getTranslationText().PageSize}</label>
 		<div class="control has-icons-left">
 			<div class="select is-small is-fullwidth">
 				<select bind:value={paperSize}>
@@ -78,7 +92,7 @@
 	</div>
 	<div class="field">
 		<!-- svelte-ignore a11y-label-has-associated-control -->
-		<label class="label is-small">Page Orientation</label>
+		<label class="label is-small">{getTranslationText().PageOrientation}</label>
 		<div class="control">
 			<div class="field has-addons">
 				{#each Object.keys(PageOrientation) as key}
@@ -104,7 +118,7 @@
 	</div>
 	<div class="field">
 		<!-- svelte-ignore a11y-label-has-associated-control -->
-		<label class="label">Format</label>
+		<label class="label">{getTranslationText().Format}</label>
 		<div class="control has-icons-left">
 			<div class="select is-small is-fullwidth">
 				<select bind:value={format}>
@@ -120,7 +134,7 @@
 	</div>
 	<div class="field">
 		<!-- svelte-ignore a11y-label-has-associated-control -->
-		<label class="label">DPI</label>
+		<label class="label">{getTranslationText().DPI}</label>
 		<div class="control has-icons-left">
 			<div class="select is-small is-fullwidth">
 				<select bind:value={dpi}>
@@ -139,7 +153,7 @@
 		<span class="icon is-small">
 			<Fa icon={faDownload} size="sm" />
 		</span>
-		<span>Export</span>
+		<span>{getTranslationText().Generate}</span>
 	</button>
 </div>
 

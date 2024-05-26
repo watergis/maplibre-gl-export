@@ -55,8 +55,14 @@
 		Format,
 		PageOrientation,
 		Size,
+		defaultAttributionOptions,
+		defaultMarkerCirclePaint,
+		defaultNorthIconOptions,
+		type AttributionOptions,
 		type DPIType,
 		type FormatType,
+		type Language,
+		type NorthIconOptions,
 		type PageOrientationType,
 		type SizeType
 	} from '@watergis/maplibre-gl-export';
@@ -85,6 +91,11 @@
 	export let dpi: DPIType = DPI[96];
 	export let format: FormatType = Format.PNG;
 	export let orientation: PageOrientationType = PageOrientation.Landscape;
+	export let local: Language = 'en';
+	export let filename = 'map';
+	export let markerCirclePaint = defaultMarkerCirclePaint;
+	export let attributionOptions: AttributionOptions = defaultAttributionOptions;
+	export let northIconOptions: NorthIconOptions = defaultNorthIconOptions;
 
 	$: paperSize, updatePrintableArea();
 	$: orientation, updatePrintableArea();
@@ -178,7 +189,18 @@
 		>
 			<Fa icon={faXmark} />
 		</span>
-		<MapExportPanel bind:map bind:paperSize bind:format bind:dpi bind:orientation />
+		<MapExportPanel
+			bind:map
+			bind:paperSize
+			bind:format
+			bind:dpi
+			bind:orientation
+			bind:local
+			bind:filename
+			bind:markerCirclePaint
+			bind:attributionOptions
+			bind:northIconOptions
+		/>
 	</nav>
 {/if}
 
