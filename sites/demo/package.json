@@ -12,7 +12,7 @@
 		"format": "prettier --write ."
 	},
 	"devDependencies": {
-		"@skeletonlabs/skeleton": "2.10.0",
+		"@skeletonlabs/skeleton": "2.10.1",
 		"@skeletonlabs/tw-plugin": "0.4.0",
 		"@sveltejs/adapter-auto": "^3.0.0",
 		"@sveltejs/kit": "^2.0.0",
@@ -21,7 +21,7 @@
 		"@tailwindcss/typography": "0.5.13",
 		"@types/eslint": "^8.56.0",
 		"@types/mapbox-gl": "^3.1.0",
-		"@types/node": "20.12.12",
+		"@types/node": "20.14.5",
 		"@typescript-eslint/eslint-plugin": "^7.0.0",
 		"@typescript-eslint/parser": "^7.0.0",
 		"@watergis/mapbox-gl-export": "workspace:^",
@@ -38,7 +38,7 @@
 		"prettier-plugin-svelte": "^3.1.2",
 		"svelte": "^4.2.7",
 		"svelte-check": "^3.6.0",
-		"tailwindcss": "3.4.3",
+		"tailwindcss": "3.4.4",
 		"tslib": "^2.4.1",
 		"typescript": "^5.0.0",
 		"vite": "^5.0.3",
