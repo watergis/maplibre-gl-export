@@ -244,11 +244,24 @@ export abstract class MapGeneratorBase {
 		// Render map
 		let renderMap = this.getRenderedMap(container, style);
 
-		this.addNorthIconToMap(renderMap).then(() => {
-			renderMap.once('idle', () => {
-				const isAttributionAdded = this.addAttributions(renderMap);
-				if (isAttributionAdded) {
-					renderMap.once('idle', () => {
+		renderMap.on('load', () => {
+			this.addNorthIconToMap(renderMap).then(() => {
+				renderMap.once('idle', () => {
+					const isAttributionAdded = this.addAttributions(renderMap);
+					if (isAttributionAdded) {
+						renderMap.once('idle', () => {
+							renderMap = this.renderMapPost(renderMap);
+							const markers = this.getMarkers();
+							if (markers.length === 0) {
+								this.exportImage(renderMap, hidden, actualPixelRatio);
+							} else {
+								renderMap = this.renderMarkers(renderMap);
+								renderMap.once('idle', () => {
+									this.exportImage(renderMap, hidden, actualPixelRatio);
+								});
+							}
+						});
+					} else {
 						renderMap = this.renderMapPost(renderMap);
 						const markers = this.getMarkers();
 						if (markers.length === 0) {
@@ -259,19 +272,8 @@ export abstract class MapGeneratorBase {
 								this.exportImage(renderMap, hidden, actualPixelRatio);
 							});
 						}
-					});
-				} else {
-					renderMap = this.renderMapPost(renderMap);
-					const markers = this.getMarkers();
-					if (markers.length === 0) {
-						this.exportImage(renderMap, hidden, actualPixelRatio);
-					} else {
-						renderMap = this.renderMarkers(renderMap);
-						renderMap.once('idle', () => {
-							this.exportImage(renderMap, hidden, actualPixelRatio);
-						});
 					}
-				}
+				});
 			});
 		});
 	}
