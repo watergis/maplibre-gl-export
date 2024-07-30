@@ -1,5 +1,11 @@
 # @watergis/mapbox-gl-export
 
+## 3.5.2
+
+### Patch Changes
+
+- b7a4bff: Fix an error: Style is not done loading
+
 ## 3.5.1
 
 ### Patch Changes
