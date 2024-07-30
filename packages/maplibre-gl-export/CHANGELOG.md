@@ -1,5 +1,11 @@
 # @watergis/maplibre-gl-export
 
+## 3.8.2
+
+### Patch Changes
+
+- b7a4bff: Fix an error: Style is not done loading
+
 ## 3.8.1
 
 ### Patch Changes
