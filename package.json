@@ -23,7 +23,7 @@
     "@changesets/cli": "^2.27.1",
     "lefthook": "^1.6.5"
   },
-  "packageManager": "pnpm@9.7.0",
+  "packageManager": "pnpm@9.7.1",
   "engines": {
     "pnpm": "^9.0.0"
   },
