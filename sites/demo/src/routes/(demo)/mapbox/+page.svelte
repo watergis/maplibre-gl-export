@@ -47,7 +47,7 @@
 		mapboxgl.accessToken = PUBLIC_MAPBOX_ACCESSTOKEN;
 		$mapStore = new Map({
 			container: 'map',
-			style: 'mapbox://styles/mapbox/streets-v11',
+			style: 'mapbox://styles/mapbox/standard',
 			// style: 'https://narwassco.github.io/mapbox-stylefiles/unvt/style.json',
 			center: [0, 0],
 			zoom: 1,

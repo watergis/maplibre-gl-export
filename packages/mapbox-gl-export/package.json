@@ -2,6 +2,7 @@
 	"name": "@watergis/mapbox-gl-export",
 	"version": "3.5.2",
 	"description": "This module adds control which can export PDF and images.",
+	"type": "module",
 	"main": "dist/mapbox-gl-export.umd.js",
 	"types": "./dist/types/index.d.ts",
 	"module": "dist/mapbox-gl-export.es.js",
@@ -50,26 +51,27 @@
 	"homepage": "https://github.com/watergis/maplibre-gl-export#readme",
 	"devDependencies": {
 		"@types/geojson": "^7946.0.14",
-		"@types/mapbox-gl": "^3.1.0",
-		"@types/node": "^20.11.25",
-		"@typescript-eslint/eslint-plugin": "^7.1.1",
-		"@typescript-eslint/parser": "^7.1.1",
+		"@types/mapbox-gl": "^3.4.0",
+		"@types/node": "^22.5.0",
+		"@typescript-eslint/eslint-plugin": "^8.2.0",
+		"@typescript-eslint/parser": "^8.2.0",
 		"@watergis/maplibre-gl-export": "workspace:^",
-		"autoprefixer": "^10.4.18",
-		"eslint": "^8.57.0",
+		"autoprefixer": "^10.4.20",
+		"eslint": "^9.9.1",
 		"eslint-config-prettier": "^9.1.0",
 		"eslint-plugin-import": "^2.29.1",
+		"globals": "^15.9.0",
 		"path": "^0.12.7",
-		"postcss": "^8.4.35",
+		"postcss": "^8.4.41",
 		"postcss-cli": "^11.0.0",
-		"prettier": "^3.2.5",
-		"sass": "^1.71.1",
-		"sass-loader": "^14.1.1",
-		"typescript": "^5.4.2",
-		"vite": "^5.1.5"
+		"prettier": "^3.3.3",
+		"sass": "^1.77.8",
+		"sass-loader": "^16.0.1",
+		"typescript": "^5.5.4",
+		"vite": "^5.4.2"
 	},
 	"dependencies": {
 		"js-loading-overlay": "^1.2.0",
-		"mapbox-gl": "^3.2.0"
+		"mapbox-gl": "^3.6.0"
 	}
 }

@@ -54,7 +54,7 @@
 			// center: [35.87063, -1.08551],
 			// zoom: 12,
 			// terrain testing with Bing aerial
-			style: 'https://unpkg.com/@undp-data/style@latest/dist/aerialstyle.json',
+			style: 'https://narwassco.github.io/mapbox-stylefiles/unvt/style-aerial.json',
 			center: [0, 0],
 			zoom: 1,
 			hash: true
