@@ -1,5 +1,11 @@
 # @watergis/mapbox-gl-export
 
+## 3.5.3
+
+### Patch Changes
+
+- 5a45f61: chore: updated all dependencies of mapbox-gl-export and maplibre-gl-export (particularly for eslint v9)
+
 ## 3.5.2
 
 ### Patch Changes
