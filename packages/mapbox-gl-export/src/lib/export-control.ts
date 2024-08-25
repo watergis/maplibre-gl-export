@@ -14,6 +14,8 @@ import MapGenerator from './map-generator';
  * Mapbox GL Export Control.
  * @param {Object} targets - Object of layer.id and title
  */
+// eslint-disable-next-line
+// @ts-ignore
 export default class MapboxExportControl extends MaplibreExportControl implements IControl {
 	private accessToken: string | undefined;
 
@@ -23,6 +25,8 @@ export default class MapboxExportControl extends MaplibreExportControl implement
 		this.accessToken = options.accessToken;
 	}
 
+	// eslint-disable-next-line
+	// @ts-ignore
 	protected generateMap(
 		map: MapboxMap,
 		size: SizeType,

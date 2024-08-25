@@ -1,4 +1,4 @@
-import mapboxgl, { accessToken, Map as MapboxMap } from 'mapbox-gl';
+import mapboxgl, { Map as MapboxMap } from 'mapbox-gl';
 import 'js-loading-overlay';
 import {
 	defaultAttributionOptions,
@@ -39,6 +39,8 @@ export default class MapGenerator extends MapGeneratorBase {
 		accesstoken?: string
 	) {
 		super(
+			// eslint-disable-next-line
+			// @ts-ignore
 			map,
 			size,
 			dpi,
@@ -54,12 +56,41 @@ export default class MapGenerator extends MapGeneratorBase {
 		this.accesstoken = accesstoken;
 	}
 
+	/**
+	 * This function is required to solve an error of Converting circular structure to JSON in mapbox
+	 */
+	private stringify(obj) {
+		let cache = [];
+		const str = JSON.stringify(obj, function (key, value) {
+			if (typeof value === 'object' && value !== null) {
+				// eslint-disable-next-line
+				// @ts-ignore
+				if (cache.indexOf(value) !== -1) {
+					// Circular reference found, discard key
+					return;
+				}
+				// Store value in our collection
+				// eslint-disable-next-line
+				// @ts-ignore
+				cache.push(value);
+			}
+			return value;
+		});
+		// eslint-disable-next-line
+		// @ts-ignore
+		cache = null; // reset the cache
+		return str;
+	}
+
+	// eslint-disable-next-line
+	// @ts-ignore
 	protected getRenderedMap(container: HTMLElement, style: mapboxgl.Style) {
+		const s = this.stringify(style);
 		// Render map
 		const renderMap = new MapboxMap({
-			accessToken: this.accesstoken || accessToken,
+			accessToken: this.accesstoken || mapboxgl.accessToken,
 			container,
-			style,
+			style: JSON.parse(s),
 			center: this.map.getCenter(),
 			zoom: this.map.getZoom(),
 			bearing: this.map.getBearing(),
