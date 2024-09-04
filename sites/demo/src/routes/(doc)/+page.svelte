@@ -145,7 +145,7 @@
 			name: 'attributionOptions',
 			default: JSON.stringify(defaultAttributionOptions, null, 2),
 			description:
-				'This plugin will try to add attribution to the bottom-right or top-right of the image as a maplibre symbol layer. The default style of attribution label can be changed per your preference. For fallbackTextFont property, it will only be used when font informaiton cannot be fetched from style object. If glyphs property is not set to your style object, attribution will not be added. You can hide it if none is set to visibility.'
+				'This plugin will try to add attribution to the bottom-right or top-right of the image as a maplibre symbol layer. The default style of attribution label can be changed per your preference. For fallbackTextFont property, it will only be used when font information cannot be fetched from style object. If glyphs property is not set to your style object, attribution will not be added. You can hide it if none is set to visibility.'
 		},
 		{
 			name: 'northIconOptions',
@@ -334,7 +334,7 @@ ${
 		<h3 class="h3 pt-6">Parameters</h3>
 
 		<p>
-			The first argment of the constructor can accept the various parameters to customize your own
+			The first argument of the constructor can accept the various parameters to customize your own
 			settings.
 		</p>
 

@@ -7,7 +7,7 @@ This document contains a set of guidelines to help developers during the contrib
 ### Download and install dependencies
 
 ```shell
-git close git@github.com:watergis/maplibre-gl-export.git
+git clone git@github.com:watergis/maplibre-gl-export.git
 cd maplibre-gl-export
 pnpm i
 ```
@@ -20,7 +20,7 @@ pnpm lefthook install
 
 ### Run locally
 
-- mapblire-gl-export
+- maplibre-gl-export
 
 ```shell
 cd packages/maplibre-gl-export
@@ -36,7 +36,7 @@ pnpm dev
 
 Note. Most of common features are imported from `maplibre-gl-export` plugin
 
-- Demo ducumentaiton
+- Demo documentation
 
 ```shell
 # build maplibre-gl-export and mapbox-gl-export at the root folder of the repository

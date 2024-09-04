@@ -79,7 +79,7 @@
 ### Patch Changes
 
 - 1a9b3d8: fix: use local language name for Translation object
-- 64d39b0: refactor: export AvailableLanguages as an array from mapblire-gl-export
+- 64d39b0: refactor: export AvailableLanguages as an array from maplibre-gl-export
 - a86c079: fix: add LanguageCode in Translation interface
 
 ## 3.1.0

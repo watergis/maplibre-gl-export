@@ -23,7 +23,7 @@ Select a plugin related to this PR.
 <!-- ignore-task-list-start -->
 - [ ] Code is up-to-date with the `main` branch
 - [ ] No lint errors after `pnpm lint`
-- [ ] Make sure all the exsiting features working well
+- [ ] Make sure all the existing features working well
 - [ ] Make sure a changeset file is added if your PR changes package code
 <!-- ignore-task-list-end -->
 
