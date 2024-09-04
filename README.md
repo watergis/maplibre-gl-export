@@ -1,4 +1,4 @@
-# malibre-gl-export
+# maplibre-gl-export
 
 ![License](https://img.shields.io/github/license/watergis/maplibre-gl-export)
 ![build](https://github.com/watergis/maplibre-gl-export/workflows/build/badge.svg)

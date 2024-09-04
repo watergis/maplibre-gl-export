@@ -106,7 +106,7 @@ export abstract class MapGeneratorBase {
 	 * Constructor
 	 * @param map MaplibreMap object
 	 * @param size layout size. default is A4
-	 * @param dpi dpi value. deafult is 300
+	 * @param dpi dpi value. default is 300
 	 * @param format image format. default is PNG
 	 * @param unit length unit. default is mm
 	 * @param fileName file name. default is 'map'

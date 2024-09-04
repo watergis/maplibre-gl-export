@@ -21,7 +21,7 @@ export default class MapGenerator extends MapGeneratorBase {
 	 * Constructor
 	 * @param map MapboxMap object
 	 * @param size layout size. default is A4
-	 * @param dpi dpi value. deafult is 300
+	 * @param dpi dpi value. default is 300
 	 * @param format image format. default is PNG
 	 * @param unit length unit. default is mm
 	 * @param fileName file name. default is 'map'
@@ -99,7 +99,7 @@ export default class MapGenerator extends MapGeneratorBase {
 			preserveDrawingBuffer: true,
 			fadeDuration: 0,
 			// attributionControl: false,
-			// hack to read transfrom request callback function
+			// hack to read transform request callback function
 			// eslint-disable-next-line
 			// @ts-ignore
 			transformRequest: (this.map as unknown)._requestManager._transformRequestFn
