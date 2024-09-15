@@ -1,7 +1,7 @@
 # maplibre-gl-export
 
 ![License](https://img.shields.io/github/license/watergis/maplibre-gl-export)
-![build](https://github.com/watergis/maplibre-gl-export/workflows/build/badge.svg)
+[![build](https://img.shields.io/github/actions/workflow/status/watergis/maplibre-gl-export/build.yml)](https://github.com/watergis/maplibre-gl-export/actions/workflows/build.yml)
 [![Netlify Status](https://api.netlify.com/api/v1/badges/2ca781c3-2680-4c17-9219-4992c1f2a44e/deploy-status)](https://app.netlify.com/sites/maplibre-gl-export/deploys)
 ![GitHub repo size](https://img.shields.io/github/repo-size/watergis/maplibre-gl-export)
 
