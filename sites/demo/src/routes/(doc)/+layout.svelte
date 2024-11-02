@@ -24,7 +24,12 @@
 	hljs.registerLanguage('shell', shell);
 	storeHighlightJs.set(hljs);
 
-	export let data: PageData;
+	interface Props {
+		data: PageData;
+		children?: import('svelte').Snippet;
+	}
+
+	let { data, children }: Props = $props();
 
 	let title = 'Maplibre/Mapbox GL Export';
 
@@ -55,12 +60,12 @@
 
 <!-- App Shell -->
 <AppShell>
-	<svelte:fragment slot="header">
+	{#snippet header()}
 		<!-- App Bar -->
 		<AppBar>
-			<svelte:fragment slot="lead">
+			{#snippet lead()}
 				<div class="flex items-center">
-					<button class="md:hidden btn btn-sm mr-4" on:click={drawerOpen}>
+					<button class="md:hidden btn btn-sm mr-4" onclick={drawerOpen}>
 						<span>
 							<svg viewBox="0 0 100 80" class="fill-token w-4 h-4">
 								<rect width="100" height="20" />
@@ -71,8 +76,8 @@
 					</button>
 					<strong class="text-xl uppercase">{title}</strong>
 				</div>
-			</svelte:fragment>
-			<svelte:fragment slot="trail">
+			{/snippet}
+			{#snippet trail()}
 				<div class="hidden md:inline-block">
 					<a
 						class="btn btn-sm variant-ghost-surface"
@@ -91,9 +96,9 @@
 						GitHub
 					</a>
 				</div>
-			</svelte:fragment>
+			{/snippet}
 		</AppBar>
-	</svelte:fragment>
+	{/snippet}
 
 	<Drawer>
 		<h2 class="p-4">{title}</h2>
@@ -105,9 +110,9 @@
 		<p class="px-8">The website content is licensed CC BY NC SA 4.0</p>
 	</Drawer>
 
-	<slot />
+	{@render children?.()}
 
-	<svelte:fragment slot="footer">
+	{#snippet footer()}
 		<div class="space-y-2 py-4">
 			<div class="flex justify-center item-center">
 				<span class="pr-2">Light/Dark mode switch</span>
@@ -117,5 +122,5 @@
 			<p class="flex justify-center space-x-2">The source code is licensed MIT.</p>
 			<p class="flex justify-center space-x-2">The website content is licensed CC BY NC SA 4.0.</p>
 		</div>
-	</svelte:fragment>
+	{/snippet}
 </AppShell>

@@ -1,4 +1,4 @@
-<script context="module" lang="ts">
+<script module lang="ts">
 	import type { ControlPosition, IControl } from 'maplibre-gl';
 
 	export class LanguageControl implements IControl {
@@ -43,12 +43,16 @@
 
 	const dispatch = createEventDispatcher();
 
-	export let map: MaplibreMap | MapboxMap;
-	export let language: Language = 'en';
-	export let position: ControlPosition = 'top-right';
+	interface Props {
+		map: MaplibreMap | MapboxMap;
+		language?: Language;
+		position?: ControlPosition;
+	}
+
+	let { map, language = $bindable('en'), position = 'top-right' }: Props = $props();
 
 	let control: LanguageControl | undefined;
-	let controlGroup: HTMLDivElement;
+	let controlGroup: HTMLDivElement = $state();
 
 	const handleClickLanguage = (lang: Language) => {
 		language = lang;
@@ -77,7 +81,7 @@
 	{#each AvailableLanguages as lang}
 		<button
 			class="lang-button {language === lang ? 'selected' : ''}"
-			on:click={() => {
+			onclick={() => {
 				handleClickLanguage(lang);
 			}}
 		>
