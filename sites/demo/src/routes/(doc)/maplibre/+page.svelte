@@ -5,29 +5,26 @@
 		Size,
 		PageOrientation,
 		Format,
-		DPI
+		DPI,
+		type Language
 	} from '@watergis/maplibre-gl-export';
 	import { Protocol } from 'pmtiles';
-	import { getContext, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 	import '@watergis/maplibre-gl-export/dist/maplibre-gl-export.css';
 	import 'maplibre-gl/dist/maplibre-gl.css';
-	import {
-		MAPSTORE_CONTEXT_KEY,
-		type LanguageStore,
-		type MapStore,
-		LANGUAGE_CONTEXT_KEY
-	} from '$lib/stores';
+	import LanguageSelector from '$lib/LanguageSelector.svelte';
 
-	const mapStore: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
-	const languageStore: LanguageStore = getContext(LANGUAGE_CONTEXT_KEY);
+	let map: Map | undefined = $state();
+	let language: Language = $state('en');
+	let mapContainer: HTMLDivElement | undefined = $state();
 
 	let exportControl: MaplibreExportControl;
 
 	const initExportControl = () => {
-		if (!$mapStore) return;
-		if (!$languageStore) return;
+		if (!map) return;
+		if (!language) return;
 		if (exportControl) {
-			$mapStore.removeControl(exportControl);
+			map.removeControl(exportControl);
 		}
 
 		exportControl = new MaplibreExportControl({
@@ -37,18 +34,19 @@
 			DPI: DPI[96],
 			Crosshair: true,
 			PrintableArea: true,
-			Local: $languageStore
+			Local: language
 		});
 
-		$mapStore.addControl(exportControl, 'top-right');
+		map.addControl(exportControl, 'top-right');
 	};
 
 	onMount(() => {
+		if (!mapContainer) return;
 		const protocol = new Protocol();
 		addProtocol('pmtiles', protocol.tile);
 
-		$mapStore = new Map({
-			container: 'map',
+		map = new Map({
+			container: mapContainer,
 			// narok vector style
 			// style: 'https://narwassco.github.io/mapbox-stylefiles/unvt/style.json',
 			// center: [35.87063, -1.08551],
@@ -60,14 +58,14 @@
 			hash: true
 		});
 
-		$mapStore.addControl(new NavigationControl({ visualizePitch: true }), 'bottom-right');
+		map.addControl(new NavigationControl({ visualizePitch: true }), 'bottom-right');
 
-		new Marker().setLngLat([37.30467, -0.15943]).addTo($mapStore);
-		new Marker().setLngLat([30.0824, -1.9385]).addTo($mapStore);
+		new Marker().setLngLat([37.30467, -0.15943]).addTo(map);
+		new Marker().setLngLat([30.0824, -1.9385]).addTo(map);
 
-		$mapStore.once('load', () => {
-			if ($mapStore.getSource('terrarium')) {
-				($mapStore as Map).addControl(
+		map.once('load', () => {
+			if (map?.getSource('terrarium')) {
+				(map as Map).addControl(
 					new TerrainControl({
 						source: 'terrarium',
 						exaggeration: 1
@@ -75,26 +73,28 @@
 					'bottom-right'
 				);
 
-				$mapStore.setMaxPitch(85);
+				map.setMaxPitch(85);
 			}
 		});
 
 		initExportControl();
+	});
 
-		languageStore.subscribe(() => {
-			initExportControl();
-		});
+	$effect(() => {
+		initExportControl();
 	});
 </script>
 
-<div id="map"></div>
+<div class="map" bind:this={mapContainer}></div>
+
+{#if map}
+	<LanguageSelector {map} bind:language position="bottom-left" />
+{/if}
 
 <style lang="scss">
-	#map {
-		position: absolute;
-		top: 0;
-		bottom: 0;
+	.map {
+		position: relative;
 		width: 100%;
-		z-index: 10;
+		height: 100%;
 	}
 </style>

@@ -206,12 +206,7 @@
 
 			<h3 class="h3 pt-6 pb-4">Demo</h3>
 
-			<a
-				class="btn variant-filled-primary capitalize"
-				href="/{tabSet}?language={selectedLanguage}"
-				target="_blank"
-				rel="noreferrer"
-			>
+			<a class="btn variant-filled-primary capitalize" href="/{tabSet}?language={selectedLanguage}">
 				Open {tabSet} DEMO
 			</a>
 		</div>

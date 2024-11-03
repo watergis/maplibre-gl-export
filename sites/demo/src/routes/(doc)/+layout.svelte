@@ -74,10 +74,13 @@
 							</svg>
 						</span>
 					</button>
-					<strong class="text-xl uppercase">{title}</strong>
+					<a href="/"><strong class="text-xl uppercase">{title}</strong></a>
 				</div>
 			{/snippet}
 			{#snippet trail()}
+				<div class="hidden md:inline-block">
+					<LightSwitch />
+				</div>
 				<div class="hidden md:inline-block">
 					<a
 						class="btn btn-sm variant-ghost-surface"
@@ -105,7 +108,7 @@
 		<hr />
 		<Navigation />
 		<hr />
-		<p class="px-8">Maintained by JinIgarashi</p>
+		<p class="px-8">©2024 JinIgarashi</p>
 		<p class="px-8">The source code is licensed MIT</p>
 		<p class="px-8">The website content is licensed CC BY NC SA 4.0</p>
 	</Drawer>
@@ -114,13 +117,7 @@
 
 	{#snippet footer()}
 		<div class="space-y-2 py-4">
-			<div class="flex justify-center item-center">
-				<span class="pr-2">Light/Dark mode switch</span>
-				<span><LightSwitch /></span>
-			</div>
-			<p class="flex justify-center space-x-2">Maplibre/Mapbox GL Export by JinIgarashi.</p>
-			<p class="flex justify-center space-x-2">The source code is licensed MIT.</p>
-			<p class="flex justify-center space-x-2">The website content is licensed CC BY NC SA 4.0.</p>
+			<p class="flex justify-center space-x-2">©2024 JinIgarashi</p>
 		</div>
 	{/snippet}
 </AppShell>
