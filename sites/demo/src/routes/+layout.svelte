@@ -1,5 +1,5 @@
 <script lang="ts">
-	import '../../app.postcss';
+	import '../app.postcss';
 	import { AppShell, AppBar, LightSwitch } from '@skeletonlabs/skeleton';
 	import { autoModeWatcher } from '@skeletonlabs/skeleton';
 
