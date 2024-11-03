@@ -87,7 +87,7 @@
 	});
 </script>
 
-<div id="map" />
+<div id="map"></div>
 
 <style lang="scss">
 	#map {

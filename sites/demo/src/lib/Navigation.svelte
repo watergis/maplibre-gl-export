@@ -12,15 +12,15 @@
 
 <nav class="list-nav p-4">
 	<ul>
-		<li><a href="/" on:click={drawerClose}>Homepage</a></li>
+		<li><a href="/" onclick={drawerClose}>Homepage</a></li>
 		<li>
-			<a href="https://twitter.com/j_igarashi" target="_blank" on:click={drawerClose}> Twitter </a>
+			<a href="https://twitter.com/j_igarashi" target="_blank" onclick={drawerClose}> Twitter </a>
 		</li>
 		<li>
 			<a
 				href="https://github.com/watergis/maplibre-gl-export"
 				target="_blank"
-				on:click={drawerClose}
+				onclick={drawerClose}
 			>
 				GitHub
 			</a>

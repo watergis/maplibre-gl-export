@@ -9,6 +9,11 @@
 	import LanguageSelector from '$lib/LanguageSelector.svelte';
 	import { page } from '$app/stores';
 	import type { Language } from '@watergis/maplibre-gl-export';
+	interface Props {
+		children?: import('svelte').Snippet;
+	}
+
+	let { children }: Props = $props();
 
 	const mapStore = createMapStore();
 	setContext(MAPSTORE_CONTEXT_KEY, mapStore);
@@ -44,7 +49,7 @@
 	title="Fork me on GitHub">Fork me on GitHub</a
 >
 
-<slot />
+{@render children?.()}
 
 {#if $mapStore}
 	<LanguageSelector bind:map={$mapStore} bind:language={$languageStore} position="bottom-left" />

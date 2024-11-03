@@ -13,27 +13,28 @@
 		{ label: 'Maplibre GL Export', value: 'maplibre' },
 		{ label: 'Mapbox GL Export', value: 'mapbox' }
 	];
-	let tabSet: string = tabs[0].value;
+	let tabSet: string = $state(tabs[0].value);
 
 	let imprtTypeTabs = [
 		{ label: 'NPM', value: 'npm' },
 		{ label: 'CDN', value: 'cdn' }
 	];
-	let importTypeTabSet: string = imprtTypeTabs[0].value;
+	let importTypeTabSet: string = $state(imprtTypeTabs[0].value);
 
-	let maplibreExportVersion = 'latest';
-	let mapboxExportVersion = 'latest';
-	let maplibreCdnExample = '';
-	let mapboxCdnExample = '';
+	let maplibreExportVersion = $state('latest');
+	let mapboxExportVersion = $state('latest');
+	let maplibreCdnExample = $state('');
+	let mapboxCdnExample = $state('');
 
-	let selectedLanguage = 'en';
-	let mapboxToken = 'Your access token';
-	let packageManager = 'npm';
+	let selectedLanguage = $state('en');
+	let mapboxToken = $state('Your access token');
+	let packageManager = $state('npm');
 
-	$: styleUrl =
+	let styleUrl = $derived(
 		tabSet === 'maplibre'
 			? 'https://demotiles.maplibre.org/style.json'
-			: 'mapbox://styles/mapbox/streets-v11';
+			: 'mapbox://styles/mapbox/streets-v11'
+	);
 
 	const getMaplibreExportVersion = async () => {
 		const res = await fetch('https://registry.npmjs.org/@watergis/maplibre-gl-export/latest');
