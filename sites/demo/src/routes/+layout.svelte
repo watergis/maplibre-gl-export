@@ -44,7 +44,7 @@
 		drawerStore.close();
 	};
 
-	onMount(() => {
+	$effect(() => {
 		autoModeWatcher();
 	});
 </script>
