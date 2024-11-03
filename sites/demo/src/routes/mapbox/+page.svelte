@@ -5,29 +5,27 @@
 		Size,
 		PageOrientation,
 		Format,
-		DPI
+		DPI,
+		type Language
 	} from '@watergis/mapbox-gl-export';
-	import { getContext, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 	import '@watergis/mapbox-gl-export/dist/mapbox-gl-export.css';
 	import { PUBLIC_MAPBOX_ACCESSTOKEN } from '$env/static/public';
 	import 'mapbox-gl/dist/mapbox-gl.css';
-	import {
-		MAPSTORE_CONTEXT_KEY,
-		type LanguageStore,
-		type MapStore,
-		LANGUAGE_CONTEXT_KEY
-	} from '$lib/stores';
+	import LanguageSelector from '$lib/LanguageSelector.svelte';
+	import { page } from '$app/stores';
 
-	const mapStore: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
-	const languageStore: LanguageStore = getContext(LANGUAGE_CONTEXT_KEY);
+	let map: Map | undefined = $state();
+	let language: Language = $state(($page.url.searchParams.get('language') as Language) ?? 'en');
+	let mapContainer: HTMLDivElement | undefined = $state();
 
 	let exportControl: MapboxExportControl;
 
 	const initExportControl = () => {
-		if (!$mapStore) return;
-		if (!$languageStore) return;
+		if (!map) return;
+		if (!language) return;
 		if (exportControl) {
-			$mapStore.removeControl(exportControl);
+			map.removeControl(exportControl);
 		}
 
 		exportControl = new MapboxExportControl({
@@ -37,16 +35,17 @@
 			DPI: DPI[96],
 			Crosshair: true,
 			PrintableArea: true,
-			Local: $languageStore
+			Local: language
 		});
 
-		$mapStore.addControl(exportControl, 'top-right');
+		map.addControl(exportControl, 'top-right');
 	};
 
 	onMount(() => {
+		if (!mapContainer) return;
 		mapboxgl.accessToken = PUBLIC_MAPBOX_ACCESSTOKEN;
-		$mapStore = new Map({
-			container: 'map',
+		map = new Map({
+			container: mapContainer,
 			style: 'mapbox://styles/mapbox/standard',
 			// style: 'https://narwassco.github.io/mapbox-stylefiles/unvt/style.json',
 			center: [0, 0],
@@ -55,27 +54,30 @@
 			accessToken: PUBLIC_MAPBOX_ACCESSTOKEN
 		});
 
-		($mapStore as Map).addControl(new NavigationControl(), 'bottom-right');
+		(map as Map).addControl(new NavigationControl(), 'bottom-right');
 
-		new Marker().setLngLat([37.30467, -0.15943]).addTo($mapStore);
-		new Marker().setLngLat([30.0824, -1.9385]).addTo($mapStore);
+		new Marker().setLngLat([37.30467, -0.15943]).addTo(map);
+		new Marker().setLngLat([30.0824, -1.9385]).addTo(map);
 
 		initExportControl();
-
-		languageStore.subscribe(() => {
-			initExportControl();
-		});
 	});
+
+	const onLanguageChange = (lang: Language) => {
+		language = lang;
+		initExportControl();
+	};
 </script>
 
-<div id="map"></div>
+<div class="map" bind:this={mapContainer}></div>
+
+{#if map}
+	<LanguageSelector {map} bind:language position="bottom-left" change={onLanguageChange} />
+{/if}
 
 <style lang="scss">
-	#map {
-		position: absolute;
-		top: 0;
-		bottom: 0;
+	.map {
+		position: relative;
 		width: 100%;
-		z-index: 10;
+		height: 100%;
 	}
 </style>

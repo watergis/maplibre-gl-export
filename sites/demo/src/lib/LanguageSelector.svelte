@@ -39,26 +39,25 @@
 	import { type Language, getTranslation, AvailableLanguages } from '@watergis/maplibre-gl-export';
 	import type { Map as MapboxMap } from 'mapbox-gl';
 	import type { Map as MaplibreMap } from 'maplibre-gl';
-	import { createEventDispatcher, onDestroy, onMount } from 'svelte';
-
-	const dispatch = createEventDispatcher();
+	import { onDestroy, onMount } from 'svelte';
 
 	interface Props {
 		map: MaplibreMap | MapboxMap;
 		language?: Language;
 		position?: ControlPosition;
+		change?: (language: Language) => void;
 	}
 
-	let { map, language = $bindable('en'), position = 'top-right' }: Props = $props();
+	let { map, language = $bindable('en'), position = 'top-right', change }: Props = $props();
 
 	let control: LanguageControl | undefined;
 	let controlGroup: HTMLDivElement = $state();
 
 	const handleClickLanguage = (lang: Language) => {
 		language = lang;
-		dispatch('change', {
-			language
-		});
+		if (change) {
+			change(language);
+		}
 	};
 
 	onMount(() => {
@@ -80,7 +79,7 @@
 >
 	{#each AvailableLanguages as lang}
 		<button
-			class="lang-button {language === lang ? 'selected' : ''}"
+			class="btn bg-gray-300 hover:bg-gray-400 text-gray-800 {language === lang ? 'selected' : ''}"
 			onclick={() => {
 				handleClickLanguage(lang);
 			}}
@@ -91,17 +90,12 @@
 </div>
 
 <style lang="scss">
-	.lang-button {
+	.btn {
 		min-width: 150px;
 		padding: 0 0.5rem !important;
 
 		&.selected {
-			background-color: #006eb5;
-			color: white;
-
-			&:hover {
-				color: black;
-			}
+			@apply bg-blue-500 text-white;
 		}
 	}
 </style>
