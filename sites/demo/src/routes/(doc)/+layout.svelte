@@ -65,7 +65,7 @@
 		<AppBar>
 			{#snippet lead()}
 				<div class="flex items-center">
-					<button class="md:hidden btn btn-sm mr-4" onclick={drawerOpen}>
+					<button class="md:hidden btn btn-sm mr-4" onclick={drawerOpen} aria-label="{title}">
 						<span>
 							<svg viewBox="0 0 100 80" class="fill-token w-4 h-4">
 								<rect width="100" height="20" />
