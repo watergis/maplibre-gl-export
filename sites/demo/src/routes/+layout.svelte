@@ -13,7 +13,6 @@
 	import typescript from 'highlight.js/lib/languages/typescript';
 	import shell from 'highlight.js/lib/languages/shell';
 	import type { PageData } from './$types';
-	import { onMount } from 'svelte';
 	import { initializeStores, Drawer, getDrawerStore } from '@skeletonlabs/skeleton';
 
 	hljs.registerLanguage('xml', xml); // for HTML
