@@ -8,6 +8,13 @@
 		defaultMarkerCirclePaint,
 		defaultNorthIconOptions
 	} from '@watergis/maplibre-gl-export';
+	import type { PageData } from './$types';
+
+	interface Props {
+		data: PageData;
+	}
+
+	let { data }: Props = $props();
 
 	let tabs = [
 		{ label: 'Maplibre GL Export', value: 'maplibre' },
@@ -171,11 +178,10 @@
 
 <div class="px-4">
 	<div class="text-center">
-		<h2 class="h1 pt-4 pb-6">Welcome to Maplibre/Mapbox GL Export</h2>
+		<h2 class="h1 pt-4 pb-6">Welcome to {data.metadata.title}</h2>
 
 		<div class="flex justify-center space-x-2 pb-4">
-			Maplibre/Mapbox GL Export is a Maplibre/Mapbox GL JS plugin that can export a map image in
-			various image format such as PNG, JPEG, PDF and SVG without any server!
+			{data.metadata.description}
 		</div>
 
 		<div class="flex justify-center space-x-2">
@@ -367,6 +373,12 @@ ${
 				rel="noreferrer">See implementation</a
 			>
 		</div>
+	</div>
+	<hr />
+	<div class="space-y-2 py-4">
+		{#each data.metadata.licenses as license}
+			<p class="space-x-2">{license}</p>
+		{/each}
 	</div>
 </div>
 

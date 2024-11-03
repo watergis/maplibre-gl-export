@@ -13,9 +13,10 @@
 	import '@watergis/maplibre-gl-export/dist/maplibre-gl-export.css';
 	import 'maplibre-gl/dist/maplibre-gl.css';
 	import LanguageSelector from '$lib/LanguageSelector.svelte';
+	import { page } from '$app/stores';
 
 	let map: Map | undefined = $state();
-	let language: Language = $state('en');
+	let language: Language = $state(($page.url.searchParams.get('language') as Language) ?? 'en');
 	let mapContainer: HTMLDivElement | undefined = $state();
 
 	let exportControl: MaplibreExportControl;
@@ -80,15 +81,16 @@
 		initExportControl();
 	});
 
-	$effect(() => {
+	const onLanguageChange = (lang: Language) => {
+		language = lang;
 		initExportControl();
-	});
+	};
 </script>
 
 <div class="map" bind:this={mapContainer}></div>
 
 {#if map}
-	<LanguageSelector {map} bind:language position="bottom-left" />
+	<LanguageSelector {map} bind:language position="bottom-left" change={onLanguageChange} />
 {/if}
 
 <style lang="scss">

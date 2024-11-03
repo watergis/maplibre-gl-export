@@ -15,7 +15,6 @@
 	import type { PageData } from './$types';
 	import { onMount } from 'svelte';
 	import { initializeStores, Drawer, getDrawerStore } from '@skeletonlabs/skeleton';
-	import Navigation from '$lib/Navigation.svelte';
 
 	hljs.registerLanguage('xml', xml); // for HTML
 	hljs.registerLanguage('css', css);
@@ -31,7 +30,7 @@
 
 	let { data, children }: Props = $props();
 
-	let title = 'Maplibre/Mapbox GL Export';
+	let year = new Date().getFullYear();
 
 	initializeStores();
 
@@ -41,21 +40,33 @@
 		drawerStore.open({});
 	};
 
+	const drawerClose = () => {
+		drawerStore.close();
+	};
+
 	onMount(() => {
 		autoModeWatcher();
 	});
 </script>
 
 <svelte:head>
-	<title>{data.title}</title>
-	<meta property="og:site_name" content={data.site_name} />
+	<title>{data.metadata.title}</title>
+	<meta property="og:site_name" content={data.metadata.description} />
 	<meta property="og:type" content="article" />
-	<meta name="description" content={data.site_description} />
-	<meta property="og:description" content={data.site_description} />
-	<meta name="twitter:description" content={data.site_description} />
-	<meta property="og:title" content={data.title} />
+	<meta name="description" content={data.metadata.description} />
+	<meta property="og:description" content={data.metadata.description} />
+	<meta name="twitter:description" content={data.metadata.description} />
+	<meta property="og:title" content={data.metadata.title} />
 	<meta name="twitter:card" content="summary_large_image" />
-	<meta name="twitter:title" content={data.title} />
+	<meta name="twitter:title" content={data.metadata.title} />
+
+	<link
+		rel="stylesheet"
+		href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+		integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+		crossorigin="anonymous"
+		referrerpolicy="no-referrer"
+	/>
 </svelte:head>
 
 <!-- App Shell -->
@@ -65,7 +76,11 @@
 		<AppBar>
 			{#snippet lead()}
 				<div class="flex items-center">
-					<button class="md:hidden btn btn-sm mr-4" onclick={drawerOpen} aria-label={title}>
+					<button
+						class="md:hidden btn btn-sm mr-4"
+						onclick={drawerOpen}
+						aria-label={data.metadata.title}
+					>
 						<span>
 							<svg viewBox="0 0 100 80" class="fill-token w-4 h-4">
 								<rect width="100" height="20" />
@@ -74,7 +89,7 @@
 							</svg>
 						</span>
 					</button>
-					<a href="/"><strong class="text-xl uppercase">{title}</strong></a>
+					<a href="/"><strong class="text-xl uppercase">{data.metadata.title}</strong></a>
 				</div>
 			{/snippet}
 			{#snippet trail()}
@@ -82,42 +97,59 @@
 					<LightSwitch />
 				</div>
 				<div class="hidden md:inline-block">
-					<a
-						class="btn btn-sm variant-ghost-surface"
-						href="https://twitter.com/j_igarashi"
-						target="_blank"
-						rel="noreferrer"
-					>
-						Twitter
-					</a>
-					<a
-						class="btn btn-sm variant-ghost-surface"
-						href="https://github.com/watergis/maplibre-gl-export"
-						target="_blank"
-						rel="noreferrer"
-					>
-						GitHub
-					</a>
+					{#each data.nav as link}
+						<a
+							class="btn btn-sm variant-ghost-surface ml-2"
+							href={link.href}
+							target="_blank"
+							rel="noreferrer"
+							aria-label={link.icon}
+						>
+							<span><i class={link.icon}></i></span>
+						</a>
+					{/each}
 				</div>
 			{/snippet}
 		</AppBar>
 	{/snippet}
 
 	<Drawer>
-		<h2 class="p-4">{title}</h2>
+		<h2 class="p-4">{data.metadata.title}</h2>
 		<hr />
-		<Navigation />
-		<hr />
-		<p class="px-8">©2024 JinIgarashi</p>
-		<p class="px-8">The source code is licensed MIT</p>
-		<p class="px-8">The website content is licensed CC BY NC SA 4.0</p>
+
+		<nav class="list-nav p-4">
+			<ul>
+				<li><a href="/" onclick={drawerClose}>Homepage</a></li>
+				<li><a href="/maplibre" onclick={drawerClose}>Maplibre GL Export demo</a></li>
+				<li><a href="/mapbox" onclick={drawerClose}>Mapbox GL Export demo</a></li>
+
+				<li>
+					<div class="flex items-center py-2">
+						<div class="px-4"><LightSwitch /></div>
+						{#each data.nav as link}
+							<a href={link.href} target="_blank" onclick={drawerClose} aria-label={link.icon}>
+								<span><i class={link.icon}></i></span>
+							</a>
+						{/each}
+					</div>
+				</li>
+				<li>
+					<p class="px-4 py-2">©{year} {data.metadata.author}</p>
+				</li>
+				{#each data.metadata.licenses as license}
+					<li>
+						<p class="px-4 py-2">{license}</p>
+					</li>
+				{/each}
+			</ul>
+		</nav>
 	</Drawer>
 
 	{@render children?.()}
 
 	{#snippet footer()}
 		<div class="space-y-2 py-4">
-			<p class="flex justify-center space-x-2">©2024 JinIgarashi</p>
+			<p class="flex justify-center space-x-2">©{year} {data.metadata.author}</p>
 		</div>
 	{/snippet}
 </AppShell>
