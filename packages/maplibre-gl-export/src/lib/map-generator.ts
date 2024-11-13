@@ -1,5 +1,4 @@
 import { Map as MaplibreMap, StyleSpecification } from 'maplibre-gl';
-import 'js-loading-overlay';
 import { DPIType, Format, FormatType, Size, SizeType, Unit, UnitType } from './interfaces';
 import {
 	MapGeneratorBase,

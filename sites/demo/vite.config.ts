@@ -14,5 +14,12 @@ export default defineConfig({
 	],
 	ssr: {
 		noExternal: ['maplibre-gl', 'mapbox-gl']
+	},
+	css: {
+		preprocessorOptions: {
+			scss: {
+				api: 'modern-compiler'
+			}
+		}
 	}
 });

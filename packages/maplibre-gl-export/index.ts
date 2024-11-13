@@ -1,11 +1,18 @@
-import maplibregl, { Map, NavigationControl, TerrainControl } from 'maplibre-gl';
+import {
+	addProtocol,
+	AttributionControl,
+	Map,
+	Marker,
+	NavigationControl,
+	TerrainControl
+} from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { MaplibreExportControl, Size, PageOrientation, Format, DPI } from './src/lib/index';
 import './src/scss/maplibre-gl-export.scss';
 import { Protocol } from 'pmtiles';
 
 const protocol = new Protocol();
-maplibregl.addProtocol('pmtiles', protocol.tile);
+addProtocol('pmtiles', protocol.tile);
 
 const map = new Map({
 	container: 'map',
@@ -22,7 +29,7 @@ const map = new Map({
 });
 
 map.addControl(new NavigationControl({ visualizePitch: true }), 'top-right');
-map.addControl(new maplibregl.AttributionControl({ compact: false }), 'bottom-right');
+map.addControl(new AttributionControl({ compact: false }), 'bottom-right');
 map.addControl(
 	new MaplibreExportControl({
 		PageSize: Size.A3,
@@ -45,7 +52,7 @@ map.addControl(
 );
 
 map.once('load', () => {
-	new maplibregl.Marker().setLngLat([37.30467, -0.15943]).addTo(map);
+	new Marker().setLngLat([37.30467, -0.15943]).addTo(map);
 
 	if (map.getSource('terrarium')) {
 		map.addControl(

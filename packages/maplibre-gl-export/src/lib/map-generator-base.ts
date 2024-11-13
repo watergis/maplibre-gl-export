@@ -36,7 +36,6 @@ import {
 	SymbolLayerSpecification
 } from 'maplibre-gl';
 import { CirclePaint, Map as MapboxMap } from 'mapbox-gl';
-import 'js-loading-overlay';
 import {
 	AttributionOptions,
 	AttributionStyle,
@@ -192,25 +191,8 @@ export abstract class MapGeneratorBase {
 		// eslint-disable-next-line
 		const this_ = this;
 
-		// see documentation for JS Loading Overray library
-		// https://js-loading-overlay.muhdfaiz.com
-		// eslint-disable-next-line
-		// @ts-ignore
-		JsLoadingOverlay.show({
-			overlayBackgroundColor: '#5D5959',
-			overlayOpacity: '0.6',
-			spinnerIcon: 'ball-spin',
-			spinnerColor: '#2400FD',
-			spinnerSize: '2x',
-			overlayIDName: 'overlay',
-			spinnerIDName: 'spinner',
-			offsetX: 0,
-			offsetY: 0,
-			containerID: null,
-			lockScroll: false,
-			overlayZIndex: 9998,
-			spinnerZIndex: 9999
-		});
+		this.addLoader();
+		this.showLoader();
 
 		// Calculate pixel ratio
 		const actualPixelRatio: number = window.devicePixelRatio;
@@ -549,9 +531,7 @@ export abstract class MapGeneratorBase {
 		});
 		hiddenDiv.remove();
 
-		// eslint-disable-next-line
-		// @ts-ignore
-		JsLoadingOverlay.hide();
+		this.hideLoader();
 	}
 
 	/**
@@ -657,5 +637,46 @@ export abstract class MapGeneratorBase {
 			conversionFactor /= 25.4;
 		}
 		return `${conversionFactor * length}px`;
+	}
+
+	/**
+	 * Add loader in the parent element of maplibre map.
+	 */
+	private addLoader() {
+		const canvas = this.map.getCanvas();
+		const grandParent = canvas.parentElement?.parentElement;
+		if (!grandParent) return;
+		const loaderElements = grandParent.getElementsByClassName('map-export-loader');
+		if (loaderElements.length > 0) return;
+		const loader = document.createElement('span');
+		loader.classList.add('map-export-loader');
+		loader.classList.add('loader-default');
+		grandParent.appendChild(loader);
+	}
+
+	/**
+	 * Show loader
+	 */
+	private showLoader() {
+		const canvas = this.map.getCanvas();
+		const grandParent = canvas.parentElement?.parentElement;
+		if (!grandParent) return;
+		const loaderElements = grandParent.getElementsByClassName('map-export-loader');
+		if (loaderElements && loaderElements.length > 0) {
+			loaderElements.item(0)?.classList.add('is-active');
+		}
+	}
+
+	/**
+	 * Hide loader
+	 */
+	private hideLoader() {
+		const canvas = this.map.getCanvas();
+		const grandParent = canvas.parentElement?.parentElement;
+		if (!grandParent) return;
+		const loaderElements = grandParent.getElementsByClassName('map-export-loader');
+		if (loaderElements && loaderElements.length > 0) {
+			loaderElements.item(0)?.classList.remove('is-active');
+		}
 	}
 }
