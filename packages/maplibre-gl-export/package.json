@@ -73,7 +73,6 @@
 		"vite": "^5.4.2"
 	},
 	"dependencies": {
-		"js-loading-overlay": "^1.2.0",
 		"jspdf": "^2.5.1",
 		"maplibre-gl": "^4.6.0"
 	}

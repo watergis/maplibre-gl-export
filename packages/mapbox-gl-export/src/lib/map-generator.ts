@@ -1,5 +1,4 @@
 import mapboxgl, { Map as MapboxMap } from 'mapbox-gl';
-import 'js-loading-overlay';
 import {
 	defaultAttributionOptions,
 	defaultMarkerCirclePaint,

@@ -17,9 +17,6 @@ importers:
 
   packages/mapbox-gl-export:
     dependencies:
-      js-loading-overlay:
-        specifier: ^1.2.0
-        version: 1.2.0
       mapbox-gl:
         specifier: ^3.6.0
         version: 3.7.0
@@ -84,9 +81,6 @@ importers:
 
   packages/maplibre-gl-export:
     dependencies:
-      js-loading-overlay:
-        specifier: ^1.2.0
-        version: 1.2.0
       jspdf:
         specifier: ^2.5.1
         version: 2.5.2
@@ -1786,9 +1780,6 @@ packages:
   jiti@1.21.6:
     resolution: {integrity: sha512-2yTgeWTWzMWkHu6Jp9NKgePDaYHbntiwvYuuJLbbN9vl7DC9DvXKOB2BC3ZZ92D3cvV/aflH0osDfwpHepQ53w==}
     hasBin: true
-
-  js-loading-overlay@1.2.0:
-    resolution: {integrity: sha512-1No+SmLxzclgGr1wvJbfp1cCnEF+GsWJUJHv8URu/9YJW/BnNdWrYFYIw/gKXDJWFr/ZdR+9gnbJbND+vn+z4Q==}
 
   js-yaml@3.14.1:
     resolution: {integrity: sha512-okMH7OXXJ7YrN9Ok3/SXrnu4iX9yOk+25nqX4imS2npuvTYDmo/QEZoqwZkYaIDk3jVvBOTOIEgEhaLOynBS9g==}
@@ -4468,8 +4459,6 @@ snapshots:
       '@pkgjs/parseargs': 0.11.0
 
   jiti@1.21.6: {}
-
-  js-loading-overlay@1.2.0: {}
 
   js-yaml@3.14.1:
     dependencies:
