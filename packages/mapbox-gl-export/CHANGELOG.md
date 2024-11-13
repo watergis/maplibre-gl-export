@@ -1,5 +1,11 @@
 # @watergis/mapbox-gl-export
 
+## 3.5.4
+
+### Patch Changes
+
+- c3c5f8c: fix: repalced js-loading-overlay to pure css to show loader.
+
 ## 3.5.3
 
 ### Patch Changes
