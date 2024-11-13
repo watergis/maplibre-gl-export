@@ -1,5 +1,11 @@
 # @watergis/maplibre-gl-export
 
+## 3.8.4
+
+### Patch Changes
+
+- c3c5f8c: fix: repalced js-loading-overlay to pure css to show loader.
+
 ## 3.8.3
 
 ### Patch Changes
