@@ -20,8 +20,8 @@
   },
   "homepage": "https://github.com/watergis/maplibre-gl-export#readme",
   "devDependencies": {
-    "@changesets/cli": "^2.27.7",
-    "lefthook": "^1.7.14"
+    "@changesets/cli": "^2.27.9",
+    "lefthook": "^1.8.2"
   },
   "packageManager": "pnpm@9.12.3",
   "engines": {

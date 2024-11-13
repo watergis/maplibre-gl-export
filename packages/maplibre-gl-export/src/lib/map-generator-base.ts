@@ -643,9 +643,9 @@ export abstract class MapGeneratorBase {
 	 * Add loader in the parent element of maplibre map.
 	 */
 	private addLoader() {
-		const canvas = this.map.getCanvas()
-		const grandParent = canvas.parentElement?.parentElement
-		if (!grandParent) return
+		const canvas = this.map.getCanvas();
+		const grandParent = canvas.parentElement?.parentElement;
+		if (!grandParent) return;
 		const loaderElements = grandParent.getElementsByClassName('map-export-loader');
 		if (loaderElements.length > 0) return;
 		const loader = document.createElement('span');
@@ -658,9 +658,9 @@ export abstract class MapGeneratorBase {
 	 * Show loader
 	 */
 	private showLoader() {
-		const canvas = this.map.getCanvas()
-		const grandParent = canvas.parentElement?.parentElement
-		if (!grandParent) return
+		const canvas = this.map.getCanvas();
+		const grandParent = canvas.parentElement?.parentElement;
+		if (!grandParent) return;
 		const loaderElements = grandParent.getElementsByClassName('map-export-loader');
 		if (loaderElements && loaderElements.length > 0) {
 			loaderElements.item(0)?.classList.add('is-active');
@@ -671,9 +671,9 @@ export abstract class MapGeneratorBase {
 	 * Hide loader
 	 */
 	private hideLoader() {
-		const canvas = this.map.getCanvas()
-		const grandParent = canvas.parentElement?.parentElement
-		if (!grandParent) return
+		const canvas = this.map.getCanvas();
+		const grandParent = canvas.parentElement?.parentElement;
+		if (!grandParent) return;
 		const loaderElements = grandParent.getElementsByClassName('map-export-loader');
 		if (loaderElements && loaderElements.length > 0) {
 			loaderElements.item(0)?.classList.remove('is-active');
