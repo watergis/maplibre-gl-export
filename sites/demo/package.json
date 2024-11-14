@@ -34,7 +34,7 @@
 		"mapbox-gl": "^3.8.0",
 		"maplibre-gl": "^4.7.1",
 		"pmtiles": "^3.2.1",
-		"postcss": "8.4.48",
+		"postcss": "8.4.49",
 		"prettier": "^3.3.3",
 		"prettier-plugin-svelte": "^3.2.8",
 		"svelte": "^5.1.16",
