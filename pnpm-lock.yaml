@@ -122,8 +122,8 @@ importers:
         specifier: ^0.12.7
         version: 0.12.7
       pmtiles:
-        specifier: ^3.2.1
-        version: 3.2.1
+        specifier: ^4.0.0
+        version: 4.0.1
       postcss:
         specifier: ^8.4.49
         version: 8.4.49
@@ -219,8 +219,8 @@ importers:
         specifier: ^4.7.1
         version: 4.7.1
       pmtiles:
-        specifier: ^3.2.1
-        version: 3.2.1
+        specifier: ^4.0.0
+        version: 4.0.1
       postcss:
         specifier: 8.4.49
         version: 8.4.49
@@ -839,9 +839,6 @@ packages:
 
   '@types/json5@0.0.29':
     resolution: {integrity: sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==}
-
-  '@types/leaflet@1.9.14':
-    resolution: {integrity: sha512-sx2q6MDJaajwhKeVgPSvqXd8rhNJSTA3tMidQGduZn9S6WBYxDkCpSpV5xXEmSg7Cgdk/5vJGhVF1kMYLzauBg==}
 
   '@types/mapbox-gl@3.4.1':
     resolution: {integrity: sha512-NsGKKtgW93B+UaLPti6B7NwlxYlES5DpV5Gzj9F75rK5ALKsqSk15CiEHbOnTr09RGbr6ZYiCdI+59NNNcAImg==}
@@ -2181,8 +2178,8 @@ packages:
     resolution: {integrity: sha512-saLsH7WeYYPiD25LDuLRRY/i+6HaPYr6G1OUlN39otzkSTxKnubR9RTxS3/Kk50s1g2JTgFwWQDQyplC5/SHZg==}
     engines: {node: '>= 6'}
 
-  pmtiles@3.2.1:
-    resolution: {integrity: sha512-3R4fBwwoli5mw7a6t1IGwOtfmcSAODq6Okz0zkXhS1zi9sz1ssjjIfslwPvcWw5TNhdjNBUg9fgfPLeqZlH6ng==}
+  pmtiles@4.0.1:
+    resolution: {integrity: sha512-YS4uj/v179kA6tDd2E8d7ikOIEHy8ahtXN+u4joZYGkG2EwTkC2DUwgNmYLipyl60Vzf3FnIccIuDZB6bmdKmg==}
 
   possible-typed-array-names@1.0.0:
     resolution: {integrity: sha512-d7Uw+eZoloe0EHDIYoe+bQ5WXnGMOpmiZFTuMWCwpjzzkL2nTjcKiAk4hh8TjnGye2TwWOk3UXucZ+3rbmBa8Q==}
@@ -3401,10 +3398,6 @@ snapshots:
   '@types/json-schema@7.0.15': {}
 
   '@types/json5@0.0.29': {}
-
-  '@types/leaflet@1.9.14':
-    dependencies:
-      '@types/geojson': 7946.0.14
 
   '@types/mapbox-gl@3.4.1':
     dependencies:
@@ -4861,9 +4854,8 @@ snapshots:
 
   pirates@4.0.6: {}
 
-  pmtiles@3.2.1:
+  pmtiles@4.0.1:
     dependencies:
-      '@types/leaflet': 1.9.14
       fflate: 0.8.2
 
   possible-typed-array-names@1.0.0: {}
