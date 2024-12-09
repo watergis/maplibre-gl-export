@@ -1,5 +1,11 @@
 # @watergis/maplibre-gl-export
 
+## 3.8.5
+
+### Patch Changes
+
+- 7728399: chore: updated dependencies
+
 ## 3.8.4
 
 ### Patch Changes
