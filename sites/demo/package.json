@@ -33,7 +33,7 @@
 		"globals": "^15.12.0",
 		"mapbox-gl": "^3.8.0",
 		"maplibre-gl": "^4.7.1",
-		"pmtiles": "^3.2.1",
+		"pmtiles": "^4.0.0",
 		"postcss": "8.4.49",
 		"prettier": "^3.3.3",
 		"prettier-plugin-svelte": "^3.2.8",
