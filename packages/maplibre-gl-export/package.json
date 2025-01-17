@@ -74,6 +74,6 @@
 	},
 	"dependencies": {
 		"jspdf": "^2.5.2",
-		"maplibre-gl": "^4.7.1"
+		"maplibre-gl": "^5.0.0"
 	}
 }
