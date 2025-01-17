@@ -53,7 +53,9 @@ export default class MapGenerator extends MapGeneratorBase {
 			bearing: this.map.getBearing(),
 			pitch: this.map.getPitch(),
 			interactive: false,
-			preserveDrawingBuffer: true,
+			canvasContextAttributes: {
+				preserveDrawingBuffer: true
+			},
 			fadeDuration: 0,
 			// attributionControl: false,
 			// hack to read transform request callback function
