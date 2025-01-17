@@ -1,5 +1,11 @@
 # @watergis/mapbox-gl-export
 
+## 3.5.6
+
+### Patch Changes
+
+- 3862737: chore: update dependencies in mapbox-gl-export
+
 ## 3.5.5
 
 ### Patch Changes
