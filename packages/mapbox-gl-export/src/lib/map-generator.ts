@@ -87,7 +87,7 @@ export default class MapGenerator extends MapGeneratorBase {
 		const s = this.stringify(style);
 		// Render map
 		const renderMap = new MapboxMap({
-			accessToken: this.accesstoken || mapboxgl.accessToken,
+			accessToken: this.accesstoken || (mapboxgl.accessToken as string),
 			container,
 			style: JSON.parse(s),
 			center: this.map.getCenter(),
