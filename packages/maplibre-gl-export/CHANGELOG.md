@@ -1,5 +1,11 @@
 # @watergis/maplibre-gl-export
 
+## 4.0.0
+
+### Major Changes
+
+- 3862737: chore: upgrade maplibre-gl dependency from v4 to v5.
+
 ## 3.8.5
 
 ### Patch Changes
