@@ -1,8 +1,8 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "github>whitesource/merge-confidence:beta",
-    "config:base",
+    "mergeConfidence:all-badges",
+    "config:recommended",
     ":preserveSemverRanges",
     ":semanticCommitTypeAll(chore)"
   ],
@@ -12,18 +12,21 @@
   },
   "packageRules": [
     {
-      "matchUpdateTypes": ["minor", "patch"],
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
       "matchCurrentVersion": "!/^0/",
       "automerge": true
     }
   ],
   "major": {
-    "stabilityDays": 7
+    "minimumReleaseAge": "7 days"
   },
   "minor": {
-    "stabilityDays": 3
+    "minimumReleaseAge": "3 days"
   },
   "patch": {
-    "stabilityDays": 2
+    "minimumReleaseAge": "2 days"
   }
 }
