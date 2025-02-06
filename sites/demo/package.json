@@ -21,7 +21,7 @@
 		"@tailwindcss/typography": "0.5.16",
 		"@types/eslint": "^9.6.1",
 		"@types/mapbox-gl": "^3.4.1",
-		"@types/node": "22.13.0",
+		"@types/node": "22.13.1",
 		"@typescript-eslint/eslint-plugin": "^8.20.0",
 		"@typescript-eslint/parser": "^8.20.0",
 		"@watergis/mapbox-gl-export": "workspace:^",
