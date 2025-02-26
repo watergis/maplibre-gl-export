@@ -73,7 +73,7 @@
 		"vite": "^6.0.7"
 	},
 	"dependencies": {
-		"jspdf": "^2.5.2",
+		"jspdf": "^3.0.0",
 		"maplibre-gl": "^5.0.1"
 	}
 }
