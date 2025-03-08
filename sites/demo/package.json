@@ -29,7 +29,7 @@
 		"autoprefixer": "10.4.20",
 		"eslint": "^9.18.0",
 		"eslint-config-prettier": "^10.0.1",
-		"eslint-plugin-svelte": "^2.46.1",
+		"eslint-plugin-svelte": "^3.0.0",
 		"globals": "^15.14.0",
 		"mapbox-gl": "^3.9.3",
 		"maplibre-gl": "^5.0.1",
