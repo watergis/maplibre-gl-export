@@ -96,7 +96,7 @@
 					<LightSwitch />
 				</div>
 				<div class="hidden md:inline-block">
-					{#each data.nav as link}
+					{#each data.nav as link (data.nav.indexOf(link))}
 						<a
 							class="btn btn-sm variant-ghost-surface ml-2"
 							href={link.href}
@@ -125,7 +125,7 @@
 				<li>
 					<div class="flex items-center py-2">
 						<div class="px-4"><LightSwitch /></div>
-						{#each data.nav as link}
+						{#each data.nav as link (data.nav.indexOf(link))}
 							<a href={link.href} target="_blank" onclick={drawerClose} aria-label={link.icon}>
 								<span><i class={link.icon}></i></span>
 							</a>
@@ -135,7 +135,7 @@
 				<li>
 					<p class="px-4 py-2">©{year} {data.metadata.author}</p>
 				</li>
-				{#each data.metadata.licenses as license}
+				{#each data.metadata.licenses as license (data.metadata.licenses.indexOf(license))}
 					<li>
 						<p class="px-4 py-2">{license}</p>
 					</li>
