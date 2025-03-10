@@ -77,7 +77,7 @@
 	class="maplibregl-ctrl maplibregl-ctrl-group mapboxgl-ctrl mapboxgl-ctrl-group"
 	bind:this={controlGroup}
 >
-	{#each AvailableLanguages as lang}
+	{#each AvailableLanguages as lang (lang)}
 		<button
 			class="btn bg-gray-300 hover:bg-gray-400 text-gray-800 {language === lang ? 'selected' : ''}"
 			onclick={() => {

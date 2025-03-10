@@ -198,7 +198,7 @@
 			<h3 class="h3 pt-6 pb-4">Select a map library</h3>
 
 			<RadioGroup active="variant-filled-primary" hover="hover:variant-soft-primary">
-				{#each tabs as tab}
+				{#each tabs as tab (tab.value)}
 					<RadioItem bind:group={tabSet} name="justify" value={tab.value}>
 						{tab.label}
 						{#if tab.value === 'maplibre'}
@@ -224,7 +224,7 @@
 			<label class="label">
 				<span>Select your language</span>
 				<select class="select" bind:value={selectedLanguage}>
-					{#each Languages as lang}
+					{#each Languages as lang (lang)}
 						<option value={lang.LanguageCode}>{lang.LanguageName} ({lang.LanguageCode})</option>
 					{/each}
 				</select>
@@ -232,7 +232,7 @@
 		</div>
 
 		<TabGroup>
-			{#each imprtTypeTabs as tab}
+			{#each imprtTypeTabs as tab (tab.value)}
 				<Tab bind:group={importTypeTabSet} name={tab.value} value={tab.value}>{tab.label}</Tab>
 			{/each}
 		</TabGroup>
@@ -250,9 +250,9 @@
 			<p>Getting start with installing the package</p>
 
 			<RadioGroup active="variant-filled-primary" hover="hover:variant-soft-primary">
-				<RadioItem bind:group={packageManager} name="justify" value={'npm'}>npm</RadioItem>
-				<RadioItem bind:group={packageManager} name="justify" value={'yarn'}>yarn</RadioItem>
-				<RadioItem bind:group={packageManager} name="justify" value={'pnpm'}>pnpm</RadioItem>
+				<RadioItem bind:group={packageManager} name="justify" value="npm">npm</RadioItem>
+				<RadioItem bind:group={packageManager} name="justify" value="yarn">yarn</RadioItem>
+				<RadioItem bind:group={packageManager} name="justify" value="pnpm">pnpm</RadioItem>
 			</RadioGroup>
 
 			<div class="pt-2">
@@ -350,7 +350,7 @@ ${
 					</tr>
 				</thead>
 				<tbody>
-					{#each parameters as param}
+					{#each parameters as param (parameters.indexOf(param))}
 						{#if !(tabSet === 'maplibre' && param.name === 'accessToken')}
 							<tr>
 								<td>{param.name}</td>
@@ -376,7 +376,7 @@ ${
 	</div>
 	<hr />
 	<div class="space-y-2 py-4">
-		{#each data.metadata.licenses as license}
+		{#each data.metadata.licenses as license (data.metadata.licenses.indexOf(license))}
 			<p class="space-x-2">{license}</p>
 		{/each}
 	</div>
