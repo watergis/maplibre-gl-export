@@ -174,8 +174,8 @@ importers:
         specifier: 0.4.1
         version: 0.4.1(tailwindcss@3.4.17)
       '@sveltejs/adapter-auto':
-        specifier: ^4.0.0
-        version: 4.0.0(@sveltejs/kit@2.20.4(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.25.7)(vite@6.2.5(@types/node@22.14.0)(jiti@1.21.7)(sass@1.86.3)(yaml@2.7.1)))(svelte@5.25.7)(vite@6.2.5(@types/node@22.14.0)(jiti@1.21.7)(sass@1.86.3)(yaml@2.7.1)))
+        specifier: ^5.0.0
+        version: 5.0.0(@sveltejs/kit@2.20.4(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.25.7)(vite@6.2.5(@types/node@22.14.0)(jiti@1.21.7)(sass@1.86.3)(yaml@2.7.1)))(svelte@5.25.7)(vite@6.2.5(@types/node@22.14.0)(jiti@1.21.7)(sass@1.86.3)(yaml@2.7.1)))
       '@sveltejs/kit':
         specifier: ^2.19.0
         version: 2.20.4(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.25.7)(vite@6.2.5(@types/node@22.14.0)(jiti@1.21.7)(sass@1.86.3)(yaml@2.7.1)))(svelte@5.25.7)(vite@6.2.5(@types/node@22.14.0)(jiti@1.21.7)(sass@1.86.3)(yaml@2.7.1))
@@ -826,8 +826,8 @@ packages:
     peerDependencies:
       acorn: ^8.9.0
 
-  '@sveltejs/adapter-auto@4.0.0':
-    resolution: {integrity: sha512-kmuYSQdD2AwThymQF0haQhM8rE5rhutQXG4LNbnbShwhMO4qQGnKaaTy+88DuNSuoQDi58+thpq8XpHc1+oEKQ==}
+  '@sveltejs/adapter-auto@5.0.0':
+    resolution: {integrity: sha512-r645Oerr5E9pVX8Xk8ZkObRq/915y5HfZQjFFv4opbstvqQqHfgMhm46tR0iDDKqydZOgJCPa6RdQXh6i7G/2g==}
     peerDependencies:
       '@sveltejs/kit': ^2.0.0
 
@@ -3407,7 +3407,7 @@ snapshots:
     dependencies:
       acorn: 8.14.1
 
-  '@sveltejs/adapter-auto@4.0.0(@sveltejs/kit@2.20.4(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.25.7)(vite@6.2.5(@types/node@22.14.0)(jiti@1.21.7)(sass@1.86.3)(yaml@2.7.1)))(svelte@5.25.7)(vite@6.2.5(@types/node@22.14.0)(jiti@1.21.7)(sass@1.86.3)(yaml@2.7.1)))':
+  '@sveltejs/adapter-auto@5.0.0(@sveltejs/kit@2.20.4(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.25.7)(vite@6.2.5(@types/node@22.14.0)(jiti@1.21.7)(sass@1.86.3)(yaml@2.7.1)))(svelte@5.25.7)(vite@6.2.5(@types/node@22.14.0)(jiti@1.21.7)(sass@1.86.3)(yaml@2.7.1)))':
     dependencies:
       '@sveltejs/kit': 2.20.4(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.25.7)(vite@6.2.5(@types/node@22.14.0)(jiti@1.21.7)(sass@1.86.3)(yaml@2.7.1)))(svelte@5.25.7)(vite@6.2.5(@types/node@22.14.0)(jiti@1.21.7)(sass@1.86.3)(yaml@2.7.1))
       import-meta-resolve: 4.1.0
