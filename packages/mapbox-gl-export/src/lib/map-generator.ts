@@ -107,7 +107,22 @@ export default class MapGenerator extends MapGeneratorBase {
 		// eslint-disable-next-line
 		// @ts-ignore
 		const images = (this.map.style.imageManager || {}).images || [];
-		if (images && Object.keys(images)?.length > 0) {
+		if (images instanceof Map) {
+			images.forEach((v, k) => {
+				if (k !== "basemap") {
+					v.forEach((image, imageId) => {
+						renderMap.addImage(imageId, image.data, {
+							content: image.content,
+							pixelRatio: image.pixelRatio,
+							sdf: image.sdf,
+							stretchX: image.stretchX,
+							stretchY: image.stretchY
+						});
+					});
+				}
+			});
+		}
+		else if (images && Object.keys(images)?.length > 0) {
 			Object.keys(images).forEach((key) => {
 				if (!key) return;
 				if (!images[key].data) return;
