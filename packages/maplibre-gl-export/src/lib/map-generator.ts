@@ -77,15 +77,7 @@ export default class MapGenerator extends MapGeneratorBase {
 			const image = images[key];
 			if (!image.data) return;
 
-			renderMap.addImage(key, images[key].data, {
-				content: image.content,
-				pixelRatio: image.pixelRatio,
-				sdf: image.sdf,
-				stretchX: image.stretchX,
-				stretchY: image.stretchY,
-				textFitHeight: image.textFitHeight,
-				textFitWidth: image.textFitWidth
-			});
+			renderMap.addImage(key, images[key].data, image);
 		});
 
 		return renderMap;

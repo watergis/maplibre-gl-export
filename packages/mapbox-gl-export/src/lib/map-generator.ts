@@ -111,13 +111,7 @@ export default class MapGenerator extends MapGeneratorBase {
 			images.forEach((v, k) => {
 				if (k !== "basemap") {
 					v.forEach((image, imageId) => {
-						renderMap.addImage(imageId, image.data, {
-							content: image.content,
-							pixelRatio: image.pixelRatio,
-							sdf: image.sdf,
-							stretchX: image.stretchX,
-							stretchY: image.stretchY
-						});
+						renderMap.addImage(imageId, image.data, image);
 					});
 				}
 			});
@@ -126,7 +120,7 @@ export default class MapGenerator extends MapGeneratorBase {
 			Object.keys(images).forEach((key) => {
 				if (!key) return;
 				if (!images[key].data) return;
-				renderMap.addImage(key, images[key].data);
+				renderMap.addImage(key, images[key].data, images[key]);
 			});
 		}
 
