@@ -1,6 +1,6 @@
 {
 	"name": "@watergis/maplibre-gl-export",
-	"version": "4.0.1",
+	"version": "4.1.0",
 	"description": "This module adds control which can export PDF and images.",
 	"type": "module",
 	"main": "dist/maplibre-gl-export.umd.js",

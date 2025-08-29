@@ -1,5 +1,15 @@
 # @watergis/mapbox-gl-export
 
+## 3.6.0
+
+### Minor Changes
+
+- a84469e: feat: add Russian translation
+
+### Patch Changes
+
+- 2689f24: chore: updated dependencies in package.json
+
 ## 3.5.7
 
 ### Patch Changes
