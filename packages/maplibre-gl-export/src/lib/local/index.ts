@@ -11,6 +11,7 @@ import zhHans from './zhHans';
 import zhHant from './zhHant';
 import ja from './ja';
 import pt from './pt';
+import ru from './ru';
 import { Language } from '../interfaces/Language';
 import { Translation } from '../interfaces/Translation';
 
@@ -27,7 +28,8 @@ export const Languages: Translation[] = [
 	zhHans,
 	zhHant,
 	ja,
-	pt
+	pt,
+	ru
 ];
 
 export const AvailableLanguages = [
@@ -43,7 +45,8 @@ export const AvailableLanguages = [
 	'zhHans',
 	'zhHant',
 	'ja',
-	'pt'
+	'pt',
+	'ru'
 ] as const;
 
 export const getTranslation = (lang: Language) => {
