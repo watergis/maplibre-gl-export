@@ -21,7 +21,7 @@
   "homepage": "https://github.com/watergis/maplibre-gl-export#readme",
   "devDependencies": {
     "@changesets/cli": "^2.29.6",
-    "lefthook": "^1.12.3"
+    "lefthook": "^2.0.0"
   },
   "packageManager": "pnpm@10.28.0",
   "engines": {
