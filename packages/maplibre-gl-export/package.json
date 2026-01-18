@@ -61,7 +61,7 @@
 		"eslint": "^9.34.0",
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-import": "^2.32.0",
-		"globals": "^16.3.0",
+		"globals": "^17.0.0",
 		"path": "^0.12.7",
 		"pmtiles": "^4.3.0",
 		"postcss": "^8.5.6",

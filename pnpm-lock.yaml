@@ -55,8 +55,8 @@ importers:
         specifier: ^2.32.0
         version: 2.32.0(@typescript-eslint/parser@8.41.0(eslint@9.34.0(jiti@1.21.7))(typescript@5.9.2))(eslint@9.34.0(jiti@1.21.7))
       globals:
-        specifier: ^16.3.0
-        version: 16.3.0
+        specifier: ^17.0.0
+        version: 17.0.0
       path:
         specifier: ^0.12.7
         version: 0.12.7
@@ -125,8 +125,8 @@ importers:
         specifier: ^2.32.0
         version: 2.32.0(@typescript-eslint/parser@8.41.0(eslint@9.34.0(jiti@1.21.7))(typescript@5.9.2))(eslint@9.34.0(jiti@1.21.7))
       globals:
-        specifier: ^16.3.0
-        version: 16.3.0
+        specifier: ^17.0.0
+        version: 17.0.0
       path:
         specifier: ^0.12.7
         version: 0.12.7
@@ -222,8 +222,8 @@ importers:
         specifier: ^3.11.0
         version: 3.11.0(eslint@9.34.0(jiti@1.21.7))(svelte@5.38.6)
       globals:
-        specifier: ^16.3.0
-        version: 16.3.0
+        specifier: ^17.0.0
+        version: 17.0.0
       mapbox-gl:
         specifier: ^3.14.0
         version: 3.14.0
@@ -1651,6 +1651,10 @@ packages:
 
   globals@16.3.0:
     resolution: {integrity: sha512-bqWEnJ1Nt3neqx2q5SFfGS8r/ahumIakg3HcwtNlrVlwXIeNumWn/c7Pn/wKzGhf6SaW6H6uWXLqC30STCMchQ==}
+    engines: {node: '>=18'}
+
+  globals@17.0.0:
+    resolution: {integrity: sha512-gv5BeD2EssA793rlFWVPMMCqefTlpusw6/2TbAVMy0FzcG8wKJn4O+NqJ4+XWmmwrayJgw5TzrmWjFgmz1XPqw==}
     engines: {node: '>=18'}
 
   globalthis@1.0.4:
@@ -4452,6 +4456,8 @@ snapshots:
   globals@14.0.0: {}
 
   globals@16.3.0: {}
+
+  globals@17.0.0: {}
 
   globalthis@1.0.4:
     dependencies:
