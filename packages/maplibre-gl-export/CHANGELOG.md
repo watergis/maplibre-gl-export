@@ -1,5 +1,11 @@
 # @watergis/maplibre-gl-export
 
+## 4.1.1
+
+### Patch Changes
+
+- 3cc9a19: chore: update jspdf to 4.0.0
+
 ## 4.1.0
 
 ### Minor Changes
