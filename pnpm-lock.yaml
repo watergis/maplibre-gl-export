@@ -168,8 +168,8 @@ importers:
         specifier: ^9.34.0
         version: 9.34.0
       '@skeletonlabs/skeleton':
-        specifier: 2.11.0
-        version: 2.11.0(svelte@5.38.6)
+        specifier: 4.10.0
+        version: 4.10.0(tailwindcss@3.4.19)
       '@skeletonlabs/tw-plugin':
         specifier: 0.4.1
         version: 0.4.1(tailwindcss@3.4.19)
@@ -823,10 +823,10 @@ packages:
   '@rtsao/scc@1.1.0':
     resolution: {integrity: sha512-zt6OdqaDoOnJ1ZYsCYGt9YmWzDXl4vQdKTyJev62gFhRGKdx7mcT54V9KIjg+d2wi9EXsPvAPKe7i7WjfVWB8g==}
 
-  '@skeletonlabs/skeleton@2.11.0':
-    resolution: {integrity: sha512-ORMZYACsIlfKyBx2ZIHBy7zE877t99fxU7LzcY1dveVmn2//+OeqnbQb5RryNILsMR62Tuu1VLnCu01/ByHlbQ==}
+  '@skeletonlabs/skeleton@4.10.0':
+    resolution: {integrity: sha512-wmawxvCdKgKP1CcvKFmHefdzP/9UoV4xVq/itjoOcQ6CT/JxVqOwvOvqdEuND3x5GYb0QEX0yLgeQOqAQvpjQw==}
     peerDependencies:
-      svelte: ^3.56.0 || ^4.0.0 || ^5.0.0
+      tailwindcss: ^4.0.0
 
   '@skeletonlabs/tw-plugin@0.4.1':
     resolution: {integrity: sha512-crrC8BGKis0GNTp7V2HF6mk1ECLUvAxgTTV26LMgt/rV3U6Xd7N7dL5qIL8fE4MTHvpKa1SBsdqsnMbEvATeEg==}
@@ -1474,9 +1474,6 @@ packages:
     peerDependenciesMeta:
       jiti:
         optional: true
-
-  esm-env@1.0.0:
-    resolution: {integrity: sha512-Cf6VksWPsTuW01vU9Mk/3vRue91Zevka5SjyNf3nEpokFRuqt/KjUQoGAwq9qMmhpLTHmXzSIrFRw8zxWzmFBA==}
 
   esm-env@1.2.2:
     resolution: {integrity: sha512-Epxrv+Nr/CaL4ZcFGPJIYLWFom+YeV1DqMLHJoEd9SYRxNbaFruBwfEX/kkHUJf55j2+TUbmDcmuilbP1TmXHA==}
@@ -3446,10 +3443,9 @@ snapshots:
 
   '@rtsao/scc@1.1.0': {}
 
-  '@skeletonlabs/skeleton@2.11.0(svelte@5.38.6)':
+  '@skeletonlabs/skeleton@4.10.0(tailwindcss@3.4.19)':
     dependencies:
-      esm-env: 1.0.0
-      svelte: 5.38.6
+      tailwindcss: 3.4.19
 
   '@skeletonlabs/tw-plugin@0.4.1(tailwindcss@3.4.19)':
     dependencies:
@@ -4267,8 +4263,6 @@ snapshots:
       jiti: 1.21.7
     transitivePeerDependencies:
       - supports-color
-
-  esm-env@1.0.0: {}
 
   esm-env@1.2.2: {}
 
