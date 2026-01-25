@@ -223,6 +223,7 @@
 
 			<h3 class="h3 pt-6 pb-4">Demo</h3>
 
+			<!-- eslint-disable svelte/no-navigation-without-resolve -->
 			<a class="btn preset-filled-primary-500 btn-lg" href="/{tabSet}?language={selectedLanguage}">
 				Open {tabSet} DEMO
 			</a>
