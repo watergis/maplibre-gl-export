@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { CodeBlock, RadioGroup, RadioItem, Tab, TabGroup } from '@skeletonlabs/skeleton';
+	import { SegmentedControl, Tabs } from '@skeletonlabs/skeleton-svelte';
 	import {
 		AvailableLanguages,
 		Languages,
@@ -9,6 +9,7 @@
 		defaultNorthIconOptions
 	} from '@watergis/maplibre-gl-export';
 	import type { PageData } from './$types';
+	import CodeBlock from '$lib/CodeBlock.svelte';
 
 	interface Props {
 		data: PageData;
@@ -197,22 +198,32 @@
 		<div class="px-2">
 			<h3 class="h3 pt-6 pb-4">Select a map library</h3>
 
-			<RadioGroup active="variant-filled-primary" hover="hover:variant-soft-primary">
-				{#each tabs as tab (tab.value)}
-					<RadioItem bind:group={tabSet} name="justify" value={tab.value}>
-						{tab.label}
-						{#if tab.value === 'maplibre'}
-							({maplibreExportVersion})
-						{:else}
-							({mapboxExportVersion})
-						{/if}
-					</RadioItem>
-				{/each}
-			</RadioGroup>
+			<SegmentedControl
+				value={tabSet}
+				onValueChange={(details) => (tabSet = details.value)}
+				class="w-fit"
+			>
+				<SegmentedControl.Control>
+					<SegmentedControl.Indicator />
+					{#each tabs as tab (tab.value)}
+						<SegmentedControl.Item value={tab.value}>
+							<SegmentedControl.ItemText>
+								{tab.label}
+								{#if tab.value === 'maplibre'}
+									({maplibreExportVersion})
+								{:else}
+									({mapboxExportVersion})
+								{/if}
+							</SegmentedControl.ItemText>
+							<SegmentedControl.ItemHiddenInput />
+						</SegmentedControl.Item>
+					{/each}
+				</SegmentedControl.Control>
+			</SegmentedControl>
 
 			<h3 class="h3 pt-6 pb-4">Demo</h3>
 
-			<a class="btn variant-filled-primary capitalize" href="/{tabSet}?language={selectedLanguage}">
+			<a class="btn preset-filled-primary-500 btn-lg" href="/{tabSet}?language={selectedLanguage}">
 				Open {tabSet} DEMO
 			</a>
 		</div>
@@ -231,12 +242,6 @@
 			</label>
 		</div>
 
-		<TabGroup>
-			{#each imprtTypeTabs as tab (tab.value)}
-				<Tab bind:group={importTypeTabSet} name={tab.value} value={tab.value}>{tab.label}</Tab>
-			{/each}
-		</TabGroup>
-
 		<div class="px-2" hidden={tabSet !== 'mapbox'}>
 			<h3 class="h3 pt-6 pb-4">Mapbox access token</h3>
 			<label class="label">
@@ -245,37 +250,71 @@
 			</label>
 		</div>
 
-		<div class="p-2" hidden={importTypeTabSet !== 'npm'}>
-			<h3 class="h3 pt-6 pb-4">Install</h3>
-			<p>Getting start with installing the package</p>
+		<Tabs
+			value={importTypeTabSet}
+			orientation="horizontal"
+			onValueChange={(details) => {
+				importTypeTabSet = details.value;
+			}}
+		>
+			<Tabs.List>
+				{#each imprtTypeTabs as tab (tab.value)}
+					<Tabs.Trigger value={tab.value}>{tab.label}</Tabs.Trigger>
+				{/each}
+				<Tabs.Indicator />
+			</Tabs.List>
 
-			<RadioGroup active="variant-filled-primary" hover="hover:variant-soft-primary">
-				<RadioItem bind:group={packageManager} name="justify" value="npm">npm</RadioItem>
-				<RadioItem bind:group={packageManager} name="justify" value="yarn">yarn</RadioItem>
-				<RadioItem bind:group={packageManager} name="justify" value="pnpm">pnpm</RadioItem>
-			</RadioGroup>
+			<Tabs.Content value="npm">
+				<div class="p-2">
+					<h3 class="h3 pt-6 pb-4">Install</h3>
+					<p>Getting start with installing the package</p>
 
-			<div class="pt-2">
-				{#if packageManager === 'npm'}
+					<SegmentedControl
+						value={packageManager}
+						onValueChange={(details) => (packageManager = details.value)}
+						class="w-fit"
+					>
+						<SegmentedControl.Control>
+							<SegmentedControl.Indicator />
+							<SegmentedControl.Item value="npm">
+								<SegmentedControl.ItemText>npm</SegmentedControl.ItemText>
+								<SegmentedControl.ItemHiddenInput />
+							</SegmentedControl.Item>
+							<SegmentedControl.Item value="yarn">
+								<SegmentedControl.ItemText>yarn</SegmentedControl.ItemText>
+								<SegmentedControl.ItemHiddenInput />
+							</SegmentedControl.Item>
+							<SegmentedControl.Item value="pnpm">
+								<SegmentedControl.ItemText>pnpm</SegmentedControl.ItemText>
+								<SegmentedControl.ItemHiddenInput />
+							</SegmentedControl.Item>
+						</SegmentedControl.Control>
+					</SegmentedControl>
+
+					<div class="pt-2">
+						{#if packageManager === 'npm'}
+							<CodeBlock
+								lang="console"
+								code={`npm install --save-dev @watergis/${tabSet}-gl-export`}
+							/>
+						{:else if packageManager === 'yarn'}
+							<CodeBlock lang="console" code={`yarn add --dev @watergis/${tabSet}-gl-export`} />
+						{:else if packageManager === 'pnpm'}
+							<CodeBlock
+								lang="console"
+								code={`pnpm add --save-dev @watergis/${tabSet}-gl-export`}
+							/>
+						{/if}
+					</div>
+
+					<h3 class="h3 pt-6 pb-4">Usage</h3>
+
+					<p>Copy and past the below code.</p>
+
 					<CodeBlock
-						language="shell"
-						code={`npm install --save-dev @watergis/${tabSet}-gl-export`}
-					/>
-				{:else if packageManager === 'yarn'}
-					<CodeBlock language="shell" code={`yarn add --dev @watergis/${tabSet}-gl-export`} />
-				{:else if packageManager === 'pnpm'}
-					<CodeBlock language="shell" code={`pnpm add --save-dev @watergis/${tabSet}-gl-export`} />
-				{/if}
-			</div>
-
-			<h3 class="h3 pt-6 pb-4">Usage</h3>
-
-			<p>Copy and past the below code.</p>
-
-			<CodeBlock
-				language="ts"
-				lineNumbers
-				code={`
+						lang="js"
+						showLineNumber
+						code={`
 import {  ${tabSet === 'mapbox' ? 'mapboxgl, ' : ''}Map } from '${tabSet}-gl';
 import '${tabSet}-gl/dist/${tabSet}-gl.css';
 import {
@@ -305,18 +344,20 @@ const exportControl = new ${tabSet === 'maplibre' ? 'Maplibre' : 'Mapbox'}Export
 });
 map.addControl(exportControl, 'top-right');
 			`}
-			/>
-		</div>
+					/>
+				</div>
+			</Tabs.Content>
 
-		<div hidden={importTypeTabSet !== 'cdn'}>
-			<h3 class="h3 pt-6">Usage</h3>
+			<Tabs.Content value="cdn">
+				<div>
+					<h3 class="h3 pt-6">Usage</h3>
 
-			<p>Copy and past the below code.</p>
+					<p>Copy and past the below code.</p>
 
-			<CodeBlock
-				language="html"
-				lineNumbers
-				code={`
+					<CodeBlock
+						lang="js"
+						showLineNumber
+						code={`
 ${
 	tabSet === 'mapbox'
 		? `${mapboxCdnExample
@@ -330,8 +371,10 @@ ${
 				.replace(/{style}/g, styleUrl)}`
 }
 			`}
-			/>
-		</div>
+					/>
+				</div>
+			</Tabs.Content>
+		</Tabs>
 
 		<h3 class="h3 pt-6">Parameters</h3>
 
@@ -340,8 +383,8 @@ ${
 			settings.
 		</p>
 
-		<div class="table-container">
-			<table class="table table-hover">
+		<div class="table-wrap">
+			<table class="table caption-bottom">
 				<thead>
 					<tr>
 						<th>Parameter</th>
@@ -349,7 +392,7 @@ ${
 						<th>Description</th>
 					</tr>
 				</thead>
-				<tbody>
+				<tbody class="[&>tr]:hover:preset-tonal-primary">
 					{#each parameters as param (parameters.indexOf(param))}
 						{#if !(tabSet === 'maplibre' && param.name === 'accessToken')}
 							<tr>
@@ -367,7 +410,7 @@ ${
 
 		<div class="flex justify-center space-x-2 py-6">
 			<a
-				class="btn variant-filled-secondary"
+				class="btn preset-outlined-surface-500"
 				href="https://github.com/watergis/maplibre-gl-export/tree/main/packages/{tabSet}-gl-export#options"
 				target="_blank"
 				rel="noreferrer">See implementation</a
@@ -381,6 +424,3 @@ ${
 		{/each}
 	</div>
 </div>
-
-<style lang="postcss">
-</style>

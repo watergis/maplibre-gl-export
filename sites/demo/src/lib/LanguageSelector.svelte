@@ -51,7 +51,7 @@
 	let { map, language = $bindable('en'), position = 'top-right', change }: Props = $props();
 
 	let control: LanguageControl | undefined;
-	let controlGroup: HTMLDivElement = $state();
+	let controlGroup: HTMLDivElement | undefined = $state();
 
 	const handleClickLanguage = (lang: Language) => {
 		language = lang;
@@ -61,8 +61,10 @@
 	};
 
 	onMount(() => {
-		control = new LanguageControl(controlGroup);
-		map.addControl(control, position);
+		if (controlGroup) {
+			control = new LanguageControl(controlGroup);
+			map.addControl(control, position);
+		}
 	});
 
 	onDestroy(() => {
@@ -79,7 +81,9 @@
 >
 	{#each AvailableLanguages as lang (lang)}
 		<button
-			class="btn bg-gray-300 hover:bg-gray-400 text-gray-800 {language === lang ? 'selected' : ''}"
+			class="btn {language === lang
+				? 'preset-filled-primary-500'
+				: 'preset-outlined-surface-500 hover:bg-gray-400'}"
 			onclick={() => {
 				handleClickLanguage(lang);
 			}}
@@ -93,9 +97,5 @@
 	.btn {
 		min-width: 150px;
 		padding: 0 0.5rem !important;
-
-		&.selected {
-			@apply bg-blue-500 text-white;
-		}
 	}
 </style>
