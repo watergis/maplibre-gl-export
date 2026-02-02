@@ -27,7 +27,7 @@
 		"@typescript-eslint/parser": "^8.53.1",
 		"@watergis/mapbox-gl-export": "workspace:^",
 		"@watergis/maplibre-gl-export": "workspace:^",
-		"autoprefixer": "10.4.23",
+		"autoprefixer": "10.4.24",
 		"eslint": "^9.39.2",
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-svelte": "^3.14.0",
