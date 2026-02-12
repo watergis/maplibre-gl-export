@@ -22,7 +22,7 @@
 		"@tailwindcss/vite": "^4.1.18",
 		"@types/eslint": "^9.6.1",
 		"@types/mapbox-gl": "^3.4.1",
-		"@types/node": "25.2.2",
+		"@types/node": "25.2.3",
 		"@typescript-eslint/eslint-plugin": "^8.53.1",
 		"@typescript-eslint/parser": "^8.53.1",
 		"@watergis/mapbox-gl-export": "workspace:^",
