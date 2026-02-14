@@ -12,7 +12,7 @@
 		"format": "prettier --write ."
 	},
 	"devDependencies": {
-		"@eslint/js": "^9.39.2",
+		"@eslint/js": "^10.0.0",
 		"@lucide/svelte": "^0.563.1",
 		"@skeletonlabs/skeleton": "^4.11.0",
 		"@skeletonlabs/skeleton-svelte": "^4.11.0",
@@ -28,7 +28,7 @@
 		"@watergis/mapbox-gl-export": "workspace:^",
 		"@watergis/maplibre-gl-export": "workspace:^",
 		"autoprefixer": "10.4.24",
-		"eslint": "^9.39.2",
+		"eslint": "^10.0.0",
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-svelte": "^3.14.0",
 		"globals": "^17.1.0",
