@@ -29,9 +29,9 @@ import {
  * @param {Object} targets - Object of layer.id and title
  */
 export default class MaplibreExportControl implements IControl {
-	protected controlContainer: HTMLElement;
+	protected controlContainer!: HTMLElement;
 
-	protected exportContainer: HTMLElement;
+	protected exportContainer!: HTMLElement;
 
 	protected crosshair: CrosshairManager | undefined;
 
@@ -39,7 +39,7 @@ export default class MaplibreExportControl implements IControl {
 
 	protected map?: MaplibreMap | MapboxMap;
 
-	protected exportButton: HTMLButtonElement;
+	protected exportButton!: HTMLButtonElement;
 
 	protected options: ControlOptions = {
 		PageSize: Size.A4 as SizeType,
@@ -116,7 +116,7 @@ export default class MaplibreExportControl implements IControl {
 		const table = document.createElement('TABLE');
 		table.className = 'print-table';
 
-		const sizes = {};
+		const sizes: Record<string, readonly [number, number]> = {};
 		this.options.AllowedSizes?.forEach((size) => {
 			const dimensions = Size[size];
 			if (dimensions) {

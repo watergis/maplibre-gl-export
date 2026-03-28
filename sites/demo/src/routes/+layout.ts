@@ -10,7 +10,8 @@ export const load: LayoutLoad = async () => {
 			licenses: [
 				'The source code is licensed MIT',
 				'The website content is licensed CC BY NC SA 4.0.'
-			]
+			],
+			contact: 'https://jin-igarashi.me'
 		},
 		nav: [
 			{ href: 'https://twitter.com/j_igarashi', icon: 'fa-brands fa-x-twitter' },
