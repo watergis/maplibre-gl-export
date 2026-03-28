@@ -1,5 +1,11 @@
 # @watergis/mapbox-gl-export
 
+## 3.6.1
+
+### Patch Changes
+
+- 68e4abc: chore: updated dependencies
+
 ## 3.6.0
 
 ### Minor Changes

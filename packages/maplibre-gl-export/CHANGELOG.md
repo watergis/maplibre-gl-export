@@ -1,5 +1,11 @@
 # @watergis/maplibre-gl-export
 
+## 4.1.2
+
+### Patch Changes
+
+- 68e4abc: chore: updated dependencies
+
 ## 4.1.1
 
 ### Patch Changes
