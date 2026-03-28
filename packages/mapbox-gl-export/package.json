@@ -50,29 +50,28 @@
 	},
 	"homepage": "https://github.com/watergis/maplibre-gl-export#readme",
 	"devDependencies": {
-		"@eslint/js": "^9.34.0",
+		"@eslint/js": "^10.0.1",
 		"@types/geojson": "^7946.0.16",
-		"@types/mapbox-gl": "^3.4.1",
-		"@types/node": "^24.0.0",
-		"@typescript-eslint/eslint-plugin": "^8.41.0",
-		"@typescript-eslint/parser": "^8.41.0",
+		"@types/node": "^25.5.0",
+		"@typescript-eslint/eslint-plugin": "^8.57.2",
+		"@typescript-eslint/parser": "^8.57.2",
 		"@watergis/maplibre-gl-export": "workspace:^",
-		"autoprefixer": "^10.4.21",
-		"eslint": "^9.34.0",
+		"autoprefixer": "^10.4.27",
+		"eslint": "^10.1.0",
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-import": "^2.32.0",
-		"globals": "^17.0.0",
+		"globals": "^17.4.0",
 		"path": "^0.12.7",
-		"postcss": "^8.5.6",
+		"postcss": "^8.5.8",
 		"postcss-cli": "^11.0.1",
-		"prettier": "^3.6.2",
-		"sass": "^1.91.0",
-		"sass-loader": "^16.0.5",
-		"typescript": "^5.9.2",
-		"typescript-eslint": "^8.41.0",
-		"vite": "^7.1.3"
+		"prettier": "^3.8.1",
+		"sass": "^1.98.0",
+		"sass-loader": "^16.0.7",
+		"typescript": "^6.0.2",
+		"typescript-eslint": "^8.57.2",
+		"vite": "^8.0.3"
 	},
 	"dependencies": {
-		"mapbox-gl": "^3.14.0"
+		"mapbox-gl": "^3.20.0"
 	}
 }

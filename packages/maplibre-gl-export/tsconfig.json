@@ -1,7 +1,7 @@
 {
 	"compilerOptions": {
 		"alwaysStrict": true,
-		"baseUrl": ".",
+		"rootDir": "./src/lib",
 		"emitDeclarationOnly": true,
 		"declaration": true,
 		"declarationMap": true,
@@ -9,7 +9,7 @@
 		"experimentalDecorators": true,
 		"lib": ["dom", "ESNext"],
 		"module": "ESNext",
-		"moduleResolution": "node",
+		"moduleResolution": "bundler",
 		"noImplicitThis": true,
 		"noUnusedLocals": true,
 		"outDir": "./dist/lib",

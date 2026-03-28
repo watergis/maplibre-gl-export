@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
-	import IconGithub from '@lucide/svelte/icons/github';
-	import IconTwitter from '@lucide/svelte/icons/twitter';
+	import { siGithub, siX } from 'simple-icons';
+
 	import { AppBar } from '@skeletonlabs/skeleton-svelte';
 	import type { PageData } from './$types';
 	import LightSwitch from '$lib/LightSwitch.svelte';
@@ -59,11 +59,13 @@
 								title={link.icon}
 								aria-label={link.icon}
 							>
-								<span>
+								<span class="w-6 h-6">
 									{#if link.icon === 'github'}
-										<IconGithub />
-									{:else if link.icon === 'twitter'}
-										<IconTwitter />
+										<!-- eslint-disable svelte/no-at-html-tags -->
+										{@html siGithub.svg}
+									{:else if link.icon === 'twitter' || link.icon === 'x'}
+										<!-- eslint-disable svelte/no-at-html-tags -->
+										{@html siX.svg}
 									{:else}
 										<i class={link.icon}></i>
 									{/if}

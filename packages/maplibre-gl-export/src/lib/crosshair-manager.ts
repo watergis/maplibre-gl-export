@@ -24,7 +24,7 @@ export default class CrosshairManager {
 	public create() {
 		this.updateValues();
 		if (this.map !== undefined) {
-			this.map.on('resize', this.mapResize);
+			(this.map as MaplibreMap).on('resize', this.mapResize);
 			this.createCanvas(this.map.getCanvasContainer());
 		} else {
 			console.error('map object is null');
@@ -67,7 +67,7 @@ export default class CrosshairManager {
 		}
 	}
 
-	private createCanvas(container) {
+	private createCanvas(container: HTMLElement) {
 		if (this.width !== undefined && this.height !== undefined) {
 			const canvas = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
 			canvas.style.position = 'relative';
@@ -76,17 +76,17 @@ export default class CrosshairManager {
 			const halfWidth = this.width / 2;
 			const halfHeight = this.height / 2;
 			this.yLine = canvas.appendChild(
-				this.createLine(halfWidth, 0, halfWidth, this.height, this.color, '2px')
+				this.createLine(`${halfWidth}`, '0', `${halfWidth}`, `${this.height}`, this.color, '2px')
 			);
 			this.xLine = canvas.appendChild(
-				this.createLine(0, halfHeight, this.width, halfHeight, this.color, '2px')
+				this.createLine('0', `${halfHeight}`, `${this.width}`, `${halfHeight}`, this.color, '2px')
 			);
 			container?.appendChild(canvas);
 			this.svgCanvas = canvas;
 		}
 	}
 
-	private createLine(x1, y1, x2, y2, color, w) {
+	private createLine(x1: string, y1: string, x2: string, y2: string, color: string, w: string) {
 		const aLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
 		aLine.setAttribute('x1', x1);
 		aLine.setAttribute('y1', y1);
@@ -115,7 +115,7 @@ export default class CrosshairManager {
 		}
 
 		if (this.map !== undefined) {
-			this.map.off('resize', this.mapResize);
+			(this.map as MaplibreMap).off('resize', this.mapResize);
 			this.map = undefined;
 		}
 	}

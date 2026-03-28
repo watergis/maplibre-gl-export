@@ -5,11 +5,11 @@ import { Unit } from './interfaces';
 export default class PrintableAreaManager {
 	private map: MaplibreMap | MapboxMap | undefined;
 
-	private width: number;
+	private width!: number;
 
-	private height: number;
+	private height!: number;
 
-	private unit: string;
+	private unit!: string;
 
 	private svgCanvas: SVGElement | undefined;
 
@@ -21,7 +21,7 @@ export default class PrintableAreaManager {
 			return;
 		}
 		this.mapResize = this.mapResize.bind(this);
-		this.map.on('resize', this.mapResize);
+		(this.map as MaplibreMap).on('resize', this.mapResize);
 		const clientWidth = this.map?.getCanvas().clientWidth;
 		const clientHeight = this.map?.getCanvas().clientHeight;
 		const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');

@@ -58,25 +58,19 @@ export default class MapGenerator extends MapGeneratorBase {
 	/**
 	 * This function is required to solve an error of Converting circular structure to JSON in mapbox
 	 */
-	private stringify(obj) {
-		let cache = [];
+	private stringify(obj: unknown) {
+		let cache: object[] | null = [];
 		const str = JSON.stringify(obj, function (key, value) {
 			if (typeof value === 'object' && value !== null) {
-				// eslint-disable-next-line
-				// @ts-ignore
-				if (cache.indexOf(value) !== -1) {
+				if (cache!.indexOf(value) !== -1) {
 					// Circular reference found, discard key
 					return;
 				}
 				// Store value in our collection
-				// eslint-disable-next-line
-				// @ts-ignore
-				cache.push(value);
+				cache!.push(value);
 			}
 			return value;
 		});
-		// eslint-disable-next-line
-		// @ts-ignore
 		cache = null; // reset the cache
 		return str;
 	}
@@ -106,12 +100,17 @@ export default class MapGenerator extends MapGeneratorBase {
 
 		// eslint-disable-next-line
 		// @ts-ignore
-		const images = (this.map.style.imageManager || {}).images || [];
+		const imageManager = this.map.style.imageManager;
+		const images =
+			((imageManager as unknown as Record<string, unknown>)?.images as Record<
+				string,
+				{ data: unknown }
+			>) ?? {};
 		if (images && Object.keys(images)?.length > 0) {
 			Object.keys(images).forEach((key) => {
 				if (!key) return;
 				if (!images[key].data) return;
-				renderMap.addImage(key, images[key].data);
+				renderMap.addImage(key, images[key].data as ImageBitmap);
 			});
 		}
 

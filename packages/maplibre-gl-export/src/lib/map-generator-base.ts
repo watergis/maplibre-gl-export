@@ -30,7 +30,6 @@
 import { jsPDF } from 'jspdf';
 import {
 	Map as MaplibreMap,
-	PointLike,
 	SourceSpecification,
 	StyleSpecification,
 	SymbolLayerSpecification
@@ -218,13 +217,13 @@ export abstract class MapGeneratorBase {
 				Object.keys(src).forEach((key) => {
 					// delete properties if value is undefined.
 					// for instance, raster-dem might has undefined value in "url" and "bounds"
-					if (!src[key]) delete src[key];
+					if (!(src as Record<string, unknown>)[key]) delete (src as Record<string, unknown>)[key];
 				});
 			});
 		}
 
 		// Render map
-		let renderMap = this.getRenderedMap(container, style);
+		let renderMap = this.getRenderedMap(container, style) as MaplibreMap;
 
 		renderMap.on('load', () => {
 			this.addNorthIconToMap(renderMap).then(() => {
@@ -232,24 +231,24 @@ export abstract class MapGeneratorBase {
 					const isAttributionAdded = this.addAttributions(renderMap);
 					if (isAttributionAdded) {
 						renderMap.once('idle', () => {
-							renderMap = this.renderMapPost(renderMap);
+							renderMap = this.renderMapPost(renderMap) as MaplibreMap;
 							const markers = this.getMarkers();
 							if (markers.length === 0) {
 								this.exportImage(renderMap, hidden, actualPixelRatio);
 							} else {
-								renderMap = this.renderMarkers(renderMap);
+								renderMap = this.renderMarkers(renderMap) as MaplibreMap;
 								renderMap.once('idle', () => {
 									this.exportImage(renderMap, hidden, actualPixelRatio);
 								});
 							}
 						});
 					} else {
-						renderMap = this.renderMapPost(renderMap);
+						renderMap = this.renderMapPost(renderMap) as MaplibreMap;
 						const markers = this.getMarkers();
 						if (markers.length === 0) {
 							this.exportImage(renderMap, hidden, actualPixelRatio);
 						} else {
-							renderMap = this.renderMarkers(renderMap);
+							renderMap = this.renderMarkers(renderMap) as MaplibreMap;
 							renderMap.once('idle', () => {
 								this.exportImage(renderMap, hidden, actualPixelRatio);
 							});
@@ -315,7 +314,7 @@ export abstract class MapGeneratorBase {
 				break;
 		}
 
-		const pixels = [width, height] as PointLike;
+		const pixels: [number, number] = [width, height];
 		return pixels;
 	}
 
