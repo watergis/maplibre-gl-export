@@ -4,6 +4,9 @@ on:
   push:
     branches: [ main ]
 
+permissions:
+  contents: write
+
 env:
   CI: true
   PNPM_CACHE_FOLDER: .pnpm-store
@@ -15,6 +18,7 @@ jobs:
     permissions:
       contents: write # to create release (changesets/action)
       pull-requests: write # to create pull request (changesets/action)
+      id-token: write # Required for OIDC
     name: Release
     runs-on: ubuntu-latest
     strategy:
@@ -48,4 +52,3 @@ jobs:
           publish: pnpm release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.npm_token }}
