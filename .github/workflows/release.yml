@@ -27,7 +27,7 @@ jobs:
 
     steps:
       - name: checkout code repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - uses: pnpm/action-setup@v5.0.0
