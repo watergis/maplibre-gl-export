@@ -66,6 +66,12 @@
 		});
 	};
 
+	$effect(() => {
+		if (shiki) {
+			generatedHtml = shiki.codeToHtml(code, { lang, theme });
+		}
+	});
+
 	onMount(async () => {
 		if (!shiki) {
 			const engine = await createOnigurumaEngine(import('shiki/wasm'));
@@ -77,8 +83,6 @@
 				langs: [console, html, css, js]
 			});
 		}
-
-		generatedHtml = shiki.codeToHtml(code, { lang, theme });
 	});
 </script>
 

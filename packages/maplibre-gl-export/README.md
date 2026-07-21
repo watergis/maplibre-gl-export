@@ -8,4 +8,20 @@ This module is using source code of [mpetroff/print-maps](https://github.com/mpe
 
 ## Demo & usage
 
-See [documentation](https://maplibre-gl-export.water-gis.com/).
+See the [documentation](https://maplibre-gl-export.water-gis.com/). The demos use
+MapLibre GL JS v5, the latest stable major; v6 has a separate preview example.
+
+## MapLibre GL JS compatibility
+
+Supported peer range: `^5.21.1 || >=6.0.0-0 <7.0.0`.
+
+```sh
+pnpm add @watergis/maplibre-gl-export maplibre-gl
+```
+
+- **v5:** ESM or UMD; used by the default demos.
+- **v6:** ESM only; bundlers require one-time worker setup. See the
+  [v6 migration guide](https://github.com/maplibre/maplibre-gl-js/blob/main/docs/guides/v5-to-v6-migration-guide.md).
+
+CDN examples: [stable default](./index_cdn.html), [v5](./index_cdn_v5.html), and
+[v6 preview](./index_cdn_v6.html).

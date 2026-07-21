@@ -3,9 +3,9 @@ import type { LayoutLoad } from './$types';
 export const load: LayoutLoad = async () => {
 	return {
 		metadata: {
-			title: 'Maplibre/Mapbox GL Export',
+			title: 'MapLibre/Mapbox GL Export',
 			description:
-				'Maplibre/Mapbox GL Export is a Maplibre/Mapbox GL JS plugin that can export a map image in various image format such as PNG, JPEG, PDF and SVG without any server!',
+				'MapLibre/Mapbox GL Export is a MapLibre/Mapbox GL JS plugin that can export a map image in various image format such as PNG, JPEG, PDF and SVG without any server!',
 			author: 'JinIgarashi',
 			licenses: [
 				'The source code is licensed MIT',

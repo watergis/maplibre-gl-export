@@ -1,8 +1,8 @@
 import type { PageLoad } from './$types';
 
 export const load: PageLoad = async () => {
-	const title = 'Maplibre GL Export';
-	const site_name = 'Maplibre GL Export Demo';
+	const title = 'MapLibre GL Export';
+	const site_name = 'MapLibre GL Export Demo';
 	const site_description = 'Demo website for maplibre-gl-export plugin';
 
 	return {
