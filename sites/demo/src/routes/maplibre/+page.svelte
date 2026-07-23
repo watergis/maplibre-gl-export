@@ -1,5 +1,13 @@
 <script lang="ts">
-	import { addProtocol, Map, Marker, NavigationControl, TerrainControl } from 'maplibre-gl';
+	import {
+		addProtocol,
+		Map,
+		Marker,
+		NavigationControl,
+		setWorkerUrl,
+		TerrainControl
+	} from 'maplibre-gl';
+	import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url';
 	import {
 		MaplibreExportControl,
 		Size,
@@ -20,6 +28,8 @@
 	let mapContainer: HTMLDivElement | undefined = $state();
 
 	let exportControl: MaplibreExportControl;
+
+	setWorkerUrl(workerUrl);
 
 	const initExportControl = () => {
 		if (!map) return;

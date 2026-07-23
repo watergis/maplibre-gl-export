@@ -10,3 +10,4 @@ allowBuilds:
   workerd: true
 minimumReleaseAgeExclude:
   - sass@1.101.6
+  - maplibre-gl@6.0.0

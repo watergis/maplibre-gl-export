@@ -23,10 +23,10 @@
 	];
 	let tabSet: string = $state(tabs[0].value);
 	let maplibreVersionTabs = [
-		{ label: 'v5 (stable)', value: 'v5' },
-		{ label: 'v6.0.0-22 (preview)', value: 'v6' }
+		{ label: 'v6 (stable)', value: 'v6' },
+		{ label: 'v5', value: 'v5' }
 	];
-	let maplibreVersion = $state('v5');
+	let maplibreVersion = $state('v6');
 
 	let imprtTypeTabs = [
 		{ label: 'NPM', value: 'npm' },
@@ -43,7 +43,7 @@
 	let selectedLanguage = $state('en');
 	let mapboxToken = $state('Your access token');
 	let packageManager = $state('npm');
-	let maplibreDependencyVersion = $derived(maplibreVersion === 'v6' ? '6.0.0-22' : '^5.21.1');
+	let maplibreDependencyVersion = $derived(maplibreVersion === 'v6' ? '^6.0.0' : '^5.21.1');
 	let maplibreInstallSuffix = $derived(
 		tabSet === 'maplibre' ? ` maplibre-gl@${maplibreDependencyVersion}` : ''
 	);
@@ -73,7 +73,7 @@
 	};
 
 	const getMaplibreV5CdnExample = async () => {
-		const res = await fetch('/assets/maplibre-cdn-example.txt');
+		const res = await fetch('/assets/maplibre-v5-cdn-example.txt');
 		if (!res.ok) {
 			return;
 		}
@@ -262,15 +262,16 @@
 			<h3 class="h3 pt-6 pb-4">Demo</h3>
 			{#if tabSet === 'maplibre'}
 				<p class="pb-3 text-sm">
-					MapLibre GL JS {maplibreVersion === 'v6' ? 'v6.0.0-22 (preview)' : 'v5 (stable)'}.
+					MapLibre GL JS {maplibreVersion === 'v6' ? 'v6 (stable)' : 'v5'}.
 				</p>
 			{/if}
 
-			{#if tabSet === 'maplibre' && maplibreVersion === 'v6'}
+			{#if tabSet === 'maplibre'}
 				<!-- eslint-disable svelte/no-navigation-without-resolve -->
 				<a
 					class="btn preset-filled-primary-500 btn-lg"
-					href="/maplibre-v6?language={selectedLanguage}">Open MapLibre GL JS v6 DEMO</a
+					href="/maplibre{maplibreVersion === 'v5' ? '-v5' : ''}?language={selectedLanguage}"
+					>Open MapLibre GL JS {maplibreVersion === 'v6' ? 'v6' : 'v5'} DEMO</a
 				>
 			{:else}
 				<!-- eslint-disable svelte/no-navigation-without-resolve -->
@@ -278,7 +279,7 @@
 					class="btn preset-filled-primary-500 btn-lg"
 					href="/{tabSet}?language={selectedLanguage}"
 				>
-					Open {tabSet === 'maplibre' ? 'MapLibre GL JS v5' : 'Mapbox'} DEMO
+					Open Mapbox DEMO
 				</a>
 			{/if}
 		</div>
@@ -381,7 +382,7 @@ import { ${
 									: 'Map'
 						} } from '${tabSet}-gl';
 import '${tabSet}-gl/dist/${tabSet}-gl.css';
-${tabSet === 'maplibre' && maplibreVersion === 'v6' ? `import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?url';` : ''}
+${tabSet === 'maplibre' && maplibreVersion === 'v6' ? `import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url';` : ''}
 import {
 	${tabSet === 'maplibre' ? 'Maplibre' : 'Mapbox'}ExportControl,
 	Size,
