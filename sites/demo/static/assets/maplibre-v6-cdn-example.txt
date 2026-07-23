@@ -2,17 +2,17 @@
 <html>
 	<head>
 		<meta charset="utf-8" />
-		<title>MapLibre GL JS v6 preview</title>
+		<title>MapLibre GL JS v6 example</title>
 		<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
 
 		<script type="importmap">
 			{
 				"imports": {
-					"maplibre-gl": "https://unpkg.com/maplibre-gl@6.0.0-22/dist/maplibre-gl.mjs"
+					"maplibre-gl": "https://unpkg.com/maplibre-gl@^6.0.0/dist/maplibre-gl.mjs"
 				}
 			}
 		</script>
-		<link href="https://unpkg.com/maplibre-gl@6.0.0-22/dist/maplibre-gl.css" rel="stylesheet" />
+		<link href="https://unpkg.com/maplibre-gl@^6.0.0/dist/maplibre-gl.css" rel="stylesheet" />
 		<link
 			href="https://cdn.jsdelivr.net/npm/@watergis/maplibre-gl-export@{maplibreExportVersion}/dist/maplibre-gl-export.css"
 			rel="stylesheet"

@@ -6,7 +6,7 @@
 	let failed = $state(false);
 
 	onMount(async () => {
-		const response = await fetch('/assets/maplibre-v6-cdn-example.txt');
+		const response = await fetch('/assets/maplibre-v5-cdn-example.txt');
 		if (!response.ok) {
 			failed = true;
 			return;
@@ -23,10 +23,10 @@
 </script>
 
 {#if failed}
-	<p class="p-4">The MapLibre GL JS v6 demo could not be loaded.</p>
+	<p class="p-4">The MapLibre GL JS v5 demo could not be loaded.</p>
 {:else if exampleHtml}
-	<iframe class="h-full w-full border-0" title="MapLibre GL JS v6 demo" srcdoc={exampleHtml}
+	<iframe class="h-full w-full border-0" title="MapLibre GL JS v5 demo" srcdoc={exampleHtml}
 	></iframe>
 {:else}
-	<p class="p-4">Loading MapLibre GL JS v6 demo…</p>
+	<p class="p-4">Loading MapLibre GL JS v5 demo…</p>
 {/if}

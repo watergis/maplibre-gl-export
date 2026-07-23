@@ -4,12 +4,16 @@ import {
 	Map,
 	Marker,
 	NavigationControl,
+	setWorkerUrl,
 	TerrainControl
 } from 'maplibre-gl';
+import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { MaplibreExportControl, Size, PageOrientation, Format, DPI } from './src/lib/index';
 import './src/scss/maplibre-gl-export.scss';
 import { Protocol } from 'pmtiles';
+
+setWorkerUrl(workerUrl);
 
 const protocol = new Protocol();
 addProtocol('pmtiles', protocol.tile);
