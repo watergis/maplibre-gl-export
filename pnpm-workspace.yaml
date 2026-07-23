@@ -5,3 +5,5 @@ allowBuilds:
   '@parcel/watcher': true
   core-js: true
   lefthook: true
+minimumReleaseAgeExclude:
+  - sass@1.101.6
