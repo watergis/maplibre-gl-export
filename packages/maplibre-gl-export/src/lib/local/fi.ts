@@ -6,6 +6,8 @@ const translation: Translation = {
 	Format: 'Muoto',
 	DPI: 'DPI',
 	Generate: 'Generoi',
+	Scalebar: 'Mittakaava',
+	NorthIcon: 'Pohjoisnuoli',
 	LanguageName: 'Suomalainen',
 	LanguageCode: 'fi'
 };

@@ -6,7 +6,8 @@
 		Languages,
 		defaultAttributionOptions,
 		defaultMarkerCirclePaint,
-		defaultNorthIconOptions
+		defaultNorthIconOptions,
+		defaultScalebarOptions
 	} from '@watergis/maplibre-gl-export';
 	import type { PageData } from './$types';
 	import CodeBlock from '$lib/CodeBlock.svelte';
@@ -96,8 +97,7 @@
 		mapboxCdnExample = await res.text();
 	};
 
-	const northOptions = defaultNorthIconOptions;
-	northOptions.image = 'bring your own SVG string';
+	const northOptions = { ...defaultNorthIconOptions, image: 'bring your own SVG string' };
 
 	const parameters = [
 		{
@@ -172,13 +172,19 @@
 			name: 'attributionOptions',
 			default: JSON.stringify(defaultAttributionOptions, null, 2),
 			description:
-				'This plugin will try to add attribution to the bottom-right or top-right of the image as a maplibre symbol layer. The default style of attribution label can be changed per your preference. For fallbackTextFont property, it will only be used when font information cannot be fetched from style object. If glyphs property is not set to your style object, attribution will not be added. You can hide it if none is set to visibility.'
+				"An `AttributionControl` is added to the hidden map used for rendering, and its element is drawn onto the exported image keeping maplibre's native styling. `compact` and `customAttribution` of maplibre's `AttributionControlOptions` can be set here, in addition to `position` and `margin`. It can be placed in any of the four corners. Set `visibility` to `none` to hide it."
+		},
+		{
+			name: 'scalebarOptions',
+			default: JSON.stringify(defaultScalebarOptions, null, 2),
+			description:
+				"A `ScaleControl` is added to the hidden map used for rendering, and its element is drawn onto the exported image. `maxWidth` and `unit` of maplibre's `ScaleControlOptions` can be set here, in addition to `position` and `margin`. Set `visibility` to `none` to hide it. It can also be toggled from the export panel."
 		},
 		{
 			name: 'northIconOptions',
 			default: JSON.stringify(northOptions, null, 2),
 			description:
-				'North icon options. It is shown at top-right of corner of exported map as default. The size of north icon is 5% of map width. You can customize icon image and other settings through this option. North icon is not rendered when zoom level is less than 2 and landscape mode since it appears twice.'
+				'North icon options. It is drawn onto the exported image at the top-right corner as default, rotated to match the map bearing. The size of north icon is 5% of map width. You can customize icon image and other settings through this option. It can also be toggled from the export panel.'
 		},
 		{
 			name: 'accessToken',

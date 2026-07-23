@@ -6,6 +6,8 @@ const translation: Translation = {
 	Format: 'Format',
 	DPI: 'DPI',
 	Generate: 'Genera',
+	Scalebar: "Barra d'escala",
+	NorthIcon: 'Icona del nord',
 	LanguageName: 'Catalan',
 	LanguageCode: 'ca'
 };

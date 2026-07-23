@@ -21,7 +21,8 @@ import {
 import {
 	defaultAttributionOptions,
 	defaultMarkerCirclePaint,
-	defaultNorthIconOptions
+	defaultNorthIconOptions,
+	defaultScalebarOptions
 } from './map-generator-base';
 
 /**
@@ -55,6 +56,7 @@ export default class MaplibreExportControl implements IControl {
 		Filename: 'map',
 		markerCirclePaint: defaultMarkerCirclePaint,
 		attributionOptions: defaultAttributionOptions,
+		scalebarOptions: defaultScalebarOptions,
 		northIconOptions: defaultNorthIconOptions
 	};
 
@@ -63,10 +65,16 @@ export default class MaplibreExportControl implements IControl {
 	constructor(options: ControlOptions) {
 		if (options) {
 			options.attributionOptions = Object.assign(
+				{},
 				defaultAttributionOptions,
 				options.attributionOptions
 			);
-			options.northIconOptions = Object.assign(defaultNorthIconOptions, options.northIconOptions);
+			options.scalebarOptions = Object.assign({}, defaultScalebarOptions, options.scalebarOptions);
+			options.northIconOptions = Object.assign(
+				{},
+				defaultNorthIconOptions,
+				options.northIconOptions
+			);
 			this.options = Object.assign(this.options, options);
 		}
 		this.onDocumentClick = this.onDocumentClick.bind(this);
@@ -149,6 +157,20 @@ export default class MaplibreExportControl implements IControl {
 		);
 		table.appendChild(tr4);
 
+		const tr5 = this.createCheckbox(
+			this.getTranslation().Scalebar,
+			'scalebar',
+			this.options.scalebarOptions?.visibility !== 'none'
+		);
+		table.appendChild(tr5);
+
+		const tr6 = this.createCheckbox(
+			this.getTranslation().NorthIcon,
+			'north-icon',
+			this.options.northIconOptions?.visibility !== 'none'
+		);
+		table.appendChild(tr6);
+
 		this.exportContainer.appendChild(table);
 
 		const generateButton = document.createElement('button');
@@ -168,11 +190,27 @@ export default class MaplibreExportControl implements IControl {
 			const dpiType: HTMLSelectElement = <HTMLSelectElement>(
 				document.getElementById('mapbox-gl-export-dpi-type')
 			);
+			const scalebar: HTMLInputElement = <HTMLInputElement>(
+				document.getElementById('mapbox-gl-export-scalebar')
+			);
+			const northIcon: HTMLInputElement = <HTMLInputElement>(
+				document.getElementById('mapbox-gl-export-north-icon')
+			);
 			const orientValue = pageOrientation.value;
 			let pageSizeValue = JSON.parse(pageSize.value);
 			if (orientValue === PageOrientation.Portrait) {
 				pageSizeValue = pageSizeValue.reverse();
 			}
+
+			// reflect the panel toggles before generating so that `generateMap` (which is also
+			// overridden by MapboxExportControl) can simply read them from `this.options`.
+			if (this.options.scalebarOptions) {
+				this.options.scalebarOptions.visibility = scalebar?.checked ? 'visible' : 'none';
+			}
+			if (this.options.northIconOptions) {
+				this.options.northIconOptions.visibility = northIcon?.checked ? 'visible' : 'none';
+			}
+
 			this.generateMap(
 				map,
 				pageSizeValue,
@@ -195,17 +233,17 @@ export default class MaplibreExportControl implements IControl {
 		unit: UnitType,
 		filename?: string
 	) {
-		const mapGenerator = new MapGenerator(
-			map as MaplibreMap,
+		const mapGenerator = new MapGenerator(map as MaplibreMap, {
 			size,
 			dpi,
 			format,
 			unit,
-			filename,
-			this.options.markerCirclePaint,
-			this.options.attributionOptions,
-			this.options.northIconOptions
-		);
+			fileName: filename,
+			markerCirclePaint: this.options.markerCirclePaint,
+			attributionOptions: this.options.attributionOptions,
+			scalebarOptions: this.options.scalebarOptions,
+			northIconOptions: this.options.northIconOptions
+		});
 		mapGenerator.generate();
 	}
 
@@ -244,6 +282,33 @@ export default class MaplibreExportControl implements IControl {
 		tr1.appendChild(tdLabel);
 		tr1.appendChild(tdContent);
 		return tr1;
+	}
+
+	/**
+	 * Create a table row with a checkbox. It shares the layout of {@link createSelection}.
+	 * @param title label of the checkbox
+	 * @param type suffix of the element id (`mapbox-gl-export-${type}`)
+	 * @param checked initial state
+	 */
+	private createCheckbox(title: string, type: string, checked: boolean): HTMLElement {
+		const label = document.createElement('label');
+		label.textContent = title;
+		label.setAttribute('for', `mapbox-gl-export-${type}`);
+
+		const content = document.createElement('input');
+		content.type = 'checkbox';
+		content.setAttribute('id', `mapbox-gl-export-${type}`);
+		content.setAttribute('name', type);
+		content.checked = checked;
+
+		const tr = document.createElement('TR');
+		const tdLabel = document.createElement('TD');
+		const tdContent = document.createElement('TD');
+		tdLabel.appendChild(label);
+		tdContent.appendChild(content);
+		tr.appendChild(tdLabel);
+		tr.appendChild(tdContent);
+		return tr;
 	}
 
 	public onRemove(): void {

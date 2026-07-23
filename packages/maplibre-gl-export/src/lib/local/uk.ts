@@ -6,6 +6,8 @@ const translation: Translation = {
 	Format: 'Формат',
 	DPI: 'DPI',
 	Generate: 'Згенерувати',
+	Scalebar: 'Масштабна лінійка',
+	NorthIcon: 'Покажчик півночі',
 	LanguageName: 'українська',
 	LanguageCode: 'uk'
 };

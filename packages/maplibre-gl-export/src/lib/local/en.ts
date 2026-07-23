@@ -6,6 +6,8 @@ const translation: Translation = {
 	Format: 'Format',
 	DPI: 'DPI',
 	Generate: 'Generate',
+	Scalebar: 'Scale bar',
+	NorthIcon: 'North icon',
 	LanguageName: 'English',
 	LanguageCode: 'en'
 };

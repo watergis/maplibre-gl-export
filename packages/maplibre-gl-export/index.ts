@@ -47,6 +47,11 @@ map.addControl(
 			position: 'bottom-right',
 			visibility: 'visible'
 		},
+		scalebarOptions: {
+			position: 'bottom-left',
+			unit: 'metric',
+			visibility: 'visible'
+		},
 		northIconOptions: {
 			position: 'top-right',
 			visibility: 'visible'

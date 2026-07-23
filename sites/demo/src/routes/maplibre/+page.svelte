@@ -1,6 +1,7 @@
 <script lang="ts">
 	import {
 		addProtocol,
+		GlobeControl,
 		Map,
 		Marker,
 		NavigationControl,
@@ -70,6 +71,7 @@
 		});
 
 		map.addControl(new NavigationControl({ visualizePitch: true }), 'bottom-right');
+		map.addControl(new GlobeControl(), 'bottom-right');
 
 		new Marker().setLngLat([37.30467, -0.15943]).addTo(map);
 		new Marker().setLngLat([30.0824, -1.9385]).addTo(map);
