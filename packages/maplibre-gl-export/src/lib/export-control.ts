@@ -50,17 +50,7 @@ export default class MaplibreExportControl implements IControl {
 		PrintableArea: false,
 		Local: 'en',
 		AllowedSizes: Object.keys(Size) as (
-			| 'LETTER'
-			| 'A2'
-			| 'A3'
-			| 'A4'
-			| 'A5'
-			| 'A6'
-			| 'B2'
-			| 'B3'
-			| 'B4'
-			| 'B5'
-			| 'B6'
+			'LETTER' | 'A2' | 'A3' | 'A4' | 'A5' | 'A6' | 'B2' | 'B3' | 'B4' | 'B5' | 'B6'
 		)[],
 		Filename: 'map',
 		markerCirclePaint: defaultMarkerCirclePaint,

@@ -1,3 +1,7 @@
 packages:
   - "packages/*"
   - "sites/*"
+allowBuilds:
+  '@parcel/watcher': true
+  core-js: true
+  lefthook: true
