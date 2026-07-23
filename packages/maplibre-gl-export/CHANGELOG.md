@@ -1,5 +1,15 @@
 # @watergis/maplibre-gl-export
 
+## 4.2.0
+
+### Minor Changes
+
+- ae0a9f0: Support MapLibre GL JS v5 and v6, with v6 as the stable default.
+
+### Patch Changes
+
+- 8e94e1f: chore: update dependencies
+
 ## 4.1.2
 
 ### Patch Changes
