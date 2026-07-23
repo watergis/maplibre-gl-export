@@ -6,6 +6,8 @@ const translation: Translation = {
 	Format: 'Format',
 	DPI: 'DPI',
 	Generate: 'Générer',
+	Scalebar: "Barre d'échelle",
+	NorthIcon: 'Flèche du nord',
 	LanguageName: 'Français',
 	LanguageCode: 'fr'
 };

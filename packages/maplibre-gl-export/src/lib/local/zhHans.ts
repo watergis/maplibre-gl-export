@@ -6,6 +6,8 @@ const translation: Translation = {
 	Format: '格式',
 	DPI: '像素',
 	Generate: '导出',
+	Scalebar: '比例尺',
+	NorthIcon: '指北针',
 	LanguageName: '简体字',
 	LanguageCode: 'zhHans'
 };

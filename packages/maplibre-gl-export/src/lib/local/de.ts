@@ -6,6 +6,8 @@ const translation: Translation = {
 	Format: 'Dateiformat',
 	DPI: 'Druckauflösung',
 	Generate: 'Erstellen',
+	Scalebar: 'Maßstabsleiste',
+	NorthIcon: 'Nordpfeil',
 	LanguageName: 'Deutsch',
 	LanguageCode: 'de'
 };

@@ -6,6 +6,8 @@ const translation: Translation = {
 	Format: 'Формат',
 	DPI: 'Разрешение (DPI)',
 	Generate: 'Сгенерировать',
+	Scalebar: 'Масштабная линейка',
+	NorthIcon: 'Указатель севера',
 	LanguageName: 'русский',
 	LanguageCode: 'ru'
 };

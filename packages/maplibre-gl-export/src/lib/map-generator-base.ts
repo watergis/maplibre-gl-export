@@ -27,21 +27,18 @@
  * THE SOFTWARE.
  */
 
+import { toCanvas } from 'html-to-image';
 import { jsPDF } from 'jspdf';
-import {
-	Map as MaplibreMap,
-	SourceSpecification,
-	StyleSpecification,
-	SymbolLayerSpecification
-} from 'maplibre-gl';
+import type { ControlPosition } from 'maplibre-gl';
+import { Map as MaplibreMap, StyleSpecification } from 'maplibre-gl';
 import { CirclePaint, Map as MapboxMap } from 'mapbox-gl';
 import {
 	AttributionOptions,
-	AttributionStyle,
 	DPIType,
 	Format,
 	FormatType,
 	NorthIconOptions,
+	ScalebarOptions,
 	Size,
 	SizeType,
 	Unit,
@@ -56,15 +53,17 @@ export const defaultMarkerCirclePaint: CirclePaint = {
 };
 
 export const defaultAttributionOptions: AttributionOptions = {
-	style: {
-		textSize: 16,
-		textHaloColor: '#FFFFFF',
-		textHaloWidth: 0.8,
-		textColor: '#000000',
-		fallbackTextFont: ['Open Sans Regular']
-	},
 	visibility: 'visible',
-	position: 'bottom-right'
+	position: 'bottom-right',
+	margin: 10
+};
+
+export const defaultScalebarOptions: ScalebarOptions = {
+	maxWidth: 100,
+	unit: 'metric',
+	visibility: 'visible',
+	position: 'bottom-left',
+	margin: 10
 };
 
 export const defaultNorthIconOptions: NorthIconOptions = {
@@ -72,8 +71,40 @@ export const defaultNorthIconOptions: NorthIconOptions = {
 	imageName: 'gl-export-north-icon',
 	imageSizeFraction: 0.05,
 	visibility: 'visible',
-	position: 'top-right'
+	position: 'top-right',
+	margin: 10
 };
+
+/**
+ * CSS class prefix of the underlying library. It is used to look up markers and
+ * the DOM elements of the scale / attribution controls on the hidden map.
+ */
+export type CssPrefix = 'maplibregl' | 'mapboxgl';
+
+export interface MapGeneratorConfig {
+	/** layout size. default is A4 */
+	size?: SizeType;
+	/** dpi value. default is 300 */
+	dpi?: DPIType;
+	/** image format. default is PNG */
+	format?: FormatType;
+	/** length unit of the page layout. default is mm */
+	unit?: UnitType;
+	/** file name. default is 'map' */
+	fileName?: string;
+	/** CSS class prefix of the underlying library. default is 'maplibregl' */
+	cssPrefix?: CssPrefix;
+	markerCirclePaint?: CirclePaint;
+	attributionOptions?: AttributionOptions;
+	scalebarOptions?: ScalebarOptions;
+	northIconOptions?: NorthIconOptions;
+}
+
+/** Timeout for waiting the `load` event of the hidden map */
+const LOAD_TIMEOUT_MS = 30000;
+
+/** Timeout for waiting the `idle` event of the hidden map */
+const IDLE_TIMEOUT_MS = 5000;
 
 export abstract class MapGeneratorBase {
 	protected map: MaplibreMap | MapboxMap;
@@ -90,56 +121,82 @@ export abstract class MapGeneratorBase {
 
 	protected fileName: string;
 
-	protected markerClassName: string;
+	protected cssPrefix: CssPrefix;
 
 	protected markerCirclePaint: CirclePaint;
 
-	protected attributionClassName: string;
-
 	protected attributionOptions: AttributionOptions;
+
+	protected scalebarOptions: ScalebarOptions;
 
 	protected northIconOptions: NorthIconOptions;
 
+	/** Hidden container holding the map used for rendering. Available while generating. */
+	protected hiddenContainer: HTMLElement | undefined;
+
 	/**
 	 * Constructor
-	 * @param map MaplibreMap object
-	 * @param size layout size. default is A4
-	 * @param dpi dpi value. default is 300
-	 * @param format image format. default is PNG
-	 * @param unit length unit. default is mm
-	 * @param fileName file name. default is 'map'
+	 * @param map MaplibreMap or MapboxMap object
+	 * @param config generator settings. See {@link MapGeneratorConfig}
 	 */
-	constructor(
-		map: MaplibreMap | MapboxMap,
-		size: SizeType = Size.A4,
-		dpi: DPIType = 300,
-		format: FormatType = Format.PNG,
-		unit: UnitType = Unit.mm,
-		fileName = 'map',
-		markerClassName = 'maplibregl-marker',
-		markerCirclePaint = defaultMarkerCirclePaint,
-		attributionClassName = 'maplibregl-ctrl-attrib-inner',
-		attributionOptions = defaultAttributionOptions,
-		northIconOptions = defaultNorthIconOptions
-	) {
+	constructor(map: MaplibreMap | MapboxMap, config: MapGeneratorConfig = {}) {
+		const size = config.size ?? Size.A4;
 		this.map = map;
 		this.width = size[0];
 		this.height = size[1];
-		this.dpi = dpi;
-		this.format = format;
-		this.unit = unit;
-		this.fileName = fileName;
-		this.markerClassName = markerClassName;
-		this.markerCirclePaint = markerCirclePaint;
-		this.attributionClassName = attributionClassName;
-		this.attributionOptions = attributionOptions;
-		this.northIconOptions = northIconOptions;
+		this.dpi = config.dpi ?? 300;
+		this.format = config.format ?? Format.PNG;
+		this.unit = config.unit ?? Unit.mm;
+		this.fileName = config.fileName ?? 'map';
+		this.cssPrefix = config.cssPrefix ?? 'maplibregl';
+		this.markerCirclePaint = config.markerCirclePaint ?? defaultMarkerCirclePaint;
+		this.attributionOptions = { ...defaultAttributionOptions, ...config.attributionOptions };
+		this.scalebarOptions = { ...defaultScalebarOptions, ...config.scalebarOptions };
+		this.northIconOptions = { ...defaultNorthIconOptions, ...config.northIconOptions };
+	}
+
+	/** Class name of markers of the underlying library */
+	protected get markerClassName() {
+		return `${this.cssPrefix}-marker`;
+	}
+
+	/** Class name of the attribution control element of the underlying library */
+	protected get attributionClassName() {
+		return `${this.cssPrefix}-ctrl-attrib`;
+	}
+
+	/** Class name of the scale control element of the underlying library */
+	protected get scalebarClassName() {
+		return `${this.cssPrefix}-ctrl-scale`;
+	}
+
+	/** Ratio between the exported resolution and the base 96 DPI layout */
+	protected get scaleFactor() {
+		return this.dpi / 96;
 	}
 
 	protected abstract getRenderedMap(
 		container: HTMLElement,
 		style: StyleSpecification | mapboxgl.Style
 	): MaplibreMap | MapboxMap;
+
+	/**
+	 * Add a scale control to the hidden map. The control element is rasterized and
+	 * drawn on the exported canvas afterwards, so it only has to exist in the DOM.
+	 */
+	protected abstract addScaleControl(
+		renderMap: MaplibreMap | MapboxMap,
+		options: ScalebarOptions
+	): void;
+
+	/**
+	 * Add an attribution control to the hidden map. Its text is read from the DOM and
+	 * drawn on the exported canvas afterwards.
+	 */
+	protected abstract addAttributionControl(
+		renderMap: MaplibreMap | MapboxMap,
+		options: AttributionOptions
+	): void;
 
 	protected renderMapPost(renderMap: MaplibreMap | MapboxMap) {
 		return renderMap;
@@ -184,26 +241,28 @@ export abstract class MapGeneratorBase {
 	}
 
 	/**
-	 * Generate and download Map image
+	 * Generate and download Map image.
+	 *
+	 * The map is rendered on a hidden map object at the requested page size and DPI,
+	 * then its canvas is composed with the scale bar, north icon and attribution
+	 * onto a 2D canvas which is what actually gets exported.
 	 */
-	generate() {
-		// eslint-disable-next-line
-		const this_ = this;
-
+	async generate() {
 		this.addLoader();
 		this.showLoader();
 
 		// Calculate pixel ratio
 		const actualPixelRatio: number = window.devicePixelRatio;
 		Object.defineProperty(window, 'devicePixelRatio', {
-			get() {
-				return this_.dpi / 96;
-			}
+			get: () => this.scaleFactor,
+			configurable: true
 		});
+
 		// Create map container
 		const hidden = document.createElement('div');
 		hidden.className = 'hidden-map';
 		document.body.appendChild(hidden);
+		this.hiddenContainer = hidden;
 		const container = document.createElement('div');
 		container.style.width = this.toPixels(this.width);
 		container.style.height = this.toPixels(this.height);
@@ -222,286 +281,254 @@ export abstract class MapGeneratorBase {
 			});
 		}
 
-		// Render map
-		let renderMap = this.getRenderedMap(container, style) as MaplibreMap;
+		try {
+			// Render map
+			let renderMap = this.getRenderedMap(container, style) as MaplibreMap;
 
-		renderMap.on('load', () => {
-			this.addNorthIconToMap(renderMap).then(() => {
-				renderMap.once('idle', () => {
-					const isAttributionAdded = this.addAttributions(renderMap);
-					if (isAttributionAdded) {
-						renderMap.once('idle', () => {
-							renderMap = this.renderMapPost(renderMap) as MaplibreMap;
-							const markers = this.getMarkers();
-							if (markers.length === 0) {
-								this.exportImage(renderMap, hidden, actualPixelRatio);
-							} else {
-								renderMap = this.renderMarkers(renderMap) as MaplibreMap;
-								renderMap.once('idle', () => {
-									this.exportImage(renderMap, hidden, actualPixelRatio);
-								});
-							}
-						});
-					} else {
-						renderMap = this.renderMapPost(renderMap) as MaplibreMap;
-						const markers = this.getMarkers();
-						if (markers.length === 0) {
-							this.exportImage(renderMap, hidden, actualPixelRatio);
-						} else {
-							renderMap = this.renderMarkers(renderMap) as MaplibreMap;
-							renderMap.once('idle', () => {
-								this.exportImage(renderMap, hidden, actualPixelRatio);
-							});
-						}
-					}
-				});
+			await this.waitForEvent(renderMap, 'load', LOAD_TIMEOUT_MS);
+
+			renderMap = this.renderMapPost(renderMap) as MaplibreMap;
+
+			if (this.getMarkers().length > 0) {
+				renderMap = this.renderMarkers(renderMap) as MaplibreMap;
+			}
+
+			await this.waitForEvent(renderMap, 'idle', IDLE_TIMEOUT_MS);
+
+			const canvas = await this.composeCanvas(renderMap);
+			this.exportImage(canvas, renderMap);
+
+			renderMap.remove();
+		} catch (err) {
+			console.error('Failed to generate map image:', err);
+		} finally {
+			hidden.parentNode?.removeChild(hidden);
+			hidden.remove();
+			this.hiddenContainer = undefined;
+			Object.defineProperty(window, 'devicePixelRatio', {
+				get: () => actualPixelRatio,
+				configurable: true
 			});
-		});
-	}
-
-	private stripHtml(htmlString: string) {
-		const tempElement = document.createElement('div');
-		tempElement.innerHTML = htmlString;
-		return tempElement.textContent || tempElement.innerText || '';
-	}
-
-	/**
-	 * Get icon width against exported map size by using fraction rate
-	 * @param renderMap Map object
-	 * @param fraction adjust icon size by using this fraction rate. Default is 8%
-	 * @returns Icon width calculated
-	 */
-	private getIconWidth(renderMap: MaplibreMap | MapboxMap, fraction: number) {
-		const containerDiv = renderMap.getContainer();
-		const width = parseInt(containerDiv.style.width.replace('px', ''));
-		return parseInt(`${width * fraction}`);
-	}
-
-	/**
-	 * Get element position's pixel values based on selected position setting
-	 * @param renderMap Map object
-	 * @param position Position of element inserted
-	 * @param offset Offset value to adjust position
-	 * @returns Pixels [width, height]
-	 */
-	private getElementPosition(
-		renderMap: MaplibreMap | MapboxMap,
-		position: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right',
-		offset = 0
-	) {
-		const containerDiv = renderMap.getContainer();
-		let width = 0;
-		let height = 0;
-
-		switch (position) {
-			case 'top-left':
-				width = 0 + offset;
-				height = 0 + offset;
-				break;
-			case 'top-right':
-				width = parseInt(containerDiv.style.width.replace('px', '')) - offset;
-				height = 0 + offset;
-				break;
-			case 'bottom-left':
-				width = 0 + offset;
-				height = parseInt(containerDiv.style.height.replace('px', '')) - offset;
-				break;
-			case 'bottom-right':
-				width = parseInt(containerDiv.style.width.replace('px', '')) - offset;
-				height = parseInt(containerDiv.style.height.replace('px', '')) - offset;
-				break;
-			default:
-				break;
+			this.hideLoader();
 		}
-
-		const pixels: [number, number] = [width, height];
-		return pixels;
 	}
 
 	/**
-	 * Add North Icon SVG to map object
-	 * @param renderMap Map object
-	 * @returns void
+	 * Wait for an event of the hidden map, giving up after `timeoutMs`.
+	 *
+	 * Neither `load` nor `idle` is guaranteed to fire: a source which never finishes
+	 * loading keeps the style from being reported as loaded, and `idle` does not fire
+	 * when nothing has to be re-rendered. Exporting a partially rendered map is far
+	 * better than hanging forever, so the wait is always bounded.
 	 */
-	private addNorthIconImage(renderMap: MaplibreMap | MapboxMap) {
-		const iconSize = this.getIconWidth(renderMap, this.northIconOptions.imageSizeFraction ?? 0.08);
+	private waitForEvent(
+		renderMap: MaplibreMap | MapboxMap,
+		type: 'load' | 'idle',
+		timeoutMs: number
+	) {
 		return new Promise<void>((resolve) => {
-			const svgImage = new Image(iconSize, iconSize);
-			svgImage.onload = () => {
-				if (this.northIconOptions.imageName) {
-					renderMap.addImage(this.northIconOptions.imageName, svgImage);
+			let settled = false;
+			const finish = (timedOut = false) => {
+				if (settled) return;
+				settled = true;
+				if (timedOut) {
+					console.warn(`Timed out waiting for the '${type}' event of the map to be exported`);
 				}
 				resolve();
 			};
-			function svgStringToImageSrc(svgString: string) {
-				return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgString);
-			}
-			if (this.northIconOptions.image) {
-				svgImage.src = svgStringToImageSrc(this.northIconOptions.image);
-			}
+			(renderMap as MaplibreMap).once(type, () => finish());
+			setTimeout(() => finish(true), timeoutMs);
 		});
 	}
 
 	/**
-	 * Add North Icon Symbol layer to renderMap object
-	 * @param renderMap Map object
-	 * @returns
+	 * Compose the exported image from the rendered map canvas and the overlays.
+	 * @param renderMap hidden Map object which has finished rendering
+	 * @returns 2D canvas containing the final image
 	 */
-	private addNorthIconToMap(renderMap: MaplibreMap | MapboxMap) {
-		let visibility: 'visible' | 'none' = this.northIconOptions.visibility ?? 'visible';
-		if (renderMap.getZoom() < 2 && this.width > this.height) {
-			// if zoom level is less than 2, it will appear twice.
-			visibility = 'none';
-		}
-		return new Promise<void>((resolve) => {
-			this.addNorthIconImage(renderMap).then(() => {
-				const iconSize = this.getIconWidth(
-					renderMap,
-					this.northIconOptions.imageSizeFraction ?? 0.08
-				);
-				const iconOffset = iconSize * 0.8;
-				const pixels = this.getElementPosition(
-					renderMap,
-					this.northIconOptions.position ?? 'top-right',
-					iconOffset
-				);
-				const lngLat = (renderMap as MaplibreMap).unproject(pixels);
+	private async composeCanvas(renderMap: MaplibreMap | MapboxMap) {
+		const mapCanvas = renderMap.getCanvas();
 
-				const layerId = this.northIconOptions.imageName ?? 'gl-export-north-icon';
-				renderMap.addSource(layerId, {
-					type: 'geojson',
-					data: {
-						type: 'Feature',
-						geometry: {
-							type: 'Point',
-							coordinates: [lngLat.lng, lngLat.lat]
-						},
-						properties: {}
-					}
-				});
+		const canvas = document.createElement('canvas');
+		canvas.width = mapCanvas.width;
+		canvas.height = mapCanvas.height;
 
-				(renderMap as MapboxMap).addLayer({
-					id: layerId,
-					source: layerId,
-					type: 'symbol',
-					layout: {
-						'icon-image': layerId,
-						'icon-size': 1.0,
-						'icon-rotate': renderMap.getBearing() * -1,
-						'icon-allow-overlap': true,
-						'icon-ignore-placement': true,
-						visibility: visibility
-					},
-					paint: {}
-				});
-				resolve();
-			});
-		});
+		const ctx = canvas.getContext('2d');
+		if (!ctx) throw new Error('Failed to get 2D context for the export canvas');
+
+		// fill white first, otherwise transparent areas turn black in JPEG
+		ctx.fillStyle = '#ffffff';
+		ctx.fillRect(0, 0, canvas.width, canvas.height);
+		ctx.imageSmoothingEnabled = true;
+		ctx.imageSmoothingQuality = 'high';
+		ctx.drawImage(mapCanvas, 0, 0);
+
+		// attribution is drawn first because the scale bar is stacked on top of it
+		// when both are placed in the same corner.
+		const attributionBox = await this.drawAttribution(ctx, canvas);
+		await this.drawScalebar(ctx, canvas, attributionBox);
+		await this.drawNorthIcon(ctx, canvas, renderMap.getBearing());
+
+		return canvas;
 	}
 
-	private addAttributions(renderMap: MaplibreMap | MapboxMap) {
-		const glyphs = this.map.getStyle().glyphs;
-		// skip if glyphs is not available in style.
-		if (!glyphs) return false;
-
-		const containerDiv = renderMap.getContainer();
-		const elementPosition = this.attributionOptions.position ?? 'bottom-right';
-		const pixels = this.getElementPosition(renderMap, elementPosition, 5);
-		const width = pixels[0];
-		const lngLat = (renderMap as MaplibreMap).unproject(pixels);
-
-		const attrElements = containerDiv.getElementsByClassName(this.attributionClassName);
-		const attributions: string[] = [];
-		if (attrElements?.length > 0) {
-			// try getting attribution from html elements
-			const attrs = attrElements.item(0);
-			if (attrs) {
-				for (let i = 0; i < attrs.children.length; i++) {
-					const child = attrs.children.item(i);
-					if (!child) continue;
-					attributions.push(this.stripHtml(child.outerHTML));
-				}
-			}
-		} else {
-			// if not, try to make attribution from style
-			const sources = this.map.getStyle().sources;
-			Object.keys(sources).forEach((key) => {
-				const src: SourceSpecification = sources[key] as SourceSpecification;
-				if ('attribution' in src) {
-					const attribution = src.attribution as string;
-					attributions.push(this.stripHtml(attribution));
-				}
-			});
-		}
-
-		if (attributions.length === 0) return false;
-
-		const attributionText = attributions.join(' | ');
-
-		const attributionId = `attribution`;
-		renderMap.addSource(attributionId, {
-			type: 'geojson',
-			data: {
-				type: 'Feature',
-				geometry: {
-					type: 'Point',
-					coordinates: [lngLat.lng, lngLat.lat]
-				},
-				properties: {
-					attribution: attributionText
-				}
-			}
-		});
-
-		const fontLayers = this.map
-			.getStyle()
-			.layers.filter(
-				(l) => l.type === 'symbol' && l.layout && 'text-font' in l.layout
-			) as SymbolLayerSpecification[];
-		const font: string[] =
-			fontLayers.length > 0 && fontLayers[0].layout
-				? (fontLayers[0].layout['text-font'] as string[])
-				: (this.attributionOptions.style?.fallbackTextFont as string[]);
-
-		let visibility: 'visible' | 'none' = this.attributionOptions.visibility ?? 'visible';
-		if (renderMap.getZoom() < 2 && this.width > this.height) {
-			// if zoom level is less than 2, it will appear twice.
-			visibility = 'none';
-		}
-
-		const attrStyle = this.attributionOptions.style as AttributionStyle;
-
-		(renderMap as MapboxMap).addLayer({
-			id: attributionId,
-			source: attributionId,
-			type: 'symbol',
-			layout: {
-				'text-field': ['get', 'attribution'],
-				'text-font': font,
-				'text-max-width': parseInt(`${width / attrStyle.textSize}`),
-				'text-anchor': elementPosition,
-				'text-justify': ['top-right', 'bottom-right'].includes(elementPosition) ? 'right' : 'left',
-				'text-size': attrStyle.textSize,
-				'text-allow-overlap': true,
-				visibility: visibility
-			},
-			paint: {
-				'text-halo-color': attrStyle.textHaloColor,
-				'text-halo-width': attrStyle.textHaloWidth,
-				'text-color': attrStyle.textColor
-			}
-		});
-
-		return true;
-	}
-
-	private exportImage(
-		renderMap: MaplibreMap | MapboxMap,
-		hiddenDiv: HTMLElement,
-		actualPixelRatio: number
+	/**
+	 * Calculate the top-left corner where an overlay of the given size is drawn.
+	 * @param canvas export canvas
+	 * @param position corner of the canvas
+	 * @param width overlay width in export pixels
+	 * @param height overlay height in export pixels
+	 * @param margin distance from the canvas edge in export pixels
+	 */
+	private getOverlayOrigin(
+		canvas: HTMLCanvasElement,
+		position: ControlPosition,
+		width: number,
+		height: number,
+		margin: number
 	) {
-		const canvas = renderMap.getCanvas();
+		const left = ['top-left', 'bottom-left'].includes(position);
+		const top = ['top-left', 'top-right'].includes(position);
+		return {
+			x: left ? margin : canvas.width - width - margin,
+			y: top ? margin : canvas.height - height - margin
+		};
+	}
 
+	/**
+	 * Rasterize the attribution control element of the hidden map and draw it on the export canvas.
+	 * The native maplibre control element is used as-is, so it keeps its own styling.
+	 * @returns the box occupied by the attribution, or undefined when nothing was drawn
+	 */
+	private async drawAttribution(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
+		if (this.attributionOptions.visibility === 'none') return;
+
+		try {
+			const element = this.hiddenContainer
+				?.getElementsByClassName(this.attributionClassName)
+				?.item(0) as HTMLElement | null;
+			if (!element || element.offsetWidth === 0) return;
+
+			// `skipFonts` avoids html-to-image walking document.styleSheets to embed @font-face
+			// rules, which throws a SecurityError on cross-origin stylesheets. Fonts already
+			// loaded in the document still render during rasterization.
+			const attributionCanvas = await toCanvas(element, {
+				pixelRatio: this.scaleFactor,
+				skipFonts: true
+			});
+			if (attributionCanvas.width === 0 || attributionCanvas.height === 0) return;
+
+			const position = this.attributionOptions.position ?? 'bottom-right';
+			const margin = (this.attributionOptions.margin ?? 10) * this.scaleFactor;
+			const { x, y } = this.getOverlayOrigin(
+				canvas,
+				position,
+				attributionCanvas.width,
+				attributionCanvas.height,
+				margin
+			);
+
+			ctx.drawImage(attributionCanvas, x, y);
+
+			return { x, y, width: attributionCanvas.width, height: attributionCanvas.height };
+		} catch (err) {
+			console.warn('Failed to render attribution:', err);
+		}
+	}
+
+	/**
+	 * Rasterize the scale control element of the hidden map and draw it on the export canvas.
+	 * @param attributionBox box of the attribution, used to avoid overlapping it
+	 */
+	private async drawScalebar(
+		ctx: CanvasRenderingContext2D,
+		canvas: HTMLCanvasElement,
+		attributionBox?: { x: number; y: number; width: number; height: number }
+	) {
+		if (this.scalebarOptions.visibility === 'none') return;
+
+		try {
+			const element = this.hiddenContainer
+				?.getElementsByClassName(this.scalebarClassName)
+				?.item(0) as HTMLElement | null;
+			if (!element || element.offsetWidth === 0) return;
+
+			// `skipFonts` avoids html-to-image walking document.styleSheets to embed @font-face
+			// rules, which throws a SecurityError on cross-origin stylesheets. Fonts already
+			// loaded in the document still render during rasterization.
+			const scalebarCanvas = await toCanvas(element, {
+				pixelRatio: this.scaleFactor,
+				skipFonts: true
+			});
+			if (scalebarCanvas.width === 0 || scalebarCanvas.height === 0) return;
+
+			const position = this.scalebarOptions.position ?? 'bottom-left';
+			const margin = (this.scalebarOptions.margin ?? 10) * this.scaleFactor;
+			const origin = this.getOverlayOrigin(
+				canvas,
+				position,
+				scalebarCanvas.width,
+				scalebarCanvas.height,
+				margin
+			);
+
+			// stack the scale bar on top of / below the attribution when they share a corner
+			let { y } = origin;
+			if (attributionBox && this.attributionOptions.position === position) {
+				y = position.startsWith('top')
+					? attributionBox.y + attributionBox.height + margin
+					: attributionBox.y - scalebarCanvas.height - margin;
+			}
+
+			ctx.drawImage(scalebarCanvas, origin.x, y);
+		} catch (err) {
+			console.warn('Failed to render scale bar:', err);
+		}
+	}
+
+	/**
+	 * Draw the north icon on the export canvas, rotated to match the map bearing.
+	 * @param bearing bearing of the rendered map in degrees
+	 */
+	private async drawNorthIcon(
+		ctx: CanvasRenderingContext2D,
+		canvas: HTMLCanvasElement,
+		bearing: number
+	) {
+		if (this.northIconOptions.visibility === 'none') return;
+		const svg = this.northIconOptions.image;
+		if (!svg) return;
+
+		try {
+			const size = canvas.width * (this.northIconOptions.imageSizeFraction ?? 0.05);
+			const image = await new Promise<HTMLImageElement>((resolve, reject) => {
+				const img = new Image(size, size);
+				img.onload = () => resolve(img);
+				img.onerror = () => reject(new Error('Failed to load the north icon image'));
+				img.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+			});
+
+			const margin = (this.northIconOptions.margin ?? 10) * this.scaleFactor;
+			const { x, y } = this.getOverlayOrigin(
+				canvas,
+				this.northIconOptions.position ?? 'top-right',
+				size,
+				size,
+				margin
+			);
+
+			ctx.save();
+			ctx.translate(x + size / 2, y + size / 2);
+			// the map is rotated clockwise by `bearing`, so north sits counter-clockwise by the same angle
+			ctx.rotate((-bearing * Math.PI) / 180);
+			ctx.drawImage(image, -size / 2, -size / 2, size, size);
+			ctx.restore();
+		} catch (err) {
+			console.warn('Failed to render north icon:', err);
+		}
+	}
+
+	private exportImage(canvas: HTMLCanvasElement, renderMap: MaplibreMap | MapboxMap) {
 		const fileName = `${this.fileName}.${this.format}`;
 		switch (this.format) {
 			case Format.PNG:
@@ -511,7 +538,7 @@ export abstract class MapGeneratorBase {
 				this.toJPEG(canvas, fileName);
 				break;
 			case Format.PDF:
-				this.toPDF(renderMap, fileName);
+				this.toPDF(canvas, renderMap, fileName);
 				break;
 			case Format.SVG:
 				this.toSVG(canvas, fileName);
@@ -520,17 +547,6 @@ export abstract class MapGeneratorBase {
 				console.error(`Invalid file format: ${this.format}`);
 				break;
 		}
-
-		renderMap.remove();
-		hiddenDiv.parentNode?.removeChild(hiddenDiv);
-		Object.defineProperty(window, 'devicePixelRatio', {
-			get() {
-				return actualPixelRatio;
-			}
-		});
-		hiddenDiv.remove();
-
-		this.hideLoader();
 	}
 
 	/**
@@ -561,12 +577,12 @@ export abstract class MapGeneratorBase {
 	}
 
 	/**
-	 * Convert Map object to PDF
-	 * @param map Map object
+	 * Convert canvas to PDF
+	 * @param canvas composed Canvas element
+	 * @param map Map object used to read the document properties
 	 * @param fileName file name
 	 */
-	private toPDF(map: MaplibreMap | MapboxMap, fileName: string) {
-		const canvas = map.getCanvas();
+	private toPDF(canvas: HTMLCanvasElement, map: MaplibreMap | MapboxMap, fileName: string) {
 		const pdf = new jsPDF({
 			orientation: this.width > this.height ? 'l' : 'p',
 			unit: this.unit,
@@ -608,14 +624,14 @@ export abstract class MapGeneratorBase {
 		const pxHeight = Number(this.toPixels(this.height, this.dpi).replace('px', ''));
 
 		const svg = `
-    <svg xmlns="http://www.w3.org/2000/svg" 
-      xmlns:xlink="http://www.w3.org/1999/xlink" 
-      version="1.1" 
-      width="${pxWidth}" 
-      height="${pxHeight}" 
-      viewBox="0 0 ${pxWidth} ${pxHeight}" 
+    <svg xmlns="http://www.w3.org/2000/svg"
+      xmlns:xlink="http://www.w3.org/1999/xlink"
+      version="1.1"
+      width="${pxWidth}"
+      height="${pxHeight}"
+      viewBox="0 0 ${pxWidth} ${pxHeight}"
       xml:space="preserve">
-        <image style="stroke: none; stroke-width: 0; stroke-dasharray: none; stroke-linecap: butt; stroke-dashoffset: 0; stroke-linejoin: miter; stroke-miterlimit: 4; fill: rgb(0,0,0); fill-rule: nonzero; opacity: 1;"  
+        <image style="stroke: none; stroke-width: 0; stroke-dasharray: none; stroke-linecap: butt; stroke-dashoffset: 0; stroke-linejoin: miter; stroke-miterlimit: 4; fill: rgb(0,0,0); fill-rule: nonzero; opacity: 1;"
       xlink:href="${uri}" width="${pxWidth}" height="${pxHeight}"></image>
     </svg>`;
 

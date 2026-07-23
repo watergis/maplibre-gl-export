@@ -1,46 +1,21 @@
-import { Map as MaplibreMap, StyleSpecification } from 'maplibre-gl';
-import { DPIType, Format, FormatType, Size, SizeType, Unit, UnitType } from './interfaces';
 import {
-	MapGeneratorBase,
-	defaultAttributionOptions,
-	defaultMarkerCirclePaint,
-	defaultNorthIconOptions
-} from './map-generator-base';
+	AttributionControl,
+	ControlPosition,
+	Map as MaplibreMap,
+	ScaleControl,
+	StyleSpecification
+} from 'maplibre-gl';
+import { AttributionOptions, ScalebarOptions } from './interfaces';
+import { MapGeneratorBase, MapGeneratorConfig } from './map-generator-base';
 
 export default class MapGenerator extends MapGeneratorBase {
 	/**
 	 * Constructor
 	 * @param map MaplibreMap object
-	 * @param size layout size. default is A4
-	 * @param dpi dpi value. default is 300
-	 * @param format image format. default is PNG
-	 * @param unit length unit. default is mm
-	 * @param fileName file name. default is 'map'
+	 * @param config generator settings. See {@link MapGeneratorConfig}
 	 */
-	constructor(
-		map: MaplibreMap,
-		size: SizeType = Size.A4,
-		dpi: DPIType = 300,
-		format: FormatType = Format.PNG,
-		unit: UnitType = Unit.mm,
-		fileName = 'map',
-		markerCirclePaint = defaultMarkerCirclePaint,
-		attributionOptions = defaultAttributionOptions,
-		northIconOptions = defaultNorthIconOptions
-	) {
-		super(
-			map,
-			size,
-			dpi,
-			format,
-			unit,
-			fileName,
-			'maplibregl-marker',
-			markerCirclePaint,
-			'maplibregl-ctrl-attrib-inner',
-			attributionOptions,
-			northIconOptions
-		);
+	constructor(map: MaplibreMap, config: MapGeneratorConfig = {}) {
+		super(map, { ...config, cssPrefix: 'maplibregl' });
 	}
 
 	protected getRenderedMap(container: HTMLElement, style: StyleSpecification) {
@@ -57,7 +32,8 @@ export default class MapGenerator extends MapGeneratorBase {
 				preserveDrawingBuffer: true
 			},
 			fadeDuration: 0,
-			// attributionControl: false,
+			// the attribution control is added explicitly below so that its options can be controlled
+			attributionControl: false,
 			// hack to read transform request callback function
 			// eslint-disable-next-line
 			// @ts-ignore
@@ -78,7 +54,27 @@ export default class MapGenerator extends MapGeneratorBase {
 			renderMap.addImage(key, images[key].data);
 		});
 
+		this.addScaleControl(renderMap, this.scalebarOptions);
+		this.addAttributionControl(renderMap, this.attributionOptions);
+
 		return renderMap;
+	}
+
+	protected addScaleControl(renderMap: MaplibreMap, options: ScalebarOptions) {
+		if (options.visibility === 'none') return;
+		const control = new ScaleControl({ maxWidth: options.maxWidth, unit: options.unit });
+		renderMap.addControl(control, (options.position ?? 'bottom-left') as ControlPosition);
+	}
+
+	protected addAttributionControl(renderMap: MaplibreMap, options: AttributionOptions) {
+		if (options.visibility === 'none') return;
+		const control = new AttributionControl({
+			customAttribution: options.customAttribution,
+			// never collapse. the responsive default hides the text on maps narrower than 640px,
+			// which happens for smaller page sizes.
+			compact: false
+		});
+		renderMap.addControl(control, (options.position ?? 'bottom-right') as ControlPosition);
 	}
 
 	protected renderMapPost(renderMap: MaplibreMap) {

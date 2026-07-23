@@ -1,14 +1,14 @@
-export interface AttributionStyle {
-	textSize: number;
-	textHaloColor: string;
-	textHaloWidth: number;
-	textColor: string;
-	fallbackTextFont: string[];
-}
+import type { AttributionControlOptions, ControlPosition } from 'maplibre-gl';
 
-export interface AttributionOptions {
-	style?: AttributionStyle;
+/**
+ * Attribution options. It extends maplibre's `AttributionControlOptions`
+ * (`compact` and `customAttribution`) which are passed to the AttributionControl
+ * added to the hidden map. The control element is then rasterized and drawn on the
+ * exported canvas, so the attribution keeps maplibre's native styling.
+ */
+export interface AttributionOptions extends AttributionControlOptions {
 	visibility?: 'visible' | 'none';
-	// TODO: top-left and bottom-left have issues of text-max-width setting
-	position?: 'top-right' | 'bottom-right';
+	position?: ControlPosition;
+	/** Distance between the attribution and the edge of the map area at 96 DPI */
+	margin?: number;
 }

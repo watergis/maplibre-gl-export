@@ -1,16 +1,20 @@
+import type { ControlPosition } from 'maplibre-gl';
 import { CirclePaint } from 'mapbox-gl';
 import { FormatType } from './Format';
 import { Language } from './Language';
 import { PageOrientationType } from './PageOrientation';
 import { SizeType } from './Size';
 import { AttributionOptions } from './AttributionStyle';
+import { ScalebarOptions } from './ScalebarOptions';
 
 export interface NorthIconOptions {
 	image?: string;
 	imageName?: string;
 	imageSizeFraction?: number;
 	visibility?: 'visible' | 'none';
-	position?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
+	position?: ControlPosition;
+	/** Distance between the north icon and the edge of the map area at 96 DPI */
+	margin?: number;
 }
 
 export interface ControlOptions {
@@ -25,5 +29,6 @@ export interface ControlOptions {
 	Filename?: string;
 	markerCirclePaint?: CirclePaint;
 	attributionOptions?: AttributionOptions;
+	scalebarOptions?: ScalebarOptions;
 	northIconOptions?: NorthIconOptions;
 }

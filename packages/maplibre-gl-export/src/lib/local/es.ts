@@ -6,6 +6,8 @@ const translation: Translation = {
 	Format: 'Formato',
 	DPI: 'DPI',
 	Generate: 'Generar',
+	Scalebar: 'Barra de escala',
+	NorthIcon: 'Icono del norte',
 	LanguageName: 'Española',
 	LanguageCode: 'es'
 };

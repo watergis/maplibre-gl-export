@@ -35,18 +35,18 @@ export default class MapboxExportControl extends MaplibreExportControl implement
 		unit: UnitType,
 		filename?: string
 	) {
-		const mapGenerator = new MapGenerator(
-			map as MapboxMap,
+		const mapGenerator = new MapGenerator(map as MapboxMap, {
 			size,
 			dpi,
 			format,
 			unit,
-			filename,
-			this.options.markerCirclePaint,
-			this.options.attributionOptions,
-			this.options.northIconOptions,
-			this.accessToken
-		);
+			fileName: filename,
+			markerCirclePaint: this.options.markerCirclePaint,
+			attributionOptions: this.options.attributionOptions,
+			scalebarOptions: this.options.scalebarOptions,
+			northIconOptions: this.options.northIconOptions,
+			accessToken: this.accessToken
+		});
 		mapGenerator.generate();
 	}
 }

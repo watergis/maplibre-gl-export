@@ -4,6 +4,8 @@ export type Translation = {
 	Format: string;
 	DPI: string;
 	Generate: string;
+	Scalebar: string;
+	NorthIcon: string;
 	LanguageName: string;
 	LanguageCode: string;
 };

@@ -4,6 +4,7 @@ export * from './DPI';
 export * from './Format';
 export * from './Language';
 export * from './PageOrientation';
+export * from './ScalebarOptions';
 export * from './Size';
 export * from './Translation';
 export * from './Unit';

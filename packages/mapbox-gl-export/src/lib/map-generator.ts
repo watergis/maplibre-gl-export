@@ -1,17 +1,20 @@
-import mapboxgl, { Map as MapboxMap } from 'mapbox-gl';
+import mapboxgl, {
+	AttributionControl,
+	ControlPosition,
+	Map as MapboxMap,
+	ScaleControl
+} from 'mapbox-gl';
 import {
-	defaultAttributionOptions,
-	defaultMarkerCirclePaint,
-	defaultNorthIconOptions,
-	DPIType,
-	Format,
-	FormatType,
+	AttributionOptions,
 	MapGeneratorBase,
-	Size,
-	SizeType,
-	Unit,
-	UnitType
+	MapGeneratorConfig,
+	ScalebarOptions
 } from '@watergis/maplibre-gl-export';
+
+export interface MapboxMapGeneratorConfig extends MapGeneratorConfig {
+	/** Mapbox access token. `mapboxgl.accessToken` is used when it is not set */
+	accessToken?: string;
+}
 
 export default class MapGenerator extends MapGeneratorBase {
 	private accesstoken: string | undefined;
@@ -19,40 +22,16 @@ export default class MapGenerator extends MapGeneratorBase {
 	/**
 	 * Constructor
 	 * @param map MapboxMap object
-	 * @param size layout size. default is A4
-	 * @param dpi dpi value. default is 300
-	 * @param format image format. default is PNG
-	 * @param unit length unit. default is mm
-	 * @param fileName file name. default is 'map'
+	 * @param config generator settings. See {@link MapboxMapGeneratorConfig}
 	 */
-	constructor(
-		map: MapboxMap,
-		size: SizeType = Size.A4,
-		dpi: DPIType = 300,
-		format: FormatType = Format.PNG,
-		unit: UnitType = Unit.mm,
-		fileName = 'map',
-		markerCirclePaint = defaultMarkerCirclePaint,
-		attributionOptions = defaultAttributionOptions,
-		northIconOptions = defaultNorthIconOptions,
-		accesstoken?: string
-	) {
+	constructor(map: MapboxMap, config: MapboxMapGeneratorConfig = {}) {
 		super(
 			// eslint-disable-next-line
 			// @ts-ignore
 			map,
-			size,
-			dpi,
-			format,
-			unit,
-			fileName,
-			'mapboxgl-marker',
-			markerCirclePaint,
-			'mapboxgl-ctrl-attrib-inner',
-			attributionOptions,
-			northIconOptions
+			{ ...config, cssPrefix: 'mapboxgl' }
 		);
-		this.accesstoken = accesstoken;
+		this.accesstoken = config.accessToken;
 	}
 
 	/**
@@ -91,7 +70,8 @@ export default class MapGenerator extends MapGeneratorBase {
 			interactive: false,
 			preserveDrawingBuffer: true,
 			fadeDuration: 0,
-			// attributionControl: false,
+			// the attribution control is added explicitly below so that its options can be controlled
+			attributionControl: false,
 			// hack to read transform request callback function
 			// eslint-disable-next-line
 			// @ts-ignore
@@ -114,6 +94,29 @@ export default class MapGenerator extends MapGeneratorBase {
 			});
 		}
 
+		this.addScaleControl(renderMap, this.scalebarOptions);
+		this.addAttributionControl(renderMap, this.attributionOptions);
+
 		return renderMap;
+	}
+
+	protected addScaleControl(renderMap: MapboxMap, options: ScalebarOptions) {
+		if (options.visibility === 'none') return;
+		const control = new ScaleControl({
+			maxWidth: options.maxWidth,
+			unit: options.unit
+		});
+		renderMap.addControl(control, (options.position ?? 'bottom-left') as ControlPosition);
+	}
+
+	protected addAttributionControl(renderMap: MapboxMap, options: AttributionOptions) {
+		if (options.visibility === 'none') return;
+		const control = new AttributionControl({
+			customAttribution: options.customAttribution,
+			// never collapse. the responsive default hides the text on maps narrower than 640px,
+			// which happens for smaller page sizes.
+			compact: false
+		});
+		renderMap.addControl(control, (options.position ?? 'bottom-right') as ControlPosition);
 	}
 }
