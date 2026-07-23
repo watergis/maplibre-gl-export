@@ -62,6 +62,7 @@
 		"eslint-plugin-import": "^2.32.0",
 		"globals": "^17.4.0",
 		"mapbox-gl": "^3.20.0",
+		"maplibre-gl": "^5.21.1",
 		"path": "^0.12.7",
 		"pmtiles": "^4.4.0",
 		"postcss": "^8.5.8",
@@ -74,7 +75,9 @@
 		"vite": "^8.0.3"
 	},
 	"dependencies": {
-		"jspdf": "^4.2.1",
-		"maplibre-gl": "^5.21.1"
+		"jspdf": "^4.2.1"
+	},
+	"peerDependencies": {
+		"maplibre-gl": "^5.21.1 || >=6.0.0-0 <7.0.0"
 	}
 }

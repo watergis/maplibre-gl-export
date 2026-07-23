@@ -18,10 +18,15 @@
 	let { data }: Props = $props();
 
 	let tabs = [
-		{ label: 'Maplibre GL Export', value: 'maplibre' },
+		{ label: 'MapLibre GL Export', value: 'maplibre' },
 		{ label: 'Mapbox GL Export', value: 'mapbox' }
 	];
 	let tabSet: string = $state(tabs[0].value);
+	let maplibreVersionTabs = [
+		{ label: 'v5 (stable)', value: 'v5' },
+		{ label: 'v6.0.0-22 (preview)', value: 'v6' }
+	];
+	let maplibreVersion = $state('v5');
 
 	let imprtTypeTabs = [
 		{ label: 'NPM', value: 'npm' },
@@ -31,12 +36,17 @@
 
 	let maplibreExportVersion = $state('latest');
 	let mapboxExportVersion = $state('latest');
-	let maplibreCdnExample = $state('');
+	let maplibreV5CdnExample = $state('');
+	let maplibreV6CdnExample = $state('');
 	let mapboxCdnExample = $state('');
 
 	let selectedLanguage = $state('en');
 	let mapboxToken = $state('Your access token');
 	let packageManager = $state('npm');
+	let maplibreDependencyVersion = $derived(maplibreVersion === 'v6' ? '6.0.0-22' : '^5.21.1');
+	let maplibreInstallSuffix = $derived(
+		tabSet === 'maplibre' ? ` maplibre-gl@${maplibreDependencyVersion}` : ''
+	);
 
 	let styleUrl = $derived(
 		tabSet === 'maplibre'
@@ -62,12 +72,20 @@
 		mapboxExportVersion = json.version;
 	};
 
-	const getMaplibreCdnExample = async () => {
+	const getMaplibreV5CdnExample = async () => {
 		const res = await fetch('/assets/maplibre-cdn-example.txt');
 		if (!res.ok) {
 			return;
 		}
-		maplibreCdnExample = await res.text();
+		maplibreV5CdnExample = await res.text();
+	};
+
+	const getMaplibreV6CdnExample = async () => {
+		const res = await fetch('/assets/maplibre-v6-cdn-example.txt');
+		if (!res.ok) {
+			return;
+		}
+		maplibreV6CdnExample = await res.text();
 	};
 
 	const getMapboxCdnExample = async () => {
@@ -172,7 +190,8 @@
 	onMount(() => {
 		getMaplibreExportVersion();
 		getMapboxExportVersion();
-		getMaplibreCdnExample();
+		getMaplibreV5CdnExample();
+		getMaplibreV6CdnExample();
 		getMapboxCdnExample();
 	});
 </script>
@@ -221,12 +240,47 @@
 				</SegmentedControl.Control>
 			</SegmentedControl>
 
-			<h3 class="h3 pt-6 pb-4">Demo</h3>
+			{#if tabSet === 'maplibre'}
+				<h3 class="h3 pt-6 pb-4">Select a MapLibre GL JS version</h3>
+				<SegmentedControl
+					value={maplibreVersion}
+					onValueChange={(details) => (maplibreVersion = details.value)}
+					class="w-fit"
+				>
+					<SegmentedControl.Control>
+						<SegmentedControl.Indicator />
+						{#each maplibreVersionTabs as tab (tab.value)}
+							<SegmentedControl.Item value={tab.value}>
+								<SegmentedControl.ItemText>{tab.label}</SegmentedControl.ItemText>
+								<SegmentedControl.ItemHiddenInput />
+							</SegmentedControl.Item>
+						{/each}
+					</SegmentedControl.Control>
+				</SegmentedControl>
+			{/if}
 
-			<!-- eslint-disable svelte/no-navigation-without-resolve -->
-			<a class="btn preset-filled-primary-500 btn-lg" href="/{tabSet}?language={selectedLanguage}">
-				Open {tabSet} DEMO
-			</a>
+			<h3 class="h3 pt-6 pb-4">Demo</h3>
+			{#if tabSet === 'maplibre'}
+				<p class="pb-3 text-sm">
+					MapLibre GL JS {maplibreVersion === 'v6' ? 'v6.0.0-22 (preview)' : 'v5 (stable)'}.
+				</p>
+			{/if}
+
+			{#if tabSet === 'maplibre' && maplibreVersion === 'v6'}
+				<!-- eslint-disable svelte/no-navigation-without-resolve -->
+				<a
+					class="btn preset-filled-primary-500 btn-lg"
+					href="/maplibre-v6?language={selectedLanguage}">Open MapLibre GL JS v6 DEMO</a
+				>
+			{:else}
+				<!-- eslint-disable svelte/no-navigation-without-resolve -->
+				<a
+					class="btn preset-filled-primary-500 btn-lg"
+					href="/{tabSet}?language={selectedLanguage}"
+				>
+					Open {tabSet === 'maplibre' ? 'MapLibre GL JS v5' : 'Mapbox'} DEMO
+				</a>
+			{/if}
 		</div>
 
 		<div class="px-2">
@@ -296,14 +350,17 @@
 						{#if packageManager === 'npm'}
 							<CodeBlock
 								lang="console"
-								code={`npm install --save-dev @watergis/${tabSet}-gl-export`}
+								code={`npm install --save-dev @watergis/${tabSet}-gl-export${maplibreInstallSuffix}`}
 							/>
 						{:else if packageManager === 'yarn'}
-							<CodeBlock lang="console" code={`yarn add --dev @watergis/${tabSet}-gl-export`} />
+							<CodeBlock
+								lang="console"
+								code={`yarn add --dev @watergis/${tabSet}-gl-export${maplibreInstallSuffix}`}
+							/>
 						{:else if packageManager === 'pnpm'}
 							<CodeBlock
 								lang="console"
-								code={`pnpm add --save-dev @watergis/${tabSet}-gl-export`}
+								code={`pnpm add --save-dev @watergis/${tabSet}-gl-export${maplibreInstallSuffix}`}
 							/>
 						{/if}
 					</div>
@@ -316,8 +373,15 @@
 						lang="js"
 						showLineNumber
 						code={`
-import {  ${tabSet === 'mapbox' ? 'mapboxgl, ' : ''}Map } from '${tabSet}-gl';
+import { ${
+							tabSet === 'mapbox'
+								? 'mapboxgl, Map'
+								: maplibreVersion === 'v6'
+									? 'Map, setWorkerUrl'
+									: 'Map'
+						} } from '${tabSet}-gl';
 import '${tabSet}-gl/dist/${tabSet}-gl.css';
+${tabSet === 'maplibre' && maplibreVersion === 'v6' ? `import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?url';` : ''}
 import {
 	${tabSet === 'maplibre' ? 'Maplibre' : 'Mapbox'}ExportControl,
 	Size,
@@ -327,7 +391,13 @@ import {
 } from '@watergis/${tabSet}-gl-export';
 import '@watergis/${tabSet}-gl-export/dist/${tabSet}-gl-export.css';
 
-${tabSet === 'mapbox' ? `mapboxgl.accessToken='${mapboxToken}'` : ''}
+${
+	tabSet === 'mapbox'
+		? `mapboxgl.accessToken = '${mapboxToken}';`
+		: maplibreVersion === 'v6'
+			? 'setWorkerUrl(workerUrl);'
+			: ''
+}
 const map = new Map({
 	container: 'map',
 	style: '${styleUrl}',
@@ -366,7 +436,7 @@ ${
 				.replace(/{language}/g, selectedLanguage)
 				.replace(/{style}/g, styleUrl)
 				.replace(/{accesstoken}/g, mapboxToken)}`
-		: `${maplibreCdnExample
+		: `${(maplibreVersion === 'v6' ? maplibreV6CdnExample : maplibreV5CdnExample)
 				.replace(/{maplibreExportVersion}/g, maplibreExportVersion)
 				.replace(/{language}/g, selectedLanguage)
 				.replace(/{style}/g, styleUrl)}`

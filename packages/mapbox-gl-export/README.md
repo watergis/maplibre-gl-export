@@ -6,9 +6,9 @@ This module adds control which can export PDF and images.
 
 This module is using source code of [mpetroff/print-maps](https://github.com/mpetroff/print-maps). I just adopted this library to normal Mapbox GL Plugin. Thanks so much to develop this library!
 
-## for Maplibre GL users
+## for MapLibre GL users
 
-Please consider to use [maplibre-gl-export](https://github.com/watergis/maplibre-gl-export) plugin for Maplibre GL.
+Please consider to use [maplibre-gl-export](https://github.com/watergis/maplibre-gl-export) plugin for MapLibre GL.
 
 ## Demo & usage
 

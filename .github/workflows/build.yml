@@ -38,3 +38,26 @@ jobs:
         PUBLIC_MAPBOX_ACCESSTOKEN: ${{ secrets.PUBLIC_MAPBOX_ACCESSTOKEN }}
       run: 
         pnpm build
+
+  maplibre-compatibility:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        maplibre-version:
+          - ^5.21.1
+          - ">=6.0.0-0 <7.0.0"
+
+    steps:
+      - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v5.0.0
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Use MapLibre GL JS ${{ matrix.maplibre-version }}
+        working-directory: packages/maplibre-gl-export
+        run: pnpm add --save-dev --lockfile=false "maplibre-gl@${{ matrix.maplibre-version }}"
+      - name: Build MapLibre package
+        working-directory: packages/maplibre-gl-export
+        run: pnpm build:js
