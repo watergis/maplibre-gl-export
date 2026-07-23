@@ -4,6 +4,9 @@ packages:
 allowBuilds:
   '@parcel/watcher': true
   core-js: true
+  esbuild: true
   lefthook: true
+  sharp: true
+  workerd: true
 minimumReleaseAgeExclude:
   - sass@1.101.6
