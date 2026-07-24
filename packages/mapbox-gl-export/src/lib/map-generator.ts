@@ -16,6 +16,41 @@ export interface MapboxMapGeneratorConfig extends MapGeneratorConfig {
 	accessToken?: string;
 }
 
+/**
+ * Separator mapbox-gl uses to stringify an image id which belongs to an iconset
+ * (`ImageId.toString()` returns `name<US>iconsetId` in that case).
+ */
+const IMAGE_ID_SEPARATOR = '\x1f';
+
+/** Image of the style together with its metadata. `StyleImage` is not exported by mapbox-gl. */
+type StyleImageLike = {
+	data?: unknown;
+	pixelRatio?: number;
+	sdf?: boolean;
+	stretchX?: [number, number][];
+	stretchY?: [number, number][];
+	content?: [number, number, number, number];
+};
+
+/**
+ * Read the images of the style out of the internal image manager.
+ *
+ * mapbox-gl v3 keeps them in a `Map<scope, Map<stringifiedImageId, StyleImage>>`, while
+ * older versions used a plain `{ [id: string]: StyleImage }` object. Both shapes are
+ * flattened into `[id, image]` pairs.
+ */
+const getStyleImageEntries = (images: unknown): [string, StyleImageLike][] => {
+	if (images instanceof Map) {
+		return [...images.values()].flatMap((scoped) =>
+			scoped instanceof Map ? ([...scoped.entries()] as [string, StyleImageLike][]) : []
+		);
+	}
+	if (images && typeof images === 'object') {
+		return Object.entries(images as Record<string, StyleImageLike>);
+	}
+	return [];
+};
+
 export default class MapGenerator extends MapGeneratorBase {
 	private accesstoken: string | undefined;
 
@@ -81,18 +116,18 @@ export default class MapGenerator extends MapGeneratorBase {
 		// eslint-disable-next-line
 		// @ts-ignore
 		const imageManager = this.map.style.imageManager;
-		const images =
-			((imageManager as unknown as Record<string, unknown>)?.images as Record<
-				string,
-				{ data: unknown }
-			>) ?? {};
-		if (images && Object.keys(images)?.length > 0) {
-			Object.keys(images).forEach((key) => {
-				if (!key) return;
-				if (!images[key].data) return;
-				renderMap.addImage(key, images[key].data as ImageBitmap);
-			});
-		}
+		const images = (imageManager as unknown as Record<string, unknown>)?.images;
+		getStyleImageEntries(images).forEach(([key, image]) => {
+			// the id of an image belonging to an iconset is stringified as `name<US>iconsetId`.
+			// `addImage` only accepts the name.
+			const id = key.split(IMAGE_ID_SEPARATOR)[0];
+			if (!id || !image?.data) return;
+			// `StyleImage` is `StyleImageData & StyleImageMetadata`, so the image itself carries
+			// `pixelRatio`, `sdf`, `stretchX/Y`, `content` and so on. They have to be passed on,
+			// otherwise `pixelRatio` falls back to 1 (high resolution icons are exported at their
+			// full size) and `sdf` is lost (`icon-color` stops being applied).
+			renderMap.addImage(id, image.data as ImageBitmap, image);
+		});
 
 		this.addScaleControl(renderMap, this.scalebarOptions);
 		this.addAttributionControl(renderMap, this.attributionOptions);
