@@ -1,5 +1,20 @@
 .mapboxgl-export-list {
 	display: none;
+	// the table below adds its own outer spacing through `border-spacing`
+	padding: 4px;
+}
+
+.mapboxgl-export-list .print-table {
+	// `separate` is required for `border-spacing`: it gives every column/row the same
+	// gutter so the labels and inputs are not cramped against each other.
+	border-collapse: separate;
+	border-spacing: 10px 6px;
+
+	td {
+		padding: 0;
+		vertical-align: middle;
+		white-space: nowrap;
+	}
 }
 
 .mapboxgl-ctrl-group .mapboxgl-export-list button {
@@ -32,6 +47,24 @@
 	background-position: center;
 	background-repeat: no-repeat;
 	background-size: 70%;
+}
+
+.mapboxgl-export-custom-size {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+
+	input {
+		// wide enough for ~4 digits so the panel keeps the preset layout width
+		width: 4em;
+		flex: none;
+		min-width: 0;
+	}
+
+	.mapboxgl-export-unit {
+		flex: none;
+		font-size: 12px;
+	}
 }
 
 /*

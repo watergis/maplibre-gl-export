@@ -8,6 +8,9 @@ const translation: Translation = {
 	Generate: 'Generate',
 	Scalebar: 'Scale bar',
 	NorthIcon: 'North icon',
+	Custom: 'Custom',
+	Width: 'Width',
+	Height: 'Height',
 	LanguageName: 'English',
 	LanguageCode: 'en'
 };

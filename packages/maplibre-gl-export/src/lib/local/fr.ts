@@ -8,6 +8,9 @@ const translation: Translation = {
 	Generate: 'Générer',
 	Scalebar: "Barre d'échelle",
 	NorthIcon: 'Flèche du nord',
+	Custom: 'Personnalisé',
+	Width: 'Largeur',
+	Height: 'Hauteur',
 	LanguageName: 'Français',
 	LanguageCode: 'fr'
 };

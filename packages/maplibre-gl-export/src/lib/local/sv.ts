@@ -8,6 +8,9 @@ const translation: Translation = {
 	Generate: 'Generera',
 	Scalebar: 'Skalstock',
 	NorthIcon: 'Norrpil',
+	Custom: 'Anpassad',
+	Width: 'Bredd',
+	Height: 'Höjd',
 	LanguageName: 'Svenska',
 	LanguageCode: 'sv'
 };

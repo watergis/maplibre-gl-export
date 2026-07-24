@@ -6,6 +6,9 @@ export type Translation = {
 	Generate: string;
 	Scalebar: string;
 	NorthIcon: string;
+	Custom: string;
+	Width: string;
+	Height: string;
 	LanguageName: string;
 	LanguageCode: string;
 };

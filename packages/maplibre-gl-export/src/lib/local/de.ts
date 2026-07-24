@@ -8,6 +8,9 @@ const translation: Translation = {
 	Generate: 'Erstellen',
 	Scalebar: 'Maßstabsleiste',
 	NorthIcon: 'Nordpfeil',
+	Custom: 'Benutzerdefiniert',
+	Width: 'Breite',
+	Height: 'Höhe',
 	LanguageName: 'Deutsch',
 	LanguageCode: 'de'
 };

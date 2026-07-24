@@ -8,6 +8,9 @@ const translation: Translation = {
 	Generate: 'Tạo',
 	Scalebar: 'Thanh tỷ lệ',
 	NorthIcon: 'Biểu tượng hướng bắc',
+	Custom: 'Tùy chỉnh',
+	Width: 'Chiều rộng',
+	Height: 'Chiều cao',
 	LanguageName: 'Tiếng Việt',
 	LanguageCode: 'vi'
 };
