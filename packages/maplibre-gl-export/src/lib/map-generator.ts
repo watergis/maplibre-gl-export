@@ -50,8 +50,13 @@ export default class MapGenerator extends MapGeneratorBase {
 		// the below code was added by https://github.com/watergis/maplibre-gl-export/pull/18.
 		const images = ((this.map as MaplibreMap).style.imageManager || {}).images || [];
 		Object.keys(images).forEach((key) => {
-			if (!images[key].data) return;
-			renderMap.addImage(key, images[key].data);
+			const image = images[key];
+			if (!image?.data) return;
+			// `StyleImage` is `StyleImageData & StyleImageMetadata`, so the image itself carries
+			// `pixelRatio`, `sdf`, `stretchX/Y`, `content` and so on. They have to be passed on,
+			// otherwise `pixelRatio` falls back to 1 (high resolution icons are exported at their
+			// full size) and `sdf` is lost (`icon-color` stops being applied).
+			renderMap.addImage(key, image.data, image);
 		});
 
 		this.addScaleControl(renderMap, this.scalebarOptions);
