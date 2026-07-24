@@ -509,11 +509,11 @@ export default class MaplibreExportControl implements IControl {
 			input.setAttribute('name', type);
 
 			const unit = document.createElement('span');
-			unit.className = 'maplibregl-export-unit';
+			unit.className = `${this.MAPLIB_CSS_PREFIX}-export-unit`;
 			unit.textContent = 'mm';
 
 			const wrapper = document.createElement('div');
-			wrapper.className = 'maplibregl-export-custom-size';
+			wrapper.className = `${this.MAPLIB_CSS_PREFIX}-export-custom-size`;
 			wrapper.appendChild(input);
 			wrapper.appendChild(unit);
 

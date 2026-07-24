@@ -1,6 +1,20 @@
 .maplibregl-export-list {
 	display: none;
-	padding: 8px;
+	// the table below adds its own outer spacing through `border-spacing`
+	padding: 4px;
+}
+
+.maplibregl-export-list .print-table {
+	// `separate` is required for `border-spacing`: it gives every column/row the same
+	// gutter so the labels and inputs are not cramped against each other.
+	border-collapse: separate;
+	border-spacing: 10px 6px;
+
+	td {
+		padding: 0;
+		vertical-align: middle;
+		white-space: nowrap;
+	}
 }
 
 .maplibregl-ctrl-group .maplibregl-export-list button {
