@@ -29,14 +29,27 @@
 	let mapContainer: HTMLDivElement | undefined = $state();
 
 	let exportControl: MaplibreExportControl;
+	let onExportControl: MaplibreExportControl;
+
+	let exportedImage: { url: string; fileName: string; format: string; size: number } | undefined =
+		$state();
 
 	setWorkerUrl(workerUrl);
+
+	const clearExportedImage = () => {
+		if (!exportedImage) return;
+		URL.revokeObjectURL(exportedImage.url);
+		exportedImage = undefined;
+	};
 
 	const initExportControl = () => {
 		if (!map) return;
 		if (!language) return;
 		if (exportControl) {
 			map.removeControl(exportControl);
+		}
+		if (onExportControl) {
+			map.removeControl(onExportControl);
 		}
 
 		exportControl = new MaplibreExportControl({
@@ -56,6 +69,29 @@
 		});
 
 		map.addControl(exportControl, 'top-right');
+
+		// second control to test `onExport`. The image is not downloaded, it is shown in the panel below instead.
+		onExportControl = new MaplibreExportControl({
+			PageSize: Size.A4,
+			PageOrientation: PageOrientation.Landscape,
+			Format: Format.PNG,
+			DPI: DPI[96],
+			Crosshair: true,
+			PrintableArea: true,
+			Local: language,
+			download: false,
+			onExport: ({ blob, fileName, format }) => {
+				clearExportedImage();
+				exportedImage = {
+					url: URL.createObjectURL(blob),
+					fileName,
+					format,
+					size: blob.size
+				};
+			}
+		});
+
+		map.addControl(onExportControl, 'top-left');
 	};
 
 	onMount(() => {
@@ -111,10 +147,66 @@
 	<LanguageSelector {map} bind:language position="bottom-left" change={onLanguageChange} />
 {/if}
 
+{#if exportedImage}
+	<div class="export-result">
+		<div class="export-result-header">
+			<span>onExport result</span>
+			<button type="button" onclick={clearExportedImage} aria-label="close">✕</button>
+		</div>
+		<img src={exportedImage.url} alt="exported map" />
+		<div class="export-result-meta">
+			<div>{exportedImage.fileName}</div>
+			<div>{exportedImage.format} / {(exportedImage.size / 1024).toFixed(1)} KB</div>
+		</div>
+	</div>
+{/if}
+
 <style lang="scss">
 	.map {
 		position: relative;
 		width: 100%;
 		height: 100%;
+	}
+
+	.export-result {
+		position: absolute;
+		bottom: 30px;
+		left: 200px;
+		z-index: 10;
+		width: 260px;
+		padding: 8px;
+		border-radius: 4px;
+		background: #fff;
+		color: #000;
+		box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+
+		.export-result-header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			font-weight: bold;
+			margin-bottom: 6px;
+
+			button {
+				border: none;
+				background: none;
+				cursor: pointer;
+				font-size: 14px;
+				line-height: 1;
+			}
+		}
+
+		img {
+			display: block;
+			width: 100%;
+			height: auto;
+			border: 1px solid #ccc;
+		}
+
+		.export-result-meta {
+			margin-top: 6px;
+			font-size: 12px;
+			word-break: break-all;
+		}
 	}
 </style>
