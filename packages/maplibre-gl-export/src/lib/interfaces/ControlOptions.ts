@@ -5,6 +5,7 @@ import { Language } from './Language';
 import { PageOrientationType } from './PageOrientation';
 import { AllowedSize, SizeType } from './Size';
 import { AttributionOptions } from './AttributionStyle';
+import { ExportResult } from './ExportResult';
 import { ScalebarOptions } from './ScalebarOptions';
 
 export interface NorthIconOptions {
@@ -36,4 +37,11 @@ export interface ControlOptions {
 	attributionOptions?: AttributionOptions;
 	scalebarOptions?: ScalebarOptions;
 	northIconOptions?: NorthIconOptions;
+	/** whether the exported image is downloaded as a file. default is true */
+	download?: boolean;
+	/**
+	 * Called with the exported image once the generate button has produced it. Use it to pass
+	 * the image on to the rest of the application instead of (or in addition to) downloading it.
+	 */
+	onExport?: (result: ExportResult) => void | Promise<void>;
 }
