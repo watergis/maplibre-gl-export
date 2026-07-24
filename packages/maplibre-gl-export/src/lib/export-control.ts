@@ -26,6 +26,13 @@ import {
 } from './map-generator-base';
 
 /**
+ * Sentinel value of the page-size `<select>` option that switches the control to the
+ * user-entered custom width/height inputs. It is intentionally not valid JSON so it can
+ * never be confused with a serialized `[width, height]` preset tuple.
+ */
+const CUSTOM_SIZE_VALUE = 'custom';
+
+/**
  * MapLibre GL Export Control.
  * @param {Object} targets - Object of layer.id and title
  */
@@ -128,7 +135,20 @@ export default class MaplibreExportControl implements IControl {
 			this.options.PageSize as [number, number],
 			(data: { [key: string]: unknown }, key) => JSON.stringify(data[key])
 		);
+		// add a "Custom" entry so the end-user can type an arbitrary width/height (see below)
+		const pageSizeSelect = tr1.querySelector('select') as HTMLSelectElement;
+		const customOption = document.createElement('option');
+		customOption.value = CUSTOM_SIZE_VALUE;
+		customOption.textContent = this.getTranslation().Custom;
+		pageSizeSelect.appendChild(customOption);
 		table.appendChild(tr1);
+
+		// custom width/height inputs, prefilled from the default page size and hidden until
+		// the "Custom" entry is selected. Width and Height are separate rows so the panel
+		// keeps the same width as the preset layout.
+		const defaultSize = (this.options.PageSize as [number, number]) ?? Size.A4;
+		const { rows: customRows, widthInput, heightInput } = this.createCustomSizeRows(defaultSize);
+		customRows.forEach((row) => table.appendChild(row));
 
 		const tr2 = this.createSelection(
 			PageOrientation,
@@ -137,7 +157,52 @@ export default class MaplibreExportControl implements IControl {
 			this.options.PageOrientation as string,
 			(data: { [key: string]: unknown }, key) => data[key]
 		);
+		const pageOrientationSelect = tr2.querySelector('select') as HTMLSelectElement;
 		table.appendChild(tr2);
+
+		// resolve a preset `<option>` value (a JSON `[long, short]` tuple) into an oriented
+		// `[width, height]` tuple using the current orientation dropdown.
+		const resolvePresetSize = (value: string): [number, number] | null => {
+			if (!value || value === CUSTOM_SIZE_VALUE) {
+				return null;
+			}
+			let size: [number, number];
+			try {
+				size = JSON.parse(value) as [number, number];
+			} catch {
+				return null;
+			}
+			return pageOrientationSelect.value === PageOrientation.Portrait
+				? [size[1], size[0]]
+				: [size[0], size[1]];
+		};
+
+		// show the custom inputs only for the "Custom" entry. Orientation is meaningless then
+		// because the two inputs already define both dimensions, so disable it. Switching to
+		// "Custom" prefills the inputs from the last selected preset (oriented), so the user
+		// starts from the size they were just looking at.
+		let lastPresetValue = pageSizeSelect.value;
+		const syncCustomSize = () => {
+			const isCustom = pageSizeSelect.value === CUSTOM_SIZE_VALUE;
+			if (isCustom) {
+				const size = resolvePresetSize(lastPresetValue);
+				if (size) {
+					widthInput.value = String(size[0]);
+					heightInput.value = String(size[1]);
+				}
+			} else {
+				lastPresetValue = pageSizeSelect.value;
+			}
+			customRows.forEach((row) => {
+				row.style.display = isCustom ? '' : 'none';
+			});
+			pageOrientationSelect.disabled = isCustom;
+			this.updatePrintableArea();
+		};
+		pageSizeSelect.addEventListener('change', syncCustomSize);
+		widthInput.addEventListener('input', () => this.updatePrintableArea());
+		heightInput.addEventListener('input', () => this.updatePrintableArea());
+		syncCustomSize();
 
 		const tr3 = this.createSelection(
 			Format,
@@ -178,12 +243,6 @@ export default class MaplibreExportControl implements IControl {
 		generateButton.textContent = this.getTranslation().Generate;
 		generateButton.classList.add('generate-button');
 		generateButton.addEventListener('click', () => {
-			const pageSize: HTMLSelectElement = <HTMLSelectElement>(
-				document.getElementById('mapbox-gl-export-page-size')
-			);
-			const pageOrientation: HTMLSelectElement = <HTMLSelectElement>(
-				document.getElementById('mapbox-gl-export-page-orientation')
-			);
 			const formatType: HTMLSelectElement = <HTMLSelectElement>(
 				document.getElementById('mapbox-gl-export-format-type')
 			);
@@ -196,10 +255,10 @@ export default class MaplibreExportControl implements IControl {
 			const northIcon: HTMLInputElement = <HTMLInputElement>(
 				document.getElementById('mapbox-gl-export-north-icon')
 			);
-			const orientValue = pageOrientation.value;
-			let pageSizeValue = JSON.parse(pageSize.value);
-			if (orientValue === PageOrientation.Portrait) {
-				pageSizeValue = pageSizeValue.reverse();
+			// abort when the custom size is empty/invalid so we never generate a 0-sized map
+			const pageSizeValue = this.getSelectedSize();
+			if (!pageSizeValue) {
+				return;
 			}
 
 			// reflect the panel toggles before generating so that `generateMap` (which is also
@@ -383,17 +442,94 @@ export default class MaplibreExportControl implements IControl {
 		if (this.printableArea === undefined) {
 			return;
 		}
+		const pageSizeValue = this.getSelectedSize();
+		if (!pageSizeValue) {
+			return;
+		}
+		this.printableArea.updateArea(pageSizeValue[0], pageSizeValue[1]);
+	}
+
+	/**
+	 * Read the currently selected page size as a `[width, height]` mm tuple.
+	 *
+	 * For a preset the orientation dropdown is applied by swapping the stored landscape
+	 * tuple. For the "Custom" entry the two number inputs are used verbatim (they already
+	 * define the orientation); `null` is returned when either value is missing or not a
+	 * positive number so callers can skip generating / previewing.
+	 */
+	private getSelectedSize(): [number, number] | null {
 		const pageSize: HTMLSelectElement = <HTMLSelectElement>(
 			document.getElementById('mapbox-gl-export-page-size')
 		);
+		if (pageSize?.value === CUSTOM_SIZE_VALUE) {
+			const widthInput: HTMLInputElement = <HTMLInputElement>(
+				document.getElementById('mapbox-gl-export-custom-width')
+			);
+			const heightInput: HTMLInputElement = <HTMLInputElement>(
+				document.getElementById('mapbox-gl-export-custom-height')
+			);
+			const width = Number(widthInput?.value);
+			const height = Number(heightInput?.value);
+			if (!Number.isFinite(width) || width <= 0 || !Number.isFinite(height) || height <= 0) {
+				return null;
+			}
+			return [width, height];
+		}
 		const pageOrientation: HTMLSelectElement = <HTMLSelectElement>(
 			document.getElementById('mapbox-gl-export-page-orientation')
 		);
-		const orientValue = pageOrientation.value;
-		let pageSizeValue = JSON.parse(pageSize.value);
-		if (orientValue === PageOrientation.Portrait) {
-			pageSizeValue = pageSizeValue.reverse();
+		const size = JSON.parse(pageSize.value) as [number, number];
+		if (pageOrientation?.value === PageOrientation.Portrait) {
+			return [size[1], size[0]];
 		}
-		this.printableArea.updateArea(pageSizeValue[0], pageSizeValue[1]);
+		return [size[0], size[1]];
+	}
+
+	/**
+	 * Build the two stacked table rows holding the custom width and height number inputs
+	 * (in mm). Each dimension is its own row so the panel keeps the preset layout width.
+	 * @param defaultSize `[width, height]` used to prefill the inputs
+	 */
+	private createCustomSizeRows(defaultSize: readonly [number, number]): {
+		rows: HTMLElement[];
+		widthInput: HTMLInputElement;
+		heightInput: HTMLInputElement;
+	} {
+		const createRow = (type: string, title: string, value: number) => {
+			const label = document.createElement('label');
+			label.textContent = title;
+			label.setAttribute('for', `mapbox-gl-export-${type}`);
+
+			const input = document.createElement('input');
+			input.type = 'number';
+			input.min = '1';
+			input.step = '1';
+			input.value = String(value);
+			input.setAttribute('id', `mapbox-gl-export-${type}`);
+			input.setAttribute('name', type);
+
+			const unit = document.createElement('span');
+			unit.className = 'maplibregl-export-unit';
+			unit.textContent = 'mm';
+
+			const wrapper = document.createElement('div');
+			wrapper.className = 'maplibregl-export-custom-size';
+			wrapper.appendChild(input);
+			wrapper.appendChild(unit);
+
+			const row = document.createElement('TR');
+			row.style.display = 'none';
+			const tdLabel = document.createElement('TD');
+			const tdContent = document.createElement('TD');
+			tdLabel.appendChild(label);
+			tdContent.appendChild(wrapper);
+			row.appendChild(tdLabel);
+			row.appendChild(tdContent);
+			return { row, input };
+		};
+
+		const width = createRow('custom-width', this.getTranslation().Width, defaultSize[0]);
+		const height = createRow('custom-height', this.getTranslation().Height, defaultSize[1]);
+		return { rows: [width.row, height.row], widthInput: width.input, heightInput: height.input };
 	}
 }

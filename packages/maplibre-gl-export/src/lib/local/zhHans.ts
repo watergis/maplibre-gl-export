@@ -8,6 +8,9 @@ const translation: Translation = {
 	Generate: '导出',
 	Scalebar: '比例尺',
 	NorthIcon: '指北针',
+	Custom: '自定义',
+	Width: '宽度',
+	Height: '高度',
 	LanguageName: '简体字',
 	LanguageCode: 'zhHans'
 };

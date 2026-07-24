@@ -17,4 +17,6 @@ export const Size = {
 	B5: [250, 176],
 	B6: [176, 125]
 } as const;
-export type SizeType = (typeof Size)[keyof typeof Size];
+// `[number, number]` rather than the union of the preset tuples above so that
+// user-entered custom sizes (see the export control) are also valid `SizeType`s.
+export type SizeType = readonly [number, number];

@@ -8,6 +8,9 @@ const translation: Translation = {
 	Generate: 'Сгенерировать',
 	Scalebar: 'Масштабная линейка',
 	NorthIcon: 'Указатель севера',
+	Custom: 'Пользовательский',
+	Width: 'Ширина',
+	Height: 'Высота',
 	LanguageName: 'русский',
 	LanguageCode: 'ru'
 };

@@ -8,6 +8,9 @@ const translation: Translation = {
 	Generate: 'Generoi',
 	Scalebar: 'Mittakaava',
 	NorthIcon: 'Pohjoisnuoli',
+	Custom: 'Mukautettu',
+	Width: 'Leveys',
+	Height: 'Korkeus',
 	LanguageName: 'Suomalainen',
 	LanguageCode: 'fi'
 };

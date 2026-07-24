@@ -8,6 +8,9 @@ const translation: Translation = {
 	Generate: 'Згенерувати',
 	Scalebar: 'Масштабна лінійка',
 	NorthIcon: 'Покажчик півночі',
+	Custom: 'Власний',
+	Width: 'Ширина',
+	Height: 'Висота',
 	LanguageName: 'українська',
 	LanguageCode: 'uk'
 };

@@ -8,6 +8,9 @@ const translation: Translation = {
 	Generate: 'Genera',
 	Scalebar: "Barra d'escala",
 	NorthIcon: 'Icona del nord',
+	Custom: 'Personalitzat',
+	Width: 'Amplada',
+	Height: 'Alçada',
 	LanguageName: 'Catalan',
 	LanguageCode: 'ca'
 };

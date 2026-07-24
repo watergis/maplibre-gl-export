@@ -1,5 +1,6 @@
 .maplibregl-export-list {
 	display: none;
+	padding: 8px;
 }
 
 .maplibregl-ctrl-group .maplibregl-export-list button {
@@ -32,6 +33,24 @@
 	background-position: center;
 	background-repeat: no-repeat;
 	background-size: 70%;
+}
+
+.maplibregl-export-custom-size {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+
+	input {
+		// wide enough for ~4 digits so the panel keeps the preset layout width
+		width: 4em;
+		flex: none;
+		min-width: 0;
+	}
+
+	.maplibregl-export-unit {
+		flex: none;
+		font-size: 12px;
+	}
 }
 
 /*

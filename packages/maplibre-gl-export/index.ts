@@ -60,6 +60,10 @@ map.addControl(
 	'top-right'
 );
 
+// eslint-disable-next-line
+// @ts-ignore
+window.__map = map;
+
 map.once('load', () => {
 	new Marker().setLngLat([37.30467, -0.15943]).addTo(map);
 

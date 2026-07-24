@@ -8,6 +8,9 @@ const translation: Translation = {
 	Generate: 'Gerar',
 	Scalebar: 'Barra de escala',
 	NorthIcon: 'Ícone do norte',
+	Custom: 'Personalizado',
+	Width: 'Largura',
+	Height: 'Altura',
 	LanguageName: 'Português',
 	LanguageCode: 'pt'
 };
