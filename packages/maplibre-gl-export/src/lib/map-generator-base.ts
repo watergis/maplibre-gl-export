@@ -35,6 +35,7 @@ import { CirclePaint, Map as MapboxMap } from 'mapbox-gl';
 import {
 	AttributionOptions,
 	DPIType,
+	ExportResult,
 	Format,
 	FormatType,
 	NorthIconOptions,
@@ -98,6 +99,13 @@ export interface MapGeneratorConfig {
 	attributionOptions?: AttributionOptions;
 	scalebarOptions?: ScalebarOptions;
 	northIconOptions?: NorthIconOptions;
+	/** whether the exported image is downloaded as a file. default is true */
+	download?: boolean;
+	/**
+	 * Called with the exported image once it has been generated. Use it to pass the image on
+	 * to the rest of the application instead of (or in addition to) downloading it.
+	 */
+	onExport?: (result: ExportResult) => void | Promise<void>;
 }
 
 /** Timeout for waiting the `load` event of the hidden map */
@@ -131,6 +139,10 @@ export abstract class MapGeneratorBase {
 
 	protected northIconOptions: NorthIconOptions;
 
+	protected download: boolean;
+
+	protected onExport: ((result: ExportResult) => void | Promise<void>) | undefined;
+
 	/** Hidden container holding the map used for rendering. Available while generating. */
 	protected hiddenContainer: HTMLElement | undefined;
 
@@ -153,6 +165,8 @@ export abstract class MapGeneratorBase {
 		this.attributionOptions = { ...defaultAttributionOptions, ...config.attributionOptions };
 		this.scalebarOptions = { ...defaultScalebarOptions, ...config.scalebarOptions };
 		this.northIconOptions = { ...defaultNorthIconOptions, ...config.northIconOptions };
+		this.download = config.download ?? true;
+		this.onExport = config.onExport;
 	}
 
 	/** Class name of markers of the underlying library */
@@ -241,13 +255,64 @@ export abstract class MapGeneratorBase {
 	}
 
 	/**
-	 * Generate and download Map image.
+	 * Generate the Map image, then download it and/or hand it to the `onExport` callback.
 	 *
 	 * The map is rendered on a hidden map object at the requested page size and DPI,
 	 * then its canvas is composed with the scale bar, north icon and attribution
 	 * onto a 2D canvas which is what actually gets exported.
 	 */
 	async generate() {
+		try {
+			await this.withRenderedMap(async (renderMap) => {
+				const canvas = await this.composeCanvas(renderMap);
+				if (this.download) {
+					this.exportImage(canvas, renderMap);
+				}
+				if (this.onExport) {
+					const blob = await this.toBlobOfFormat(canvas);
+					await this.onExport({
+						canvas,
+						blob,
+						fileName: `${this.fileName}.${this.format}`,
+						format: this.format
+					});
+				}
+			});
+		} catch (err) {
+			// `generate` is called from the export button, so there is nobody to hand the
+			// error to. `toCanvas` / `toBlob` let the caller handle it instead.
+			console.error('Failed to generate map image:', err);
+		}
+	}
+
+	/**
+	 * Generate the Map image and return it as a canvas instead of downloading it.
+	 *
+	 * The canvas holds the composed image at the requested page size and DPI, exactly as it
+	 * would be written to the exported file.
+	 */
+	async toCanvas() {
+		return this.withRenderedMap((renderMap) => this.composeCanvas(renderMap));
+	}
+
+	/**
+	 * Generate the Map image and return it as a `Blob` in the configured format instead of
+	 * downloading it. PDF and SVG are wrapped around the rendered image just like the
+	 * downloaded file is.
+	 */
+	async toBlob() {
+		const canvas = await this.toCanvas();
+		return this.toBlobOfFormat(canvas);
+	}
+
+	/**
+	 * Render the map on a hidden map object and run `fn` on it once it has finished rendering.
+	 *
+	 * The loader of the source map is shown while rendering, `window.devicePixelRatio` is
+	 * temporarily raised to the export scale factor so that the map is rendered at the
+	 * requested DPI, and everything is cleaned up again afterwards.
+	 */
+	private async withRenderedMap<T>(fn: (renderMap: MaplibreMap) => T | Promise<T>) {
 		this.addLoader();
 		this.showLoader();
 
@@ -295,12 +360,11 @@ export abstract class MapGeneratorBase {
 
 			await this.waitForEvent(renderMap, 'idle', IDLE_TIMEOUT_MS);
 
-			const canvas = await this.composeCanvas(renderMap);
-			this.exportImage(canvas, renderMap);
+			const result = await fn(renderMap);
 
 			renderMap.remove();
-		} catch (err) {
-			console.error('Failed to generate map image:', err);
+
+			return result;
 		} finally {
 			hidden.parentNode?.removeChild(hidden);
 			hidden.remove();
@@ -583,6 +647,15 @@ export abstract class MapGeneratorBase {
 	 * @param fileName file name
 	 */
 	private toPDF(canvas: HTMLCanvasElement, map: MaplibreMap | MapboxMap, fileName: string) {
+		this.createPDF(canvas, map).save(fileName);
+	}
+
+	/**
+	 * Wrap the composed canvas in a PDF document of the configured page size.
+	 * @param canvas composed Canvas element
+	 * @param map Map object used to read the document properties
+	 */
+	private createPDF(canvas: HTMLCanvasElement, map: MaplibreMap | MapboxMap) {
 		const pdf = new jsPDF({
 			orientation: this.width > this.height ? 'l' : 'p',
 			unit: this.unit,
@@ -609,7 +682,7 @@ export abstract class MapGeneratorBase {
 			author: '(c)Mapbox, (c)OpenStreetMap'
 		});
 
-		pdf.save(fileName);
+		return pdf;
 	}
 
 	/**
@@ -618,6 +691,18 @@ export abstract class MapGeneratorBase {
 	 * @param fileName file name
 	 */
 	private toSVG(canvas: HTMLCanvasElement, fileName: string) {
+		const a = document.createElement('a');
+		a.href = `data:application/xml,${encodeURIComponent(this.createSVG(canvas))}`;
+		a.download = fileName;
+		a.click();
+		a.remove();
+	}
+
+	/**
+	 * Wrap the composed canvas in an SVG document of the configured page size.
+	 * @param canvas Canvas element
+	 */
+	private createSVG(canvas: HTMLCanvasElement) {
 		const uri = canvas.toDataURL('image/png');
 
 		const pxWidth = Number(this.toPixels(this.width, this.dpi).replace('px', ''));
@@ -635,11 +720,42 @@ export abstract class MapGeneratorBase {
       xlink:href="${uri}" width="${pxWidth}" height="${pxHeight}"></image>
     </svg>`;
 
-		const a = document.createElement('a');
-		a.href = `data:application/xml,${encodeURIComponent(svg)}`;
-		a.download = fileName;
-		a.click();
-		a.remove();
+		return svg;
+	}
+
+	/**
+	 * Convert the composed canvas into a `Blob` of the configured format.
+	 * @param canvas composed Canvas element
+	 */
+	private async toBlobOfFormat(canvas: HTMLCanvasElement): Promise<Blob> {
+		switch (this.format) {
+			case Format.JPEG:
+				return this.canvasToBlob(canvas, 'image/jpeg', 0.85);
+			case Format.PDF:
+				// the source map is used for the document properties. The map which was rendered
+				// shares its center, zoom and style, and it is already removed at this point.
+				return this.createPDF(canvas, this.map).output('blob');
+			case Format.SVG:
+				return new Blob([this.createSVG(canvas)], { type: 'image/svg+xml' });
+			case Format.PNG:
+				return this.canvasToBlob(canvas, 'image/png');
+			default:
+				throw new Error(`Invalid file format: ${this.format}`);
+		}
+	}
+
+	/** Promisified `HTMLCanvasElement.toBlob` */
+	private canvasToBlob(canvas: HTMLCanvasElement, type: string, quality?: number) {
+		return new Promise<Blob>((resolve, reject) => {
+			canvas.toBlob(
+				(blob) => {
+					if (blob) resolve(blob);
+					else reject(new Error(`Failed to convert the map image to ${type}`));
+				},
+				type,
+				quality
+			);
+		});
 	}
 
 	/**

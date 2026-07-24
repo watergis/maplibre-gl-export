@@ -295,7 +295,9 @@ export default class MaplibreExportControl implements IControl {
 			markerCirclePaint: this.options.markerCirclePaint,
 			attributionOptions: this.options.attributionOptions,
 			scalebarOptions: this.options.scalebarOptions,
-			northIconOptions: this.options.northIconOptions
+			northIconOptions: this.options.northIconOptions,
+			download: this.options.download,
+			onExport: this.options.onExport
 		});
 		mapGenerator.generate();
 	}

@@ -188,6 +188,18 @@
 				'North icon options. It is drawn onto the exported image at the top-right corner as default, rotated to match the map bearing. The size of north icon is 5% of map width. You can customize icon image and other settings through this option. It can also be toggled from the export panel.'
 		},
 		{
+			name: 'download',
+			default: 'true',
+			description:
+				'Whether the generated image is downloaded as a file. Set it to `false` when you only want to receive the image through `onExport`.'
+		},
+		{
+			name: 'onExport',
+			default: 'undefined',
+			description:
+				'Callback which receives the generated image, so it can be passed on to the rest of your application instead of (or in addition to) being downloaded. It is called with `{ canvas, blob, fileName, format }`. e.g. `onExport: ({ blob }) => setImageUrl(URL.createObjectURL(blob))`. The exported image can also be generated without the export panel by using `MapGenerator` directly: `await new MapGenerator(map, { size: Size.A4 }).toBlob()`.'
+		},
+		{
 			name: 'accessToken',
 			default: 'mapboxgl.accessToken is used as default',
 			description: 'Mapbox access token is required'
