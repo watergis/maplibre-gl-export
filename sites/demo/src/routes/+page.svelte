@@ -103,7 +103,8 @@
 		{
 			name: 'PageSize',
 			default: 'A4',
-			description: 'You can select from `A2` to `A6` or `B2` to `B6`'
+			description:
+				'You can select from `A2` to `A6`, `B2` to `B6` or `LETTER`. Any `[width, height]` tuple in mm is also accepted, for instance `[320, 180]`'
 		},
 		{
 			name: 'PageOrientation',
@@ -154,7 +155,7 @@
    "B6"
 ]`,
 			description:
-				"list of allowed page sizes for export. available values `'LETTER'`, `'A2'`, `'A3'`, `'A4'`, `'A5'`, `'A6'`, `'B2'`, `'B3'`, `'B4'`, `'B5'`, `'B6'`"
+				"list of page sizes offered in the export panel. An entry is either a preset name (`'LETTER'`, `'A2'`, `'A3'`, `'A4'`, `'A5'`, `'A6'`, `'B2'`, `'B3'`, `'B4'`, `'B5'`, `'B6'`) or your own `{ name, size }` pair, so aspect ratios that are not paper formats can be offered too. `size` is `[width, height]` in mm in landscape order, and the Page Orientation dropdown swaps it just like for the presets. e.g. `AllowedSizes: ['A4', { name: '16:9', size: [320, 180] }, { name: 'Square', size: [200, 200] }]`"
 		},
 		{
 			name: 'Filename',

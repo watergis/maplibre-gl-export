@@ -10,6 +10,8 @@ import {
 	FormatType,
 	Unit,
 	SizeType,
+	SizeKey,
+	CustomSize,
 	Size,
 	Translation,
 	PageOrientation,
@@ -57,9 +59,7 @@ export default class MaplibreExportControl implements IControl {
 		Crosshair: false,
 		PrintableArea: false,
 		Local: 'en',
-		AllowedSizes: Object.keys(Size) as (
-			'LETTER' | 'A2' | 'A3' | 'A4' | 'A5' | 'A6' | 'B2' | 'B3' | 'B4' | 'B5' | 'B6'
-		)[],
+		AllowedSizes: Object.keys(Size) as SizeKey[],
 		Filename: 'map',
 		markerCirclePaint: defaultMarkerCirclePaint,
 		attributionOptions: defaultAttributionOptions,
@@ -121,13 +121,7 @@ export default class MaplibreExportControl implements IControl {
 		const table = document.createElement('TABLE');
 		table.className = 'print-table';
 
-		const sizes: Record<string, readonly [number, number]> = {};
-		this.options.AllowedSizes?.forEach((size) => {
-			const dimensions = Size[size];
-			if (dimensions) {
-				sizes[size] = Size[size];
-			}
-		});
+		const sizes = this.resolveAllowedSizes();
 		const tr1 = this.createSelection(
 			sizes,
 			this.getTranslation().PageSize,
@@ -306,6 +300,56 @@ export default class MaplibreExportControl implements IControl {
 		mapGenerator.generate();
 	}
 
+	/**
+	 * Resolve the `AllowedSizes` option into the `label -> [width, height]` map backing the
+	 * page size dropdown. Entries are either a preset name or a developer-defined
+	 * `{ name, size }` pair; invalid entries are skipped so a single bad entry cannot break
+	 * the panel. Falls back to every preset when nothing valid is left.
+	 */
+	private resolveAllowedSizes(): Record<string, SizeType> {
+		const sizes: Record<string, SizeType> = {};
+		this.options.AllowedSizes?.forEach((allowedSize) => {
+			let name: string;
+			let size: SizeType;
+			if (typeof allowedSize === 'string') {
+				const dimensions = Size[allowedSize];
+				if (!dimensions) {
+					return;
+				}
+				name = allowedSize;
+				size = dimensions;
+			} else {
+				if (!this.isValidCustomSize(allowedSize)) {
+					console.warn('maplibre-gl-export: ignoring invalid AllowedSizes entry', allowedSize);
+					return;
+				}
+				name = allowedSize.name;
+				size = allowedSize.size;
+			}
+			// first entry wins so the dropdown never shows the same label twice
+			if (name in sizes) {
+				return;
+			}
+			sizes[name] = size;
+		});
+		if (Object.keys(sizes).length === 0) {
+			return { ...Size };
+		}
+		return sizes;
+	}
+
+	private isValidCustomSize(customSize: CustomSize): boolean {
+		if (typeof customSize?.name !== 'string' || customSize.name.length === 0) {
+			return false;
+		}
+		const size = customSize.size;
+		return (
+			Array.isArray(size) &&
+			size.length === 2 &&
+			size.every((value) => typeof value === 'number' && Number.isFinite(value) && value > 0)
+		);
+	}
+
 	private createSelection(
 		data: Record<string, unknown>,
 		title: string,
@@ -324,7 +368,7 @@ export default class MaplibreExportControl implements IControl {
 			optionLayout.setAttribute('value', converter(data, key) as string);
 			optionLayout.appendChild(document.createTextNode(key));
 			optionLayout.setAttribute('name', type);
-			if (defaultValue === data[key]) {
+			if (this.isSameSelectionValue(defaultValue, data[key])) {
 				optionLayout.selected = true;
 			}
 			content.appendChild(optionLayout);
@@ -341,6 +385,21 @@ export default class MaplibreExportControl implements IControl {
 		tr1.appendChild(tdLabel);
 		tr1.appendChild(tdContent);
 		return tr1;
+	}
+
+	/**
+	 * Whether the option value equals the configured default. Page sizes are compared by
+	 * value because `PageSize` may be a tuple the caller built themselves rather than one of
+	 * the `Size` presets; anything else keeps the plain identity comparison.
+	 */
+	private isSameSelectionValue(defaultValue: string | number | [number, number], value: unknown) {
+		if (Array.isArray(defaultValue) && Array.isArray(value)) {
+			return (
+				defaultValue.length === value.length &&
+				defaultValue.every((item, index) => item === value[index])
+			);
+		}
+		return (defaultValue as unknown) === value;
 	}
 
 	/**

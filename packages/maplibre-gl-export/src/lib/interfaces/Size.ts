@@ -20,3 +20,20 @@ export const Size = {
 // `[number, number]` rather than the union of the preset tuples above so that
 // user-entered custom sizes (see the export control) are also valid `SizeType`s.
 export type SizeType = readonly [number, number];
+
+/** Name of one of the preset page sizes above. */
+export type SizeKey = keyof typeof Size;
+
+/**
+ * A page size defined by the developer through the `AllowedSizes` option, for cases the
+ * paper presets do not cover (16:9, 3:2, 1:1, ...).
+ */
+export interface CustomSize {
+	/** Label shown in the page size dropdown */
+	name: string;
+	/** `[width, height]` in mm, in landscape order like the presets above */
+	size: SizeType;
+}
+
+/** An entry of the `AllowedSizes` option: either a preset name or a developer-defined size. */
+export type AllowedSize = SizeKey | CustomSize;

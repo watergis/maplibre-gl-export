@@ -47,6 +47,12 @@
 			Crosshair: true,
 			PrintableArea: true,
 			Local: language
+			// AllowedSizes: [
+			// 	'A4',
+			// 	{ name: '16:9', size: [320, 180] },
+			// 	{ name: 'Square', size: [200, 200] },
+			// 	{ name: '', size: [0, 0] } as never
+			// ]
 		});
 
 		map.addControl(exportControl, 'top-right');

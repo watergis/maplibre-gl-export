@@ -3,7 +3,7 @@ import { CirclePaint } from 'mapbox-gl';
 import { FormatType } from './Format';
 import { Language } from './Language';
 import { PageOrientationType } from './PageOrientation';
-import { SizeType } from './Size';
+import { AllowedSize, SizeType } from './Size';
 import { AttributionOptions } from './AttributionStyle';
 import { ScalebarOptions } from './ScalebarOptions';
 
@@ -25,7 +25,12 @@ export interface ControlOptions {
 	Crosshair?: boolean;
 	PrintableArea?: boolean;
 	Local?: Language;
-	AllowedSizes?: ('LETTER' | 'A2' | 'A3' | 'A4' | 'A5' | 'A6' | 'B2' | 'B3' | 'B4' | 'B5' | 'B6')[];
+	/**
+	 * List of page sizes offered in the export panel. An entry is either the name of one of
+	 * the presets (`'A4'`, `'LETTER'`, ...) or a developer-defined `{ name, size }` pair such
+	 * as `{ name: '16:9', size: [320, 180] }`.
+	 */
+	AllowedSizes?: AllowedSize[];
 	Filename?: string;
 	markerCirclePaint?: CirclePaint;
 	attributionOptions?: AttributionOptions;
