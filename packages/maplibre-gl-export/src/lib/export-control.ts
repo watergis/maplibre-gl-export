@@ -178,7 +178,7 @@ export default class MaplibreExportControl implements IControl {
 		};
 
 		// show the custom inputs only for the "Custom" entry. Orientation is meaningless then
-		// because the two inputs already define both dimensions, so disable it. Switching to
+		// because the two inputs already define both dimensions, so hide its row. Switching to
 		// "Custom" prefills the inputs from the last selected preset (oriented), so the user
 		// starts from the size they were just looking at.
 		let lastPresetValue = pageSizeSelect.value;
@@ -196,7 +196,7 @@ export default class MaplibreExportControl implements IControl {
 			customRows.forEach((row) => {
 				row.style.display = isCustom ? '' : 'none';
 			});
-			pageOrientationSelect.disabled = isCustom;
+			tr2.style.display = isCustom ? 'none' : '';
 			this.updatePrintableArea();
 		};
 		pageSizeSelect.addEventListener('change', syncCustomSize);
