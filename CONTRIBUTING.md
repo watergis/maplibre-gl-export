@@ -38,6 +38,15 @@ Note. Most of common features are imported from `maplibre-gl-export` plugin
 
 - Demo documentation
 
+The demo site shows both the maplibre and the mapbox plugin, so a Mapbox access token is
+required to run it locally. Copy `.env.example` and set your own token in it.
+
+```shell
+cd sites/demo
+cp .env.example .env
+# then set your Mapbox access token to PUBLIC_MAPBOX_ACCESSTOKEN in .env
+```
+
 ```shell
 # build maplibre-gl-export and mapbox-gl-export at the root folder of the repository
 pnpm build
