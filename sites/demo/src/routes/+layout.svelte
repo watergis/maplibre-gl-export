@@ -4,7 +4,7 @@
 
 	import { AppBar } from '@skeletonlabs/skeleton-svelte';
 	import type { PageData } from './$types';
-	import LightSwitch from '$lib/LightSwitch.svelte';
+	import LightSwitch from '#lib/LightSwitch.svelte';
 	import '../app.css';
 
 	interface Props {

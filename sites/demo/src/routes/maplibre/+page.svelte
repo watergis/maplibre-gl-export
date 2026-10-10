@@ -21,11 +21,11 @@
 	import { onMount } from 'svelte';
 	import '@watergis/maplibre-gl-export/dist/maplibre-gl-export.css';
 	import 'maplibre-gl/dist/maplibre-gl.css';
-	import LanguageSelector from '$lib/LanguageSelector.svelte';
-	import { page } from '$app/stores';
+	import LanguageSelector from '#lib/LanguageSelector.svelte';
+	import { page } from '$app/state';
 
 	let map: Map | undefined = $state();
-	let language: Language = $state(($page.url.searchParams.get('language') as Language) ?? 'en');
+	let language: Language = $state((page.url.searchParams.get('language') as Language) ?? 'en');
 	let mapContainer: HTMLDivElement | undefined = $state();
 
 	let exportControl: MaplibreExportControl;
