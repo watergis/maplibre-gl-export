@@ -10,13 +10,13 @@
 	} from '@watergis/mapbox-gl-export';
 	import { onMount } from 'svelte';
 	import '@watergis/mapbox-gl-export/dist/mapbox-gl-export.css';
-	import { PUBLIC_MAPBOX_ACCESSTOKEN } from '$env/static/public';
+	import { PUBLIC_MAPBOX_ACCESSTOKEN } from '$app/env/public';
 	import 'mapbox-gl/dist/mapbox-gl.css';
-	import LanguageSelector from '$lib/LanguageSelector.svelte';
-	import { page } from '$app/stores';
+	import LanguageSelector from '#lib/LanguageSelector.svelte';
+	import { page } from '$app/state';
 
 	let map: Map | undefined = $state();
-	let language: Language = $state(($page.url.searchParams.get('language') as Language) ?? 'en');
+	let language: Language = $state((page.url.searchParams.get('language') as Language) ?? 'en');
 	let mapContainer: HTMLDivElement | undefined = $state();
 
 	let exportControl: MapboxExportControl;

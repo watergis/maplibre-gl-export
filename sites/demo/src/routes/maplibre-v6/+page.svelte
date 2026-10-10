@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { onMount } from 'svelte';
 
 	let exampleHtml = $state('');
@@ -12,7 +12,7 @@
 			return;
 		}
 
-		const requestedLanguage = $page.url.searchParams.get('language') ?? 'en';
+		const requestedLanguage = page.url.searchParams.get('language') ?? 'en';
 		const language = /^[a-z]{2}$/.test(requestedLanguage) ? requestedLanguage : 'en';
 
 		exampleHtml = (await response.text())

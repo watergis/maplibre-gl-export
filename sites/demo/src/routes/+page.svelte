@@ -10,7 +10,7 @@
 		defaultScalebarOptions
 	} from '@watergis/maplibre-gl-export';
 	import type { PageData } from './$types';
-	import CodeBlock from '$lib/CodeBlock.svelte';
+	import CodeBlock from '#lib/CodeBlock.svelte';
 
 	interface Props {
 		data: PageData;
