@@ -10,6 +10,14 @@ This module is using source code of [mpetroff/print-maps](https://github.com/mpe
 
 Please consider to use [maplibre-gl-export](https://github.com/watergis/maplibre-gl-export) plugin for MapLibre GL.
 
+## Requirements
+
+`mapbox-gl` v3 is a peer dependency, so install it together with the plugin. The map used for exporting is created with the same `mapbox-gl` as your application.
+
+```bash
+npm install mapbox-gl @watergis/mapbox-gl-export
+```
+
 ## Demo & usage
 
 See [documentation](https://maplibre-gl-export.water-gis.com/).
