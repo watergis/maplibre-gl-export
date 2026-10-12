@@ -1,5 +1,18 @@
 # @watergis/mapbox-gl-export
 
+## 4.0.2
+
+### Patch Changes
+
+- 358e49e: fix: MapLibre GL JS is no longer bundled into mapbox-gl-export. It was never used at runtime, and it made the build fail with MapLibre GL JS v6, which is ESM-only. The bundle size is reduced as follows.
+  
+  | File                      | Before  | After  | Reduction |
+  | ------------------------- | ------- | ------ | --------- |
+  | `mapbox-gl-export.es.js`  | 1.97 MB | 600 kB | -69%      |
+  | `mapbox-gl-export.umd.js` | 1.85 MB | 824 kB | -56%      |
+- 5062adf: fix: when several export controls were added to the same page, the printable area preview and the generated map used the settings of another control. Form elements are now looked up within each control's own panel.
+- 1f7906a: docs: add a comment why preserveDrawingBuffer is needed to export a proper map image
+
 ## 4.0.1
 
 ### Patch Changes

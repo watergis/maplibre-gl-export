@@ -1,5 +1,12 @@
 # @watergis/maplibre-gl-export
 
+## 5.0.1
+
+### Patch Changes
+
+- 5062adf: fix: when several export controls were added to the same page, the printable area preview and the generated map used the settings of another control. Form elements are now looked up within each control's own panel.
+- 1f7906a: docs: add a comment why preserveDrawingBuffer is needed to export a proper map image
+
 ## 5.0.0
 
 ### Major Changes
