@@ -78,6 +78,7 @@ export default class PrintableAreaManager {
 		}
 
 		if (this.map !== undefined) {
+			(this.map as MaplibreMap).off('resize', this.mapResize);
 			this.map = undefined;
 		}
 	}

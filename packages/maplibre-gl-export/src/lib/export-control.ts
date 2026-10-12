@@ -237,18 +237,13 @@ export default class MaplibreExportControl implements IControl {
 		generateButton.textContent = this.getTranslation().Generate;
 		generateButton.classList.add('generate-button');
 		generateButton.addEventListener('click', () => {
-			const formatType: HTMLSelectElement = <HTMLSelectElement>(
-				document.getElementById('mapbox-gl-export-format-type')
-			);
-			const dpiType: HTMLSelectElement = <HTMLSelectElement>(
-				document.getElementById('mapbox-gl-export-dpi-type')
-			);
-			const scalebar: HTMLInputElement = <HTMLInputElement>(
-				document.getElementById('mapbox-gl-export-scalebar')
-			);
-			const northIcon: HTMLInputElement = <HTMLInputElement>(
-				document.getElementById('mapbox-gl-export-north-icon')
-			);
+			const formatType = this.getElement<HTMLSelectElement>('format-type');
+			const dpiType = this.getElement<HTMLSelectElement>('dpi-type');
+			const scalebar = this.getElement<HTMLInputElement>('scalebar');
+			const northIcon = this.getElement<HTMLInputElement>('north-icon');
+			if (!formatType || !dpiType) {
+				return;
+			}
 			// abort when the custom size is empty/invalid so we never generate a 0-sized map
 			const pageSizeValue = this.getSelectedSize();
 			if (!pageSizeValue) {
@@ -413,13 +408,15 @@ export default class MaplibreExportControl implements IControl {
 	private createCheckbox(title: string, type: string, checked: boolean): HTMLElement {
 		const label = document.createElement('label');
 		label.textContent = title;
-		label.setAttribute('for', `mapbox-gl-export-${type}`);
 
 		const content = document.createElement('input');
 		content.type = 'checkbox';
 		content.setAttribute('id', `mapbox-gl-export-${type}`);
 		content.setAttribute('name', type);
 		content.checked = checked;
+		// ids repeat when several controls share a page, so `for` could target another
+		// control's input. Forward the label click to this row's input instead.
+		label.addEventListener('click', () => content.click());
 
 		const tr = document.createElement('TR');
 		const tdLabel = document.createElement('TD');
@@ -511,6 +508,15 @@ export default class MaplibreExportControl implements IControl {
 	}
 
 	/**
+	 * Look up a form element of this control by the suffix of its id
+	 * (`mapbox-gl-export-${type}`). The lookup is scoped to this control's own panel because
+	 * the ids repeat when several export controls are added to the same page.
+	 */
+	private getElement<T extends HTMLElement>(type: string): T | null {
+		return this.exportContainer.querySelector<T>(`#mapbox-gl-export-${type}`);
+	}
+
+	/**
 	 * Read the currently selected page size as a `[width, height]` mm tuple.
 	 *
 	 * For a preset the orientation dropdown is applied by swapping the stored landscape
@@ -519,16 +525,13 @@ export default class MaplibreExportControl implements IControl {
 	 * positive number so callers can skip generating / previewing.
 	 */
 	private getSelectedSize(): [number, number] | null {
-		const pageSize: HTMLSelectElement = <HTMLSelectElement>(
-			document.getElementById('mapbox-gl-export-page-size')
-		);
-		if (pageSize?.value === CUSTOM_SIZE_VALUE) {
-			const widthInput: HTMLInputElement = <HTMLInputElement>(
-				document.getElementById('mapbox-gl-export-custom-width')
-			);
-			const heightInput: HTMLInputElement = <HTMLInputElement>(
-				document.getElementById('mapbox-gl-export-custom-height')
-			);
+		const pageSize = this.getElement<HTMLSelectElement>('page-size');
+		if (!pageSize) {
+			return null;
+		}
+		if (pageSize.value === CUSTOM_SIZE_VALUE) {
+			const widthInput = this.getElement<HTMLInputElement>('custom-width');
+			const heightInput = this.getElement<HTMLInputElement>('custom-height');
 			const width = Number(widthInput?.value);
 			const height = Number(heightInput?.value);
 			if (!Number.isFinite(width) || width <= 0 || !Number.isFinite(height) || height <= 0) {
@@ -536,9 +539,7 @@ export default class MaplibreExportControl implements IControl {
 			}
 			return [width, height];
 		}
-		const pageOrientation: HTMLSelectElement = <HTMLSelectElement>(
-			document.getElementById('mapbox-gl-export-page-orientation')
-		);
+		const pageOrientation = this.getElement<HTMLSelectElement>('page-orientation');
 		const size = JSON.parse(pageSize.value) as [number, number];
 		if (pageOrientation?.value === PageOrientation.Portrait) {
 			return [size[1], size[0]];
@@ -559,7 +560,6 @@ export default class MaplibreExportControl implements IControl {
 		const createRow = (type: string, title: string, value: number) => {
 			const label = document.createElement('label');
 			label.textContent = title;
-			label.setAttribute('for', `mapbox-gl-export-${type}`);
 
 			const input = document.createElement('input');
 			input.type = 'number';
@@ -568,6 +568,8 @@ export default class MaplibreExportControl implements IControl {
 			input.value = String(value);
 			input.setAttribute('id', `mapbox-gl-export-${type}`);
 			input.setAttribute('name', type);
+			// see createCheckbox: `for` is unreliable because ids repeat across controls
+			label.addEventListener('click', () => input.focus());
 
 			const unit = document.createElement('span');
 			unit.className = `${this.MAPLIB_CSS_PREFIX}-export-unit`;
