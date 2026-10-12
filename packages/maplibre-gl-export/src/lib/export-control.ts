@@ -24,6 +24,7 @@ import {
 	defaultAttributionOptions,
 	defaultMarkerCirclePaint,
 	defaultNorthIconOptions,
+	defaultSvgVectorOptions,
 	defaultScalebarOptions
 } from './map-generator-base';
 
@@ -64,7 +65,8 @@ export default class MaplibreExportControl implements IControl {
 		markerCirclePaint: defaultMarkerCirclePaint,
 		attributionOptions: defaultAttributionOptions,
 		scalebarOptions: defaultScalebarOptions,
-		northIconOptions: defaultNorthIconOptions
+		northIconOptions: defaultNorthIconOptions,
+		svgVectorOptions: defaultSvgVectorOptions
 	};
 
 	protected MAPLIB_CSS_PREFIX: string = 'maplibregl';
@@ -81,6 +83,11 @@ export default class MaplibreExportControl implements IControl {
 				{},
 				defaultNorthIconOptions,
 				options.northIconOptions
+			);
+			options.svgVectorOptions = Object.assign(
+				{},
+				defaultSvgVectorOptions,
+				options.svgVectorOptions
 			);
 			this.options = Object.assign(this.options, options);
 		}
@@ -207,6 +214,31 @@ export default class MaplibreExportControl implements IControl {
 		);
 		table.appendChild(tr3);
 
+		// exporting as vectors only applies to SVG and PDF, so the rows are hidden for the
+		// other formats. Labels can only be vectors when the map itself is.
+		const vectorRow = this.createCheckbox(
+			this.getTranslation().ExportAsVector,
+			'vector',
+			this.options.svgVectorOptions?.enabled === true
+		);
+		table.appendChild(vectorRow);
+		const vectorLabelsRow = this.createCheckbox(
+			this.getTranslation().ExportLabelsAsVector,
+			'vector-labels',
+			this.options.svgVectorOptions?.labels === 'vector'
+		);
+		table.appendChild(vectorLabelsRow);
+		const formatSelect = tr3.querySelector('select') as HTMLSelectElement;
+		const vectorInput = vectorRow.querySelector('input') as HTMLInputElement;
+		const syncVectorRows = () => {
+			const isVectorFormat = this.isVectorFormat(formatSelect.value);
+			vectorRow.style.display = isVectorFormat ? '' : 'none';
+			vectorLabelsRow.style.display = isVectorFormat && vectorInput.checked ? '' : 'none';
+		};
+		formatSelect.addEventListener('change', syncVectorRows);
+		vectorInput.addEventListener('change', syncVectorRows);
+		syncVectorRows();
+
 		const tr4 = this.createSelection(
 			DPI,
 			this.getTranslation().DPI,
@@ -241,6 +273,8 @@ export default class MaplibreExportControl implements IControl {
 			const dpiType = this.getElement<HTMLSelectElement>('dpi-type');
 			const scalebar = this.getElement<HTMLInputElement>('scalebar');
 			const northIcon = this.getElement<HTMLInputElement>('north-icon');
+			const vector = this.getElement<HTMLInputElement>('vector');
+			const vectorLabels = this.getElement<HTMLInputElement>('vector-labels');
 			if (!formatType || !dpiType) {
 				return;
 			}
@@ -258,6 +292,11 @@ export default class MaplibreExportControl implements IControl {
 			if (this.options.northIconOptions) {
 				this.options.northIconOptions.visibility = northIcon?.checked ? 'visible' : 'none';
 			}
+			this.options.svgVectorOptions = {
+				...this.options.svgVectorOptions,
+				enabled: vector?.checked === true,
+				labels: vectorLabels?.checked ? 'vector' : 'raster'
+			};
 
 			this.generateMap(
 				map,
@@ -292,7 +331,8 @@ export default class MaplibreExportControl implements IControl {
 			scalebarOptions: this.options.scalebarOptions,
 			northIconOptions: this.options.northIconOptions,
 			download: this.options.download,
-			onExport: this.options.onExport
+			onExport: this.options.onExport,
+			svgVectorOptions: this.options.svgVectorOptions
 		});
 		mapGenerator.generate();
 	}
@@ -345,6 +385,11 @@ export default class MaplibreExportControl implements IControl {
 			size.length === 2 &&
 			size.every((value) => typeof value === 'number' && Number.isFinite(value) && value > 0)
 		);
+	}
+
+	/** Whether the format can hold the map as vectors */
+	private isVectorFormat(format: string) {
+		return format === Format.SVG || format === Format.PDF;
 	}
 
 	private createSelection(

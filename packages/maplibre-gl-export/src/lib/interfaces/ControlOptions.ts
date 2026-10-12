@@ -18,6 +18,33 @@ export interface NorthIconOptions {
 	margin?: number;
 }
 
+/**
+ * Settings of the vector export of SVG and PDF.
+ *
+ * @experimental This feature is experimental. The output may differ from the map, and
+ * the options may change in a minor release.
+ */
+export interface SvgVectorOptions {
+	/**
+	 * Whether SVG and PDF are exported as real vectors. default is false, which wraps an
+	 * image of the map in the SVG / PDF file.
+	 *
+	 * When it is true, the plugin tries to draw the fill, line and point layers of the map
+	 * as vector paths. Layers which have no vector counterpart (raster, hillshade, heatmap,
+	 * fill-extrusion, ...) are still embedded as images, and the whole map is exported as an
+	 * image when it cannot be converted at all (terrain, globe projection, Mapbox Standard).
+	 */
+	enabled?: boolean;
+	/**
+	 * How symbol layers (labels and icons) are written.
+	 * - `raster` (default): they are laid over the vector layers as one transparent image,
+	 *   so labels look exactly as they do on the map.
+	 * - `vector`: labels become editable text. Their position is approximated, because the map
+	 *   does not expose where it placed them, and the text is drawn in a font of the viewer.
+	 */
+	labels?: 'raster' | 'vector';
+}
+
 export interface ControlOptions {
 	PageSize?: SizeType;
 	PageOrientation?: PageOrientationType;
@@ -44,4 +71,13 @@ export interface ControlOptions {
 	 * the image on to the rest of the application instead of (or in addition to) downloading it.
 	 */
 	onExport?: (result: ExportResult) => void | Promise<void>;
+	/**
+	 * Settings of the vector export of SVG and PDF. Set `enabled` to true to export them as
+	 * real vectors instead of an image of the map. It is disabled by default.
+	 *
+	 * `enabled` and `labels` are the initial states of the "Export as vector" and "Export
+	 * labels as vector" checkboxes, which the export panel shows while SVG or PDF is selected.
+	 * @experimental
+	 */
+	svgVectorOptions?: SvgVectorOptions;
 }

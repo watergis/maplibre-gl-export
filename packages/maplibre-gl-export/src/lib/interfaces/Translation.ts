@@ -6,6 +6,8 @@ export type Translation = {
 	Generate: string;
 	Scalebar: string;
 	NorthIcon: string;
+	ExportAsVector: string;
+	ExportLabelsAsVector: string;
 	Custom: string;
 	Width: string;
 	Height: string;

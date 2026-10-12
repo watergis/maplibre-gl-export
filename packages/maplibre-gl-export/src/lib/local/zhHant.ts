@@ -8,6 +8,8 @@ const translation: Translation = {
 	Generate: '導出',
 	Scalebar: '比例尺',
 	NorthIcon: '指北針',
+	ExportAsVector: '匯出為向量',
+	ExportLabelsAsVector: '將標註匯出為向量',
 	Custom: '自訂',
 	Width: '寬度',
 	Height: '高度',

@@ -1,0 +1,24 @@
+{
+	"compilerOptions": {
+		"alwaysStrict": true,
+		"rootDir": "./src/lib",
+		"emitDeclarationOnly": true,
+		"declaration": true,
+		"declarationMap": true,
+		"declarationDir": "./dist/types",
+		"lib": ["dom", "ESNext"],
+		"module": "ESNext",
+		"moduleResolution": "bundler",
+		"noImplicitThis": true,
+		"noUnusedLocals": true,
+		"outDir": "./dist/lib",
+		"removeComments": true,
+		"strict": true,
+		"sourceMap": true,
+		"target": "ESNext",
+		"esModuleInterop": true,
+		"skipLibCheck": true
+	},
+	"include": ["src/lib"],
+	"exclude": ["src/lib/**/*.test.ts", "src/lib/test-utils.ts"]
+}

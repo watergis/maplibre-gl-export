@@ -33,6 +33,9 @@ jobs:
 
     - run: pnpm lint
 
+    - name: test
+      run: pnpm test
+
     - name: build
       env: 
         PUBLIC_MAPBOX_ACCESSTOKEN: ${{ secrets.PUBLIC_MAPBOX_ACCESSTOKEN }}
@@ -55,6 +58,8 @@ jobs:
           node-version: 24
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      - name: Build maplibre2svg
+        run: pnpm --filter @watergis/maplibre2svg build
       - name: Use MapLibre GL JS ${{ matrix.maplibre-version }}
         working-directory: packages/maplibre-gl-export
         run: pnpm add --save-dev --lockfile=false "maplibre-gl@${{ matrix.maplibre-version }}"

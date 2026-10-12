@@ -8,6 +8,8 @@ const translation: Translation = {
 	Generate: '出力',
 	Scalebar: 'スケールバー',
 	NorthIcon: '方位記号',
+	ExportAsVector: 'ベクターとして出力',
+	ExportLabelsAsVector: 'ラベルをベクターとして出力',
 	Custom: 'カスタム',
 	Width: '幅',
 	Height: '高さ',

@@ -197,7 +197,13 @@
 			name: 'onExport',
 			default: 'undefined',
 			description:
-				'Callback which receives the generated image, so it can be passed on to the rest of your application instead of (or in addition to) being downloaded. It is called with `{ canvas, blob, fileName, format }`. e.g. `onExport: ({ blob }) => setImageUrl(URL.createObjectURL(blob))`. The exported image can also be generated without the export panel by using `MapGenerator` directly: `await new MapGenerator(map, { size: Size.A4 }).toBlob()`.'
+				'Callback which receives the generated image, so it can be passed on to the rest of your application instead of (or in addition to) being downloaded. It is called with `{ canvas, blob, fileName, format }`, plus `svg` holding the SVG source when the map was exported as vectors. e.g. `onExport: ({ blob }) => setImageUrl(URL.createObjectURL(blob))`. The exported image can also be generated without the export panel by using `MapGenerator` directly: `await new MapGenerator(map, { size: Size.A4 }).toBlob()`.'
+		},
+		{
+			name: 'svgVectorOptions',
+			default: "{ enabled: false, labels: 'raster' }",
+			description:
+				'Experimental. By default `svg` and `pdf` wrap an image of the map. Tick the `Export as vector` checkbox, which the panel shows while `svg` or `pdf` is selected, or set `enabled` to `true` to have it ticked initially, to try exporting fill, line and point layers as real vector paths. Layers which have no vector counterpart (raster, hillshade, heatmap, fill-extrusion, ...) are still embedded as images, and the whole map is exported as an image when it cannot be converted (terrain, globe projection, Mapbox Standard style). `labels` is the initial state of the `Export labels as vector` checkbox and decides how symbol layers are written: `raster` lays them over the vectors as a transparent image so that they look as on the map, `vector` writes them as editable text whose position is approximated.'
 		},
 		{
 			name: 'accessToken',

@@ -8,6 +8,8 @@ const translation: Translation = {
 	Generate: 'Generoi',
 	Scalebar: 'Mittakaava',
 	NorthIcon: 'Pohjoisnuoli',
+	ExportAsVector: 'Vie vektorina',
+	ExportLabelsAsVector: 'Vie nimiöt vektorina',
 	Custom: 'Mukautettu',
 	Width: 'Leveys',
 	Height: 'Korkeus',
