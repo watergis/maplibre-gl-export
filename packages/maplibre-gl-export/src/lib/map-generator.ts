@@ -29,6 +29,10 @@ export default class MapGenerator extends MapGeneratorBase {
 			pitch: this.map.getPitch(),
 			interactive: false,
 			canvasContextAttributes: {
+				// required: the canvas is read after the `idle` event (or after its timeout), which
+				// is not guaranteed to be in the frame it was drawn in. Without this the drawing
+				// buffer may already be cleared and a blank image is exported. It only applies to
+				// this short-lived hidden map, the map of the user does not need it.
 				preserveDrawingBuffer: true
 			},
 			fadeDuration: 0,
