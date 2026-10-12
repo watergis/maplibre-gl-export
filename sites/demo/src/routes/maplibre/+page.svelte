@@ -23,6 +23,7 @@
 	import 'maplibre-gl/dist/maplibre-gl.css';
 	import LanguageSelector from '#lib/LanguageSelector.svelte';
 	import { page } from '$app/state';
+	import mlcontour from 'maplibre-contour';
 
 	let map: Map | undefined = $state();
 	let language: Language = $state((page.url.searchParams.get('language') as Language) ?? 'en');
@@ -35,6 +36,82 @@
 		$state();
 
 	setWorkerUrl(workerUrl);
+
+	// Mapterhorn terrain tiles in Terrarium encoding. See https://mapterhorn.com
+	const demSource = new mlcontour.DemSource({
+		url: 'https://tiles.mapterhorn.com/{z}/{x}/{y}.webp',
+		encoding: 'terrarium',
+		maxzoom: 12,
+		worker: true
+	});
+	// registers the `dem-contour` and `dem-shared` protocols
+	demSource.setupMaplibre({ addProtocol });
+
+	const addContourLayers = (map: Map) => {
+		const attribution = "<a href='https://mapterhorn.com/attribution'>© Mapterhorn</a>";
+
+		map.addSource('terrarium', {
+			type: 'raster-dem',
+			tiles: [demSource.sharedDemProtocolUrl],
+			encoding: 'terrarium',
+			tileSize: 512,
+			maxzoom: 12,
+			attribution
+		});
+
+		map.addSource('contour-source', {
+			type: 'vector',
+			tiles: [
+				demSource.contourProtocolUrl({
+					thresholds: {
+						// zoom: [minor, major]
+						11: [200, 1000],
+						12: [100, 500],
+						14: [50, 200],
+						15: [20, 100]
+					},
+					// optional, override vector tile parameters:
+					contourLayer: 'contours',
+					elevationKey: 'ele',
+					levelKey: 'level',
+					extent: 4096,
+					buffer: 1
+				})
+			],
+			maxzoom: 15,
+			attribution
+		});
+
+		map.addLayer({
+			id: 'contour-lines',
+			type: 'line',
+			source: 'contour-source',
+			'source-layer': 'contours',
+			paint: {
+				'line-color': 'rgba(255,255,255, 50%)',
+				// level = highest index in thresholds array the elevation is a multiple of
+				'line-width': ['match', ['get', 'level'], 1, 1, 0.5]
+			}
+		});
+
+		map.addLayer({
+			id: 'contour-labels',
+			type: 'symbol',
+			source: 'contour-source',
+			'source-layer': 'contours',
+			filter: ['>', ['get', 'level'], 0],
+			layout: {
+				'symbol-placement': 'line',
+				'text-size': 10,
+				'text-field': ['concat', ['number-format', ['get', 'ele'], {}], 'm'],
+				'text-font': ['sans-serif']
+			},
+			paint: {
+				'text-halo-color': 'white',
+				'text-halo-width': 1
+			}
+		});
+	};
 
 	const clearExportedImage = () => {
 		if (!exportedImage) return;
@@ -119,6 +196,9 @@
 		new Marker().setLngLat([30.0824, -1.9385]).addTo(map);
 
 		map.once('load', () => {
+			if (map) {
+				addContourLayers(map);
+			}
 			if (map?.getSource('terrarium')) {
 				(map as Map).addControl(
 					new TerrainControl({

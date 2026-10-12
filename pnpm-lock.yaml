@@ -410,6 +410,9 @@ importers:
       mapbox-gl:
         specifier: ^3.26.0
         version: 3.32.0
+      maplibre-contour:
+        specifier: ^0.1.1
+        version: 0.1.1
       maplibre-gl:
         specifier: ^6.0.0
         version: 6.12.0
@@ -2425,6 +2428,9 @@ packages:
 
   mapbox-gl@3.32.0:
     resolution: {integrity: sha512-+P4qrlyejQYLyz1Bfzoe+d5Ff5vAghH54RNHm1q2VeAZqkSjQ5e1XlovQoSHlf4xqpRJtJG58kn8nkLwPMQung==}
+
+  maplibre-contour@0.1.1:
+    resolution: {integrity: sha512-0m267124bx+LJ5zM1mpB23uvO4sCrgOb4dWgwbUbGWGsDsWNA4g93XTXPoRQga6GAD6TDI7tzyowBzdADSPusg==}
 
   maplibre-gl@5.24.0:
     resolution: {integrity: sha512-ALyFxgtd5R+65UqZ/++lOqwWcC0SNho9c27fYSyLmG7AfnAul2o46F05aDJGPbFU57wos9dgcIySHs0Xe6ia3A==}
@@ -5524,6 +5530,8 @@ snapshots:
       '@jridgewell/sourcemap-codec': 1.6.0
 
   mapbox-gl@3.32.0: {}
+
+  maplibre-contour@0.1.1: {}
 
   maplibre-gl@5.24.0:
     dependencies:

@@ -32,6 +32,7 @@
 		"eslint-plugin-svelte": "^3.22.0",
 		"globals": "^17.7.0",
 		"mapbox-gl": "^3.26.0",
+		"maplibre-contour": "^0.1.1",
 		"maplibre-gl": "^6.0.0",
 		"pmtiles": "^4.4.1",
 		"prettier": "^3.9.6",
