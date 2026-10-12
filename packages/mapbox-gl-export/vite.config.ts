@@ -5,8 +5,9 @@ import { defineConfig } from 'vite';
 export default defineConfig({
 	resolve: {
 		alias: {
-			// MapLibre GL JS v6 is ESM-only; keep the Mapbox UMD build on v5.
-			'maplibre-gl': resolve(__dirname, 'node_modules/maplibre-gl/dist/maplibre-gl.js')
+			// maplibre-gl is only referenced by the MapLibre map generator, which is never used here.
+			// Point it to mapbox-gl (external) so that MapLibre GL JS is not bundled.
+			'maplibre-gl': 'mapbox-gl'
 		}
 	},
 	build: {
