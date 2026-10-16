@@ -1,6 +1,6 @@
 {
 	"name": "@watergis/maplibre2svg",
-	"version": "0.0.0",
+	"version": "0.1.0",
 	"private": true,
 	"description": "Convert a rendered MapLibre GL JS map into a vector SVG.",
 	"type": "module",
