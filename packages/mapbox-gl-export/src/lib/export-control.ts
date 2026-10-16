@@ -48,6 +48,7 @@ export default class MapboxExportControl extends MaplibreExportControl implement
 			download: this.options.download,
 			onExport: this.options.onExport,
 			svgVectorOptions: this.options.svgVectorOptions,
+			geoPdf: this.options.geoPdf,
 			accessToken: this.accessToken
 		});
 		mapGenerator.generate();

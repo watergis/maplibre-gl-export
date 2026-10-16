@@ -136,7 +136,9 @@
 			DPI: DPI[96],
 			Crosshair: true,
 			PrintableArea: true,
-			Local: language
+			Local: language,
+			// georeference exported PDF as GeoPDF (default is true)
+			geoPdf: true
 			// AllowedSizes: [
 			// 	'A4',
 			// 	{ name: '16:9', size: [320, 180] },

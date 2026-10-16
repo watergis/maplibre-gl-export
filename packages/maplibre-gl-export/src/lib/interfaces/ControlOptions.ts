@@ -80,4 +80,10 @@ export interface ControlOptions {
 	 * @experimental
 	 */
 	svgVectorOptions?: SvgVectorOptions;
+	/**
+	 * Whether the exported PDF is georeferenced as a GeoPDF, so that GIS software such as
+	 * QGIS or Avenza Maps can place it on the map. default is true.
+	 * It is skipped when the map is pitched, has terrain, or uses the globe projection.
+	 */
+	geoPdf?: boolean;
 }

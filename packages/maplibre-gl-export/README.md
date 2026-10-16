@@ -40,3 +40,15 @@ Layers which have no vector counterpart (raster, hillshade, heatmap, fill-extrus
 embedded as images at their place in the layer order, and so are labels unless **Export labels as vector**
 is ticked (`labels: 'vector'`), which writes them as editable text at an approximated position. The map is exported as an image as before when
 it cannot be converted at all. See [maplibre2svg](../maplibre2svg) for what is supported.
+
+## GeoPDF
+
+PDF files are georeferenced as a GeoPDF (the geospatial extension of ISO 32000), so that GIS
+software such as QGIS (GDAL) or Avenza Maps places them on the map. The four corners of the page
+are written in latitude and longitude with the Web Mercator (EPSG:3857) projection the map is drawn in,
+so a rotated map is georeferenced correctly too. It is skipped when the map is pitched, has terrain or
+uses the globe projection. Set `geoPdf: false` to export a plain PDF:
+
+```ts
+map.addControl(new MaplibreExportControl({ Format: Format.PDF, geoPdf: false }));
+```
