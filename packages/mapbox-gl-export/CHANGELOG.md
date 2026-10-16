@@ -1,5 +1,75 @@
 # @watergis/mapbox-gl-export
 
+## 4.2.0
+
+### Minor Changes
+
+- 02cdc0e: feat: add the WebP format (`Format.WEBP`, saved as `.webp`), which is usually much smaller than the PNG.
+  
+  The image is the same as the PNG, including the scale bar, north icon and attribution, and it is encoded with the browser's WebP encoder, so no extra library is needed. A PNG is exported instead, with a warning in the console, when the browser cannot encode WebP, such as Safari.
+  
+  ```ts
+  import { MapboxExportControl, Size, PageOrientation, Format, DPI } from '@watergis/mapbox-gl-export';
+  
+  map.addControl(
+  	new MapboxExportControl({
+  		PageSize: Size.A4,
+  		PageOrientation: PageOrientation.Landscape,
+  		Format: Format.WEBP,
+  		DPI: DPI[300],
+  		accessToken: mapboxgl.accessToken
+  	}),
+  	'top-right'
+  );
+  ```
+- 962971c: feat: georeference the exported PDF as a GeoPDF, so that it can be opened on the map in GIS software such as QGIS (GDAL) or Avenza Maps.
+  
+  The four corners of the page are written in latitude and longitude with the Web Mercator (EPSG:3857) projection the map is drawn in, following the geospatial extension of ISO 32000. It works for both the image PDF and the vector PDF (`svgVectorOptions.enabled`), and a rotated map is georeferenced correctly too. It is skipped, with a warning in the console, when the map is pitched, has terrain or uses the globe projection.
+  
+  It is enabled by default. Set `geoPdf: false` to export a plain PDF:
+  
+  ```ts
+  import { MapboxExportControl, Size, PageOrientation, Format, DPI } from '@watergis/mapbox-gl-export';
+  
+  map.addControl(
+  	new MapboxExportControl({
+  		PageSize: Size.A4,
+  		PageOrientation: PageOrientation.Landscape,
+  		Format: Format.PDF,
+  		DPI: DPI[300],
+  		geoPdf: true, // default. set false to export a plain PDF
+  		accessToken: mapboxgl.accessToken
+  	}),
+  	'top-right'
+  );
+  ```
+  
+  The exported file can be checked with GDAL, which reports the Pseudo-Mercator coordinate system and the corner coordinates of the map:
+  
+  ```bash
+  gdalinfo map.pdf
+  ```
+- a05a9f2: feat: add the GeoTIFF format (`Format.GEOTIFF`, saved as `.tif`), which can be opened on the map in GIS software such as QGIS (GDAL).
+  
+  The image is the same as the PNG, including the scale bar, north icon and attribution, and it is georeferenced with the Web Mercator (EPSG:3857) projection the map is drawn in, so a rotated map is georeferenced correctly too. The attribution of the map is also written into the `Artist` tag. It is compressed with Deflate, and a plain TIFF is exported, with a warning in the console, when the map is pitched, has terrain or uses the globe projection.
+  
+  ```ts
+  map.addControl(
+    new MapboxExportControl({ Format: Format.GEOTIFF }),
+    "top-right",
+  );
+  ```
+  
+  The exported file can be checked with GDAL:
+  
+  ```bash
+  gdalinfo map.tif
+  ```
+
+### Patch Changes
+
+- 003c115: fix: the vector PDF failed with `Maximum call stack size exceeded` for a large page size or a high DPI (e.g. A2, or 200/300/400 DPI), when the map has layers which are rendered as images such as raster or hillshade layers.
+
 ## 4.1.0
 
 ### Minor Changes
