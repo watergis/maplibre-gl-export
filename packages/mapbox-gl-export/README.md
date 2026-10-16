@@ -21,3 +21,18 @@ npm install mapbox-gl @watergis/mapbox-gl-export
 ## Demo & usage
 
 See [documentation](https://maplibre-gl-export.water-gis.com/).
+
+## Vector export (experimental)
+
+By default `svg` and `pdf` wrap an image of the map. Tick **Export as vector** in the export panel,
+which is shown while SVG or PDF is selected, or set `svgVectorOptions: { enabled: true }` to try exporting
+the fill, line and point layers as real vector paths:
+
+```ts
+map.addControl(new MapboxExportControl({ Format: Format.SVG, svgVectorOptions: { enabled: true } }));
+```
+
+Layers which have no vector counterpart (raster, hillshade, heatmap, fill-extrusion, ...) are
+embedded as images at their place in the layer order, and so are labels unless **Export labels as vector**
+is ticked (`labels: 'vector'`), which writes them as editable text at an approximated position. The map is exported as an image as before when
+it cannot be converted at all. See [maplibre2svg](../maplibre2svg) for what is supported.

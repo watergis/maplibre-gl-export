@@ -47,6 +47,7 @@ export default class MapboxExportControl extends MaplibreExportControl implement
 			northIconOptions: this.options.northIconOptions,
 			download: this.options.download,
 			onExport: this.options.onExport,
+			svgVectorOptions: this.options.svgVectorOptions,
 			accessToken: this.accessToken
 		});
 		mapGenerator.generate();

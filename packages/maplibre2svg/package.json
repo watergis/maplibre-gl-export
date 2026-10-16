@@ -1,0 +1,67 @@
+{
+	"name": "@watergis/maplibre2svg",
+	"version": "0.0.0",
+	"private": true,
+	"description": "Convert a rendered MapLibre GL JS map into a vector SVG.",
+	"type": "module",
+	"main": "dist/maplibre2svg.umd.js",
+	"types": "./dist/types/index.d.ts",
+	"module": "dist/maplibre2svg.es.js",
+	"exports": {
+		".": {
+			"types": "./dist/types/index.d.ts",
+			"import": "./dist/maplibre2svg.es.js",
+			"require": "./dist/maplibre2svg.umd.js"
+		}
+	},
+	"files": [
+		"dist",
+		"package.json"
+	],
+	"scripts": {
+		"build": "tsc && vite build",
+		"test": "vitest run",
+		"lint": "prettier --check . && eslint .",
+		"format": "prettier --write ."
+	},
+	"keywords": [
+		"maplibre",
+		"maplibre-gl-js",
+		"svg",
+		"vector",
+		"export"
+	],
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/watergis/maplibre-gl-export.git"
+	},
+	"author": "Jin IGARASHI",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/watergis/maplibre-gl-export/issues"
+	},
+	"homepage": "https://github.com/watergis/maplibre-gl-export/tree/main/packages/maplibre2svg#readme",
+	"devDependencies": {
+		"@eslint/js": "^10.0.1",
+		"@types/geojson": "^7946.0.16",
+		"@types/node": "^25.9.5",
+		"eslint": "^10.7.0",
+		"eslint-config-prettier": "^10.1.8",
+		"globals": "^17.7.0",
+		"happy-dom": "^20.14.6",
+		"maplibre-gl": "^6.13.0",
+		"prettier": "^3.9.6",
+		"typescript": "^6.0.3",
+		"typescript-eslint": "^8.65.0",
+		"vite": "^8.1.5",
+		"vitest": "^5.0.3"
+	},
+	"peerDependencies": {
+		"maplibre-gl": "^5.21.1 || >=6.0.0-0 <7.0.0"
+	},
+	"peerDependenciesMeta": {
+		"maplibre-gl": {
+			"optional": true
+		}
+	}
+}

@@ -158,4 +158,16 @@ export default class MapGenerator extends MapGeneratorBase {
 		});
 		renderMap.addControl(control, (options.position ?? 'bottom-right') as ControlPosition);
 	}
+
+	/**
+	 * The vector export is written for MapLibre GL JS, so only what Mapbox GL JS has in common
+	 * with it can be converted. Styles which import other styles, such as Mapbox Standard, keep
+	 * their layers out of reach, and the globe projection cannot be projected point by point.
+	 */
+	protected isVectorExportSupported(renderMap: MapboxMap) {
+		const imports = (renderMap.getStyle() as { imports?: unknown[] } | undefined)?.imports;
+		if (imports && imports.length > 0) return false;
+		const projection = renderMap.getProjection?.()?.name;
+		return projection === undefined || projection === null || projection === 'mercator';
+	}
 }

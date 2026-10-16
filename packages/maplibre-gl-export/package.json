@@ -56,6 +56,7 @@
 		"@types/node": "^25.9.5",
 		"@typescript-eslint/eslint-plugin": "^8.65.0",
 		"@typescript-eslint/parser": "^8.65.0",
+		"@watergis/maplibre2svg": "workspace:^",
 		"autoprefixer": "^10.5.4",
 		"eslint": "^10.7.0",
 		"eslint-config-prettier": "^10.1.8",
@@ -76,7 +77,8 @@
 	},
 	"dependencies": {
 		"html-to-image": "^1.11.13",
-		"jspdf": "^4.2.1"
+		"jspdf": "^4.2.1",
+		"svg2pdf.js": "^2.8.1"
 	},
 	"peerDependencies": {
 		"maplibre-gl": "^5.21.1 || >=6.0.0-0 <7.0.0"

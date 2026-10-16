@@ -6,7 +6,8 @@
     "lint": "pnpm -r lint",
     "format": "pnpm -r format",
     "build": "pnpm -r build",
-    "release": "changeset publish"
+    "release": "changeset publish",
+    "test": "pnpm -r --if-present test"
   },
   "repository": {
     "type": "git",

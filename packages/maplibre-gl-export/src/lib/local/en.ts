@@ -8,6 +8,8 @@ const translation: Translation = {
 	Generate: 'Generate',
 	Scalebar: 'Scale bar',
 	NorthIcon: 'North icon',
+	ExportAsVector: 'Export as vector',
+	ExportLabelsAsVector: 'Export labels as vector',
 	Custom: 'Custom',
 	Width: 'Width',
 	Height: 'Height',

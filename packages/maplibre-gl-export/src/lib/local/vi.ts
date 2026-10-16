@@ -8,6 +8,8 @@ const translation: Translation = {
 	Generate: 'Tạo',
 	Scalebar: 'Thanh tỷ lệ',
 	NorthIcon: 'Biểu tượng hướng bắc',
+	ExportAsVector: 'Xuất dạng vector',
+	ExportLabelsAsVector: 'Xuất nhãn dạng vector',
 	Custom: 'Tùy chỉnh',
 	Width: 'Chiều rộng',
 	Height: 'Chiều cao',

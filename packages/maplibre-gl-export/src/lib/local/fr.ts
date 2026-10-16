@@ -8,6 +8,8 @@ const translation: Translation = {
 	Generate: 'Générer',
 	Scalebar: "Barre d'échelle",
 	NorthIcon: 'Flèche du nord',
+	ExportAsVector: 'Exporter en vectoriel',
+	ExportLabelsAsVector: 'Exporter les étiquettes en vectoriel',
 	Custom: 'Personnalisé',
 	Width: 'Largeur',
 	Height: 'Hauteur',

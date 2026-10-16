@@ -8,6 +8,8 @@ const translation: Translation = {
 	Generate: 'Згенерувати',
 	Scalebar: 'Масштабна лінійка',
 	NorthIcon: 'Покажчик півночі',
+	ExportAsVector: 'Експортувати як вектор',
+	ExportLabelsAsVector: 'Експортувати підписи як вектор',
 	Custom: 'Власний',
 	Width: 'Ширина',
 	Height: 'Висота',

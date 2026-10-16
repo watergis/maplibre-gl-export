@@ -8,6 +8,8 @@ const translation: Translation = {
 	Generate: 'Generera',
 	Scalebar: 'Skalstock',
 	NorthIcon: 'Norrpil',
+	ExportAsVector: 'Exportera som vektor',
+	ExportLabelsAsVector: 'Exportera etiketter som vektor',
 	Custom: 'Anpassad',
 	Width: 'Bredd',
 	Height: 'Höjd',

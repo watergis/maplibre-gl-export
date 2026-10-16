@@ -10,4 +10,9 @@ export interface ExportResult {
 	fileName: string;
 	/** format the image was exported in */
 	format: FormatType;
+	/**
+	 * source of the SVG holding the map as vectors. It is only set when
+	 * `svgVectorOptions.enabled` is true, the format is SVG or PDF and the map could be converted.
+	 */
+	svg?: string;
 }
