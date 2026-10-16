@@ -6,3 +6,4 @@ export { default as PrintableAreaManager } from './printable-area-manager';
 export * from './local';
 export * from './interfaces';
 export * from './map-generator-base';
+export * from './geopdf';

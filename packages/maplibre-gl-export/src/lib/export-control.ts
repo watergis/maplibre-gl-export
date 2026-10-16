@@ -332,7 +332,8 @@ export default class MaplibreExportControl implements IControl {
 			northIconOptions: this.options.northIconOptions,
 			download: this.options.download,
 			onExport: this.options.onExport,
-			svgVectorOptions: this.options.svgVectorOptions
+			svgVectorOptions: this.options.svgVectorOptions,
+			geoPdf: this.options.geoPdf
 		});
 		mapGenerator.generate();
 	}

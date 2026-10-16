@@ -206,6 +206,12 @@
 				'Experimental. By default `svg` and `pdf` wrap an image of the map. Tick the `Export as vector` checkbox, which the panel shows while `svg` or `pdf` is selected, or set `enabled` to `true` to have it ticked initially, to try exporting fill, line and point layers as real vector paths. Layers which have no vector counterpart (raster, hillshade, heatmap, fill-extrusion, ...) are still embedded as images, and the whole map is exported as an image when it cannot be converted (terrain, globe projection, Mapbox Standard style). `labels` is the initial state of the `Export labels as vector` checkbox and decides how symbol layers are written: `raster` lays them over the vectors as a transparent image so that they look as on the map, `vector` writes them as editable text whose position is approximated.'
 		},
 		{
+			name: 'geoPdf',
+			default: 'true',
+			description:
+				'Whether the exported PDF is georeferenced as a GeoPDF (the geospatial extension of ISO 32000), so that GIS software such as QGIS (GDAL) or Avenza Maps places it on the map. The four corners of the page are written in latitude and longitude with the Web Mercator (EPSG:3857) projection the map is drawn in, so a rotated map is georeferenced correctly too. It works for both image and vector PDF, and is skipped when the map is pitched, has terrain or uses the globe projection. Set it to `false` to export a plain PDF.'
+		},
+		{
 			name: 'accessToken',
 			default: 'mapboxgl.accessToken is used as default',
 			description: 'Mapbox access token is required'
@@ -437,6 +443,7 @@ const exportControl = new ${tabSet === 'maplibre' ? 'Maplibre' : 'Mapbox'}Export
 	Crosshair: true,
 	PrintableArea: true,
 	Local: '${selectedLanguage}',
+	geoPdf: true,
 	${tabSet === 'mapbox' ? `accessToken: '${mapboxToken}',` : ''}
 });
 map.addControl(exportControl, 'top-right');
