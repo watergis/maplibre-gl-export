@@ -352,6 +352,9 @@ importers:
       vite:
         specifier: ^8.1.5
         version: 8.3.4(@types/node@25.9.9)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1)
+      vitest:
+        specifier: ^5.0.3
+        version: 5.0.3(@types/node@25.9.9)(happy-dom@20.14.6)(vite@8.3.4(@types/node@25.9.9)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1))
 
   packages/maplibre2svg:
     devDependencies:

@@ -7,3 +7,4 @@ export * from './local';
 export * from './interfaces';
 export * from './map-generator-base';
 export * from './geopdf';
+export * from './geotiff';
