@@ -997,8 +997,41 @@ export abstract class MapGeneratorBase {
 		exportInfo: ExportInfo = {}
 	) {
 		const pdf = this.createPDFDocument(map, exportInfo);
-		await pdf.svg(svg, { x: 0, y: 0, width: this.width, height: this.height });
+		const clone = svg.cloneNode(true) as SVGSVGElement;
+		const objectUrls = await this.replaceDataUrlImages(clone);
+		try {
+			await pdf.svg(clone, { x: 0, y: 0, width: this.width, height: this.height });
+		} finally {
+			objectUrls.forEach((url) => URL.revokeObjectURL(url));
+		}
 		return pdf;
+	}
+
+	/**
+	 * Replace the data URLs of the images in the SVG by object URLs.
+	 *
+	 * svg2pdf.js parses a data URL by a regular expression which overflows the call stack for
+	 * a large image, such as a layer rendered as an image for a large page or a high DPI. Any
+	 * other URL is loaded as it is, and its format is read from the extension, which is given
+	 * by the fragment of the object URL.
+	 * @param svg SVG whose images are replaced
+	 * @returns object URLs which have to be revoked after the SVG was drawn
+	 */
+	private async replaceDataUrlImages(svg: SVGSVGElement) {
+		const xlinkNs = 'http://www.w3.org/1999/xlink';
+		const objectUrls: string[] = [];
+		for (const image of Array.from(svg.getElementsByTagName('image'))) {
+			const href = image.getAttributeNS(xlinkNs, 'href') || image.getAttribute('href');
+			// SVG images are parsed as text by svg2pdf.js, which an object URL would break
+			if (!href?.startsWith('data:image/') || href.startsWith('data:image/svg')) continue;
+			const blob = await (await fetch(href)).blob();
+			const objectUrl = URL.createObjectURL(blob);
+			objectUrls.push(objectUrl);
+			const url = `${objectUrl}#image.${blob.type.split('/')[1] ?? 'png'}`;
+			image.setAttributeNS(xlinkNs, 'xlink:href', url);
+			image.setAttribute('href', url);
+		}
+		return objectUrls;
 	}
 
 	/**
