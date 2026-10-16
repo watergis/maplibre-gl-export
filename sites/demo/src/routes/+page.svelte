@@ -114,7 +114,7 @@
 		{
 			name: 'Format',
 			default: 'PDF',
-			description: 'You can select it from `jpg`, `png`, `svg` and `pdf`'
+			description: 'You can select it from `jpg`, `png`, `svg`, `pdf` and `tif`'
 		},
 		{
 			name: 'DPI',

@@ -48,3 +48,15 @@ uses the globe projection. Set `geoPdf: false` to export a plain PDF:
 ```ts
 map.addControl(new MapboxExportControl({ Format: Format.PDF, geoPdf: false }));
 ```
+
+## GeoTIFF
+
+Select **GEOTIFF** (`Format.GEOTIFF`, saved as `.tif`) to export the map as a GeoTIFF, which GIS software
+such as QGIS (GDAL) places on the map. The image is the same as the PNG, including the scale bar, north icon
+and attribution, and is written with the Web Mercator (EPSG:3857) projection the map is drawn in, so a rotated
+map is georeferenced correctly too. The attribution of the map is also written into the `Artist` tag. A plain
+TIFF is exported when the map is pitched, has terrain or uses the globe projection.
+
+```ts
+map.addControl(new MapboxExportControl({ Format: Format.GEOTIFF }));
+```
