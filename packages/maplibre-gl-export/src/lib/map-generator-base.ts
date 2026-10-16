@@ -864,6 +864,9 @@ export abstract class MapGeneratorBase {
 			case Format.JPEG:
 				this.toJPEG(canvas, fileName);
 				break;
+			case Format.WEBP:
+				this.downloadBlob(await this.createWebpBlob(canvas), fileName);
+				break;
 			case Format.PDF:
 				if (svg) (await this.createVectorPDF(svg, renderMap, exportInfo)).save(fileName);
 				else this.toPDF(canvas, renderMap, fileName, exportInfo);
@@ -906,6 +909,19 @@ export abstract class MapGeneratorBase {
 		a.download = fileName;
 		a.click();
 		a.remove();
+	}
+
+	/**
+	 * Encode the composed canvas as WebP. Browsers which cannot encode WebP, such as Safari,
+	 * return a PNG instead, which is warned about in the console.
+	 * @param canvas composed Canvas element
+	 */
+	private async createWebpBlob(canvas: HTMLCanvasElement) {
+		const blob = await this.canvasToBlob(canvas, 'image/webp', 0.9);
+		if (blob.type !== 'image/webp') {
+			console.warn(`This browser cannot encode WebP, the map is exported as ${blob.type} instead`);
+		}
+		return blob;
 	}
 
 	/**
@@ -1132,6 +1148,8 @@ export abstract class MapGeneratorBase {
 		switch (this.format) {
 			case Format.JPEG:
 				return this.canvasToBlob(canvas, 'image/jpeg', 0.85);
+			case Format.WEBP:
+				return this.createWebpBlob(canvas);
 			case Format.PDF:
 				// the source map is used for the document properties. The map which was rendered
 				// shares its center, zoom and style, and it is already removed at this point.
