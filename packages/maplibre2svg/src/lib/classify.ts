@@ -1,4 +1,4 @@
-import { properties, type LayerType, type PaintName, type StyleLayer } from './style';
+import type { LayerType, PaintName, StyleLayer } from './style';
 import type { LabelMode, LayerKind } from './types';
 
 /** Layer types which are drawn as vectors */
@@ -18,6 +18,8 @@ const PATTERN_PROPERTIES: PaintName<'fill' | 'background'>[] = [
 
 export interface ClassifyOptions {
 	zoom: number;
+	/** pitch of the map in degrees */
+	pitch: number;
 	labels: LabelMode;
 	/** whether the images of the style can be read, which patterns and icons need */
 	hasImages: boolean;
@@ -40,12 +42,21 @@ export function classifyLayer(layer: StyleLayer, options: ClassifyOptions): Laye
 
 	if (layer.type === 'symbol') {
 		if (options.labels !== 'vector') return 'symbol';
-		// icons cannot be drawn without the images of the style
-		return isSet(properties<'symbol'>(layer).layout('icon-image')) && !options.hasImages
-			? 'symbol'
-			: 'vector';
+		if (!isSet(layout?.['icon-image'])) return 'vector';
+		// icons cannot be drawn without the images of the style, nor placed along a line yet
+		const placement = layout?.['symbol-placement'];
+		return !options.hasImages || (isSet(placement) && placement !== 'point') ? 'symbol' : 'vector';
 	}
 	if (!VECTOR_TYPES.includes(layer.type)) return 'raster';
+
+	// circles are drawn at a constant size, while a pitched map scales them with the
+	// perspective or lays them flat onto the map
+	if (
+		layer.type === 'circle' &&
+		options.pitch > 0 &&
+		(paint['circle-pitch-scale'] !== 'viewport' || paint['circle-pitch-alignment'] === 'map')
+	)
+		return 'raster';
 
 	// a background has no features its properties could be evaluated for
 	if (layer.type === 'background' && Object.values(paint).some((value) => Array.isArray(value)))

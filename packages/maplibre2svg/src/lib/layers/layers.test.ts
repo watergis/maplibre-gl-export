@@ -67,6 +67,17 @@ describe('background', () => {
 		)?.firstElementChild;
 		expect(rect?.getAttribute('fill')).toMatch(/^url\(#pattern-/);
 	});
+
+	it('gives layers whose ids become the same XML id distinct ids', () => {
+		const ctx = createContext();
+		const paint = { 'background-color': '#ff0000' };
+		const ids = ['road/main', 'road main'].map(
+			(id) =>
+				renderBackground(styleLayer(id, 'background', { paint }) as LayerOfType<'background'>, ctx)
+					?.id
+		);
+		expect(ids).toEqual(['road_main', 'road_main-2']);
+	});
 });
 
 describe('fill', () => {

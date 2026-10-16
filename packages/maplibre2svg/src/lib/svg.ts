@@ -35,6 +35,24 @@ export function toId(value: string) {
 	return /^[A-Za-z_]/.test(id) ? id : `_${id}`;
 }
 
+/** Turns strings into XML ids which are unique within one document */
+export type IdAllocator = (value: string) => string;
+
+/**
+ * Create the allocator of the ids of one document. Different strings can become the same id,
+ * such as `road/main` and `road main`, so a suffix is added to the ones which are taken.
+ */
+export function createIdAllocator(): IdAllocator {
+	const used = new Set<string>();
+	return (value) => {
+		const base = toId(value);
+		let id = base;
+		for (let n = 2; used.has(id); n++) id = `${base}-${n}`;
+		used.add(id);
+		return id;
+	};
+}
+
 /**
  * Move the attributes which all of the items share to `parent`, so that they are
  * written once per layer instead of once per feature.

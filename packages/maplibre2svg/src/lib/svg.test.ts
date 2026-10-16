@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { el, fmt, hoistCommonAttrs, svgToString, toId, type Attrs } from './svg';
+import { createIdAllocator, el, fmt, hoistCommonAttrs, svgToString, toId, type Attrs } from './svg';
 
 describe('fmt', () => {
 	it('rounds to 2 decimals', () => {
@@ -13,6 +13,16 @@ describe('toId', () => {
 	it('makes a valid XML id', () => {
 		expect(toId('road/major (casing)')).toBe('road_major__casing_');
 		expect(toId('3d-buildings')).toBe('_3d-buildings');
+	});
+});
+
+describe('createIdAllocator', () => {
+	it('keeps ids unique when different strings become the same id', () => {
+		const id = createIdAllocator();
+		expect(id('road/main')).toBe('road_main');
+		expect(id('road main')).toBe('road_main-2');
+		expect(id('road_main')).toBe('road_main-3');
+		expect(id('water')).toBe('water');
 	});
 });
 

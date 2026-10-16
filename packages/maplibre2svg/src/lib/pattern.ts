@@ -1,4 +1,4 @@
-import { el, toId } from './svg';
+import { el, type IdAllocator } from './svg';
 import type { StyleImageLike } from './types';
 
 export type EncodeImage = (data: Uint8ClampedArray, width: number, height: number) => string;
@@ -71,6 +71,7 @@ export class ImageRegistry {
 		private doc: Document,
 		private defs: Element,
 		private getImage: ((name: string) => StyleImageLike | undefined) | undefined,
+		private id: IdAllocator,
 		private encode: EncodeImage = encodeWithCanvas
 	) {}
 
@@ -100,7 +101,7 @@ export class ImageRegistry {
 					])
 				: new Uint8ClampedArray(data.buffer, data.byteOffset, data.byteLength);
 			def = {
-				id: `image-${this.images.size}-${toId(name)}`,
+				id: this.id(`image-${this.images.size}-${name}`),
 				width: width / ratio,
 				height: height / ratio
 			};
@@ -123,7 +124,7 @@ export class ImageRegistry {
 		const image = this.image(name);
 		let id: string | undefined;
 		if (image) {
-			id = `pattern-${this.patterns.size}-${toId(name)}`;
+			id = this.id(`pattern-${this.patterns.size}-${name}`);
 			this.defs.appendChild(
 				el(
 					this.doc,

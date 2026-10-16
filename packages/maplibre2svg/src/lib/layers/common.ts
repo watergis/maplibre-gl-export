@@ -1,5 +1,5 @@
 import type { ImageRegistry } from '../pattern';
-import { el, fmt, hoistCommonAttrs, toId, type Attrs } from '../svg';
+import { el, fmt, hoistCommonAttrs, type Attrs, type IdAllocator } from '../svg';
 import { tileKey, tileOutline } from '../tile-clip';
 import type { StyleLayer } from '../style';
 import type { Point, Project, QueriedFeature, TileId } from '../types';
@@ -17,13 +17,19 @@ export interface RenderContext {
 	width: number;
 	height: number;
 	images: ImageRegistry;
+	/** allocates the ids of the elements, unique within the document */
+	id: IdAllocator;
 	/** ids of the clip paths which were already defined, by tile */
 	clipIds: Map<string, string>;
 }
 
 /** Create the group a layer is drawn in */
 export function layerGroup(ctx: RenderContext, layer: StyleLayer) {
-	return el(ctx.doc, 'g', { id: toId(layer.id), 'data-layer': layer.id, 'data-type': layer.type });
+	return el(ctx.doc, 'g', {
+		id: ctx.id(layer.id),
+		'data-layer': layer.id,
+		'data-type': layer.type
+	});
 }
 
 export interface TileFeatures {
@@ -56,7 +62,7 @@ export function tileGroup(ctx: RenderContext, tile: TileId | undefined) {
 	const key = tileKey(tile);
 	let id = ctx.clipIds.get(key);
 	if (!id) {
-		id = `tile-${tile.z}-${tile.x}-${tile.y}`;
+		id = ctx.id(`tile-${tile.z}-${tile.x}-${tile.y}`);
 		const points = tileOutline(tile, ctx.project, TILE_CLIP_EXPAND)
 			.map((point) => `${fmt(point.x)},${fmt(point.y)}`)
 			.join(' ');

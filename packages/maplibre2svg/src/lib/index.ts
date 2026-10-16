@@ -9,7 +9,7 @@ import type { Map as MaplibreMap } from 'maplibre-gl';
 import { assertSupported, getMapSize, queryLayerFeatures } from './map';
 import { ImageRegistry } from './pattern';
 import { captureRasterGroups } from './raster-pass';
-import { el, SVG_NS, XLINK_NS } from './svg';
+import { createIdAllocator, el, SVG_NS, XLINK_NS } from './svg';
 import type { StyleLayer } from './style';
 import type { Maplibre2SvgOptions, StyleImageLike } from './types';
 
@@ -73,6 +73,7 @@ export async function maplibre2svg(
 		typeof map.getImage === 'function'
 			? (name: string) => map.getImage(name) as StyleImageLike | undefined
 			: undefined;
+	const id = createIdAllocator();
 	const ctx: RenderContext = {
 		doc,
 		defs,
@@ -83,13 +84,15 @@ export async function maplibre2svg(
 		bearing: map.getBearing(),
 		width,
 		height,
-		images: new ImageRegistry(doc, defs, getImage, options.encodeImage),
+		images: new ImageRegistry(doc, defs, getImage, id, options.encodeImage),
+		id,
 		clipIds: new Map()
 	};
 
 	const layers = map.getStyle()?.layers ?? [];
 	const classifyOptions = {
 		zoom: map.getZoom(),
+		pitch: map.getPitch(),
 		labels: options.labels ?? 'raster',
 		hasImages: getImage !== undefined
 	};

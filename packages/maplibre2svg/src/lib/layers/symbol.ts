@@ -1,7 +1,7 @@
 import { toCssColor } from '../color';
 import { geometryToPaths, geometryToPoints, pathData, pathLength, type Path } from '../geometry';
 import { imageName } from '../pattern';
-import { el, fmt, toId, type Attrs } from '../svg';
+import { el, fmt, type Attrs } from '../svg';
 import { isInTile } from '../tile-clip';
 import { properties, type StyleLayer } from '../style';
 import type { Point, QueriedFeature } from '../types';
@@ -272,7 +272,7 @@ export function renderSymbol(layer: StyleLayer, features: QueriedFeature[], ctx:
 			// one label per feature and tile, on its longest part
 			const longest = paths.sort((a, b) => pathLength(b.points) - pathLength(a.points))[0];
 			if (longest) {
-				const id = `${toId(layer.id)}-path-${pathCount++}`;
+				const id = ctx.id(`${layer.id}-path-${pathCount++}`);
 				elements.push(...(renderLineText(feature, longest, ctx, id) ?? []));
 			}
 		}

@@ -695,7 +695,12 @@ export abstract class MapGeneratorBase {
 			return { element, box: { ...origin, ...size } as OverlayBox };
 		};
 
-		const attribution = boxOf(this.attributionClassName, this.attributionOptions, 'bottom-right');
+		const attributionPosition = this.attributionOptions.position ?? 'bottom-right';
+		const attribution = boxOf(
+			this.attributionClassName,
+			this.attributionOptions,
+			attributionPosition
+		);
 		const text = attribution?.element.textContent?.trim();
 		if (attribution && text) svg.appendChild(createAttributionOverlay(text, attribution.box));
 
@@ -705,7 +710,7 @@ export abstract class MapGeneratorBase {
 			const position = this.scalebarOptions.position ?? 'bottom-left';
 			const margin = this.scalebarOptions.margin ?? 10;
 			// stack the scale bar on top of / below the attribution when they share a corner
-			if (attribution && text && this.attributionOptions.position === position) {
+			if (attribution && text && attributionPosition === position) {
 				box.y = position.startsWith('top')
 					? attribution.box.y + attribution.box.height + margin
 					: attribution.box.y - box.height - margin;

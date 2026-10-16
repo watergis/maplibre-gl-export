@@ -3,7 +3,7 @@ import { buildSegments, classifyLayer, type ClassifyOptions } from './classify';
 import type { StyleLayer } from './style';
 import { styleLayer } from './test-utils';
 
-const options: ClassifyOptions = { zoom: 10, labels: 'raster', hasImages: true };
+const options: ClassifyOptions = { zoom: 10, pitch: 0, labels: 'raster', hasImages: true };
 const layer = (type: string, extra: object = {}) => styleLayer(type, type, extra);
 
 describe('classifyLayer', () => {
@@ -58,6 +58,39 @@ describe('classifyLayer', () => {
 		expect(classifyLayer(text, { ...options, labels: 'vector' })).toBe('vector');
 		expect(classifyLayer(icon, { ...options, labels: 'vector' })).toBe('vector');
 		expect(classifyLayer(icon, { ...options, labels: 'vector', hasImages: false })).toBe('symbol');
+	});
+
+	it('rasterizes icons placed along lines', () => {
+		const vector = { ...options, labels: 'vector' as const };
+		const along = (layout: object) => layer('symbol', { layout });
+		expect(
+			classifyLayer(along({ 'icon-image': 'arrow', 'symbol-placement': 'line' }), vector)
+		).toBe('symbol');
+		expect(
+			classifyLayer(along({ 'icon-image': 'arrow', 'symbol-placement': 'line-center' }), vector)
+		).toBe('symbol');
+		expect(classifyLayer(along({ 'text-field': 'a', 'symbol-placement': 'line' }), vector)).toBe(
+			'vector'
+		);
+		expect(classifyLayer(along({ 'icon-image': 'pin', 'symbol-placement': 'point' }), vector)).toBe(
+			'vector'
+		);
+	});
+
+	it('rasterizes circles which a pitched map scales or lays flat', () => {
+		const circle = (paint: object = {}) => layer('circle', { paint });
+		const pitched = { ...options, pitch: 45 };
+		expect(classifyLayer(circle(), options)).toBe('vector');
+		expect(classifyLayer(circle({ 'circle-pitch-alignment': 'map' }), options)).toBe('vector');
+		expect(classifyLayer(circle(), pitched)).toBe('raster');
+		expect(classifyLayer(circle({ 'circle-pitch-scale': 'map' }), pitched)).toBe('raster');
+		expect(classifyLayer(circle({ 'circle-pitch-scale': 'viewport' }), pitched)).toBe('vector');
+		expect(
+			classifyLayer(
+				circle({ 'circle-pitch-scale': 'viewport', 'circle-pitch-alignment': 'map' }),
+				pitched
+			)
+		).toBe('raster');
 	});
 });
 

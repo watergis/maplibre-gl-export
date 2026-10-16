@@ -1,7 +1,7 @@
 import type { Map as MaplibreMap } from 'maplibre-gl';
 import type { RenderContext } from './layers/common';
 import { ImageRegistry } from './pattern';
-import { el } from './svg';
+import { createIdAllocator, el } from './svg';
 import type { EvaluatedLayer, StyleLayer } from './style';
 import type { QueriedFeature, StyleImageLike } from './types';
 
@@ -10,6 +10,7 @@ export const project = ([lng, lat]: [number, number]) => ({ x: lng * 10, y: -lat
 
 export function createContext(images: Record<string, StyleImageLike> = {}): RenderContext {
 	const defs = el(document, 'defs');
+	const id = createIdAllocator();
 	return {
 		doc: document,
 		defs,
@@ -21,8 +22,10 @@ export function createContext(images: Record<string, StyleImageLike> = {}): Rend
 			document,
 			defs,
 			(name) => images[name],
+			id,
 			(_data, width, height) => `data:test/${width}x${height}`
 		),
+		id,
 		clipIds: new Map()
 	};
 }
@@ -61,6 +64,7 @@ export function createMap(
 	const map = {
 		getStyle: () => ({ layers }),
 		getZoom: () => 10,
+		getPitch: () => 0,
 		getBearing: () => 0,
 		getCanvas: () => canvas,
 		project,
