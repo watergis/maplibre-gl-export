@@ -1,7 +1,6 @@
 export const Format = {
 	JPEG: 'jpg',
 	PNG: 'png',
-	WEBP: 'webp',
 	PDF: 'pdf',
 	SVG: 'svg',
 	GEOTIFF: 'tif'

@@ -37,16 +37,6 @@ embedded as images at their place in the layer order, and so are labels unless *
 is ticked (`labels: 'vector'`), which writes them as editable text at an approximated position. The map is exported as an image as before when
 it cannot be converted at all. See [maplibre2svg](../maplibre2svg) for what is supported.
 
-## WebP
-
-Select **WEBP** (`Format.WEBP`, saved as `.webp`) to export the map as a WebP image, which is usually much
-smaller than the PNG. Browsers which cannot encode WebP, such as Safari, export a PNG instead with a warning
-in the console.
-
-```ts
-map.addControl(new MapboxExportControl({ Format: Format.WEBP }));
-```
-
 ## GeoPDF
 
 PDF files are georeferenced as a GeoPDF (the geospatial extension of ISO 32000), so that GIS
