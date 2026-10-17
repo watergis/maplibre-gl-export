@@ -27,11 +27,9 @@
  * THE SOFTWARE.
  */
 
-import { toCanvas } from 'html-to-image';
 import { jsPDF } from 'jspdf';
 import 'svg2pdf.js';
 import { maplibre2svg, svgToString } from '@watergis/maplibre2svg';
-import type { ControlPosition } from 'maplibre-gl';
 import { Map as MaplibreMap, StyleSpecification } from 'maplibre-gl';
 import { CirclePaint, Map as MapboxMap } from 'mapbox-gl';
 import {
@@ -49,15 +47,12 @@ import {
 	Unit,
 	UnitType
 } from '../interfaces';
-import {
-	createAttributionOverlay,
-	createNorthIconOverlay,
-	createScalebarOverlay,
-	getWrappedLines,
-	type OverlayBox
-} from './vector-overlays';
+import { AttributionOverlay, NorthIconOverlay, ScalebarOverlay } from './overlays';
 import { createGeoPdfViewport, type GeoCorners } from './geopdf';
 import { createGeoTiff } from './geotiff';
+
+// kept exported from here, where it used to be defined
+export { stackOverlay } from './overlays';
 
 export const defaultMarkerCirclePaint: CirclePaint = {
 	'circle-radius': 8,
@@ -154,37 +149,6 @@ const LOAD_TIMEOUT_MS = 30000;
 
 /** Timeout for waiting the `idle` event of the hidden map */
 const IDLE_TIMEOUT_MS = 5000;
-
-/**
- * Narrowest the attribution may become, as a ratio of the page width, to leave room for the
- * scale bar beside it. The scale bar is stacked over the attribution when it would be narrower.
- */
-const MIN_ATTRIBUTION_WIDTH_RATIO = 0.4;
-
-/**
- * Stack an overlay on top of / below another one when they overlap, e.g. the scale bar and
- * the attribution which share a corner or spread over the width of a narrow page.
- * @param box box of the overlay to move. It is updated in place.
- * @param other box of the overlay which is kept in place
- * @param position corner of `box`. It is moved towards the center of the page.
- * @param margin gap between the two overlays
- */
-export function stackOverlay(
-	box: OverlayBox,
-	other: OverlayBox,
-	position: ControlPosition,
-	margin: number
-) {
-	const overlaps =
-		box.x < other.x + other.width &&
-		other.x < box.x + box.width &&
-		box.y < other.y + other.height &&
-		other.y < box.y + box.height;
-	if (!overlaps) return;
-	box.y = position.startsWith('top')
-		? other.y + other.height + margin
-		: other.y - box.height - margin;
-}
 
 /**
  * What is written into the exported PDF or GeoTIFF besides the map. It is read from the
@@ -557,13 +521,11 @@ export abstract class MapGeneratorBase {
 		ctx.imageSmoothingQuality = 'high';
 		ctx.drawImage(mapCanvas, 0, 0);
 
-		this.fitAttributionWidth();
-
-		// attribution is drawn first because the scale bar is stacked on top of it
-		// when both are placed in the same corner.
-		const attributionBox = await this.drawAttribution(ctx, canvas);
-		await this.drawScalebar(ctx, canvas, attributionBox);
-		await this.drawNorthIcon(ctx, canvas, renderMap.getBearing());
+		const { attribution, scalebar, overlays } = this.createOverlays(renderMap.getBearing());
+		// it has to run before the controls are measured, which the vector SVG does as well
+		attribution.fitWidth(this.hiddenContainer?.firstElementChild?.clientWidth ?? 0, scalebar);
+		const layout = { width: canvas.width, height: canvas.height, scale: this.scaleFactor };
+		for (const overlay of overlays) await overlay.draw(ctx, layout);
 
 		return canvas;
 	}
@@ -576,191 +538,23 @@ export abstract class MapGeneratorBase {
 	}
 
 	/**
-	 * Limit the width of the attribution control so that it wraps inside of the page instead of
-	 * spreading over its whole width. When the scale bar sits in the other corner of the same
-	 * edge, the attribution is narrowed to leave room for it, unless that makes it too narrow,
-	 * in which case the scale bar is stacked over the attribution instead (see `drawScalebar`).
-	 * It has to run before the controls are measured, both for the canvas and the vector SVG.
-	 */
-	private fitAttributionWidth() {
-		if (this.attributionOptions.visibility === 'none') return;
-		const element = this.getControlElement(this.attributionClassName);
-		const pageWidth = this.hiddenContainer?.firstElementChild?.clientWidth;
-		if (!element || !pageWidth) return;
-
-		const margin = this.attributionOptions.margin ?? 10;
-		const fullWidth = pageWidth - 2 * margin;
-		let maxWidth = fullWidth;
-
-		const scalebar =
-			this.scalebarOptions.visibility === 'none'
-				? undefined
-				: this.getControlElement(this.scalebarClassName);
-		if (scalebar) {
-			const position = this.attributionOptions.position ?? 'bottom-right';
-			const scalebarPosition = this.scalebarOptions.position ?? 'bottom-left';
-			const sameEdge = position.split('-')[0] === scalebarPosition.split('-')[0];
-			if (sameEdge && position !== scalebarPosition) {
-				const scalebarMargin = this.scalebarOptions.margin ?? 10;
-				const besideScalebar = fullWidth - scalebar.offsetWidth - scalebarMargin;
-				if (besideScalebar >= pageWidth * MIN_ATTRIBUTION_WIDTH_RATIO) maxWidth = besideScalebar;
-			}
-		}
-
-		// the padding is counted in the width, so that the control never exceeds `maxWidth`
-		element.style.boxSizing = 'border-box';
-		element.style.maxWidth = `${Math.max(maxWidth, 0)}px`;
-	}
-
-	/**
-	 * Calculate the top-left corner where an overlay of the given size is drawn.
-	 * @param canvas export canvas
-	 * @param position corner of the canvas
-	 * @param width overlay width in export pixels
-	 * @param height overlay height in export pixels
-	 * @param margin distance from the canvas edge in export pixels
-	 */
-	private getOverlayOrigin(
-		canvas: { width: number; height: number },
-		position: ControlPosition,
-		width: number,
-		height: number,
-		margin: number
-	) {
-		const left = ['top-left', 'bottom-left'].includes(position);
-		const top = ['top-left', 'top-right'].includes(position);
-		return {
-			x: left ? margin : canvas.width - width - margin,
-			y: top ? margin : canvas.height - height - margin
-		};
-	}
-
-	/**
-	 * Rasterize the attribution control element of the hidden map and draw it on the export canvas.
-	 * The native maplibre control element is used as-is, so it keeps its own styling.
-	 * @returns the box occupied by the attribution, or undefined when nothing was drawn
-	 */
-	private async drawAttribution(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
-		if (this.attributionOptions.visibility === 'none') return;
-
-		try {
-			const element = this.hiddenContainer
-				?.getElementsByClassName(this.attributionClassName)
-				?.item(0) as HTMLElement | null;
-			if (!element || element.offsetWidth === 0) return;
-
-			// `skipFonts` avoids html-to-image walking document.styleSheets to embed @font-face
-			// rules, which throws a SecurityError on cross-origin stylesheets. Fonts already
-			// loaded in the document still render during rasterization.
-			const attributionCanvas = await toCanvas(element, {
-				pixelRatio: this.scaleFactor,
-				skipFonts: true
-			});
-			if (attributionCanvas.width === 0 || attributionCanvas.height === 0) return;
-
-			const position = this.attributionOptions.position ?? 'bottom-right';
-			const margin = (this.attributionOptions.margin ?? 10) * this.scaleFactor;
-			const { x, y } = this.getOverlayOrigin(
-				canvas,
-				position,
-				attributionCanvas.width,
-				attributionCanvas.height,
-				margin
-			);
-
-			ctx.drawImage(attributionCanvas, x, y);
-
-			return { x, y, width: attributionCanvas.width, height: attributionCanvas.height };
-		} catch (err) {
-			console.warn('Failed to render attribution:', err);
-		}
-	}
-
-	/**
-	 * Rasterize the scale control element of the hidden map and draw it on the export canvas.
-	 * @param attributionBox box of the attribution, used to avoid overlapping it
-	 */
-	private async drawScalebar(
-		ctx: CanvasRenderingContext2D,
-		canvas: HTMLCanvasElement,
-		attributionBox?: { x: number; y: number; width: number; height: number }
-	) {
-		if (this.scalebarOptions.visibility === 'none') return;
-
-		try {
-			const element = this.hiddenContainer
-				?.getElementsByClassName(this.scalebarClassName)
-				?.item(0) as HTMLElement | null;
-			if (!element || element.offsetWidth === 0) return;
-
-			// `skipFonts` avoids html-to-image walking document.styleSheets to embed @font-face
-			// rules, which throws a SecurityError on cross-origin stylesheets. Fonts already
-			// loaded in the document still render during rasterization.
-			const scalebarCanvas = await toCanvas(element, {
-				pixelRatio: this.scaleFactor,
-				skipFonts: true
-			});
-			if (scalebarCanvas.width === 0 || scalebarCanvas.height === 0) return;
-
-			const position = this.scalebarOptions.position ?? 'bottom-left';
-			const margin = (this.scalebarOptions.margin ?? 10) * this.scaleFactor;
-			const origin = this.getOverlayOrigin(
-				canvas,
-				position,
-				scalebarCanvas.width,
-				scalebarCanvas.height,
-				margin
-			);
-
-			const box = { ...origin, width: scalebarCanvas.width, height: scalebarCanvas.height };
-			if (attributionBox) stackOverlay(box, attributionBox, position, margin);
-
-			ctx.drawImage(scalebarCanvas, box.x, box.y);
-		} catch (err) {
-			console.warn('Failed to render scale bar:', err);
-		}
-	}
-
-	/**
-	 * Draw the north icon on the export canvas, rotated to match the map bearing.
+	 * Create the overlays drawn over the map, in the order they are drawn. The attribution comes
+	 * first because the scale bar is stacked over it when they overlap. They keep the box they
+	 * were drawn in, so new ones are created for the canvas and for the vector SVG.
 	 * @param bearing bearing of the rendered map in degrees
 	 */
-	private async drawNorthIcon(
-		ctx: CanvasRenderingContext2D,
-		canvas: HTMLCanvasElement,
-		bearing: number
-	) {
-		if (this.northIconOptions.visibility === 'none') return;
-		const svg = this.northIconOptions.image;
-		if (!svg) return;
-
-		try {
-			const size = canvas.width * (this.northIconOptions.imageSizeFraction ?? 0.05);
-			const image = await new Promise<HTMLImageElement>((resolve, reject) => {
-				const img = new Image(size, size);
-				img.onload = () => resolve(img);
-				img.onerror = () => reject(new Error('Failed to load the north icon image'));
-				img.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
-			});
-
-			const margin = (this.northIconOptions.margin ?? 10) * this.scaleFactor;
-			const { x, y } = this.getOverlayOrigin(
-				canvas,
-				this.northIconOptions.position ?? 'top-right',
-				size,
-				size,
-				margin
-			);
-
-			ctx.save();
-			ctx.translate(x + size / 2, y + size / 2);
-			// the map is rotated clockwise by `bearing`, so north sits counter-clockwise by the same angle
-			ctx.rotate((-bearing * Math.PI) / 180);
-			ctx.drawImage(image, -size / 2, -size / 2, size, size);
-			ctx.restore();
-		} catch (err) {
-			console.warn('Failed to render north icon:', err);
-		}
+	private createOverlays(bearing: number) {
+		const attribution = new AttributionOverlay(
+			this.attributionOptions,
+			this.getControlElement(this.attributionClassName)
+		);
+		const scalebar = new ScalebarOverlay(
+			this.scalebarOptions,
+			this.getControlElement(this.scalebarClassName),
+			attribution
+		);
+		const northIcon = new NorthIconOverlay(this.northIconOptions, bearing);
+		return { attribution, scalebar, overlays: [attribution, scalebar, northIcon] };
 	}
 
 	/**
@@ -812,66 +606,14 @@ export abstract class MapGeneratorBase {
 	 * laid out like on the export canvas, but in CSS pixels which the SVG is drawn in.
 	 */
 	private appendVectorOverlays(svg: SVGSVGElement, bearing: number) {
-		const page = {
+		const layout = {
 			width: parseFloat(this.toPixels(this.width)),
-			height: parseFloat(this.toPixels(this.height))
+			height: parseFloat(this.toPixels(this.height)),
+			scale: 1
 		};
-		const boxOf = (
-			className: string,
-			options: { visibility?: string; position?: ControlPosition; margin?: number },
-			fallback: ControlPosition
-		) => {
-			if (options.visibility === 'none') return undefined;
-			const element = this.hiddenContainer
-				?.getElementsByClassName(className)
-				?.item(0) as HTMLElement | null;
-			if (!element || element.offsetWidth === 0) return undefined;
-			const size = { width: element.offsetWidth, height: element.offsetHeight };
-			const origin = this.getOverlayOrigin(
-				page,
-				options.position ?? fallback,
-				size.width,
-				size.height,
-				options.margin ?? 10
-			);
-			return { element, box: { ...origin, ...size } as OverlayBox };
-		};
-
-		const attributionPosition = this.attributionOptions.position ?? 'bottom-right';
-		const attribution = boxOf(
-			this.attributionClassName,
-			this.attributionOptions,
-			attributionPosition
-		);
-		const lines = attribution ? getWrappedLines(attribution.element) : [];
-		const hasText = lines.length > 0;
-		if (attribution && hasText) svg.appendChild(createAttributionOverlay(lines, attribution.box));
-
-		const scalebar = boxOf(this.scalebarClassName, this.scalebarOptions, 'bottom-left');
-		if (scalebar) {
-			const { box } = scalebar;
-			const position = this.scalebarOptions.position ?? 'bottom-left';
-			const margin = this.scalebarOptions.margin ?? 10;
-			if (attribution && hasText) stackOverlay(box, attribution.box, position, margin);
-			svg.appendChild(createScalebarOverlay(scalebar.element.textContent?.trim() ?? '', box));
-		}
-
-		const icon = this.northIconOptions.image;
-		if (this.northIconOptions.visibility !== 'none' && icon) {
-			const size = page.width * (this.northIconOptions.imageSizeFraction ?? 0.05);
-			const origin = this.getOverlayOrigin(
-				page,
-				this.northIconOptions.position ?? 'top-right',
-				size,
-				size,
-				this.northIconOptions.margin ?? 10
-			);
-			const overlay = createNorthIconOverlay(
-				icon,
-				{ ...origin, width: size, height: size },
-				bearing
-			);
-			if (overlay) svg.appendChild(overlay);
+		for (const overlay of this.createOverlays(bearing).overlays) {
+			const element = overlay.create(layout);
+			if (element) svg.appendChild(element);
 		}
 	}
 
