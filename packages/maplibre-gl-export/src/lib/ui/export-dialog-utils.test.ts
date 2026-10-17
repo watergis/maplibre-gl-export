@@ -11,7 +11,7 @@ import {
 	toExportZoom,
 	toMapZoom
 } from './export-dialog-utils';
-import { Size } from './interfaces';
+import { Size } from '../interfaces';
 
 describe('zoom conversion', () => {
 	it('keeps the zoom when the frame is as wide as the page at 96 DPI', () => {

@@ -7,7 +7,7 @@ import {
 	type FormatType,
 	type PageOrientationType,
 	type SizeType
-} from './interfaces';
+} from '../interfaces';
 
 /**
  * Sentinel value of the page-size `<select>` option that switches the dialog to the

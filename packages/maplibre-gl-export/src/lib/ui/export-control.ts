@@ -1,7 +1,7 @@
 import { ControlPosition, IControl, Map as MaplibreMap } from 'maplibre-gl';
 import { Map as MapboxMap } from 'mapbox-gl';
-import { getTranslation } from './local';
-import MapGenerator from './map-generator';
+import { getTranslation } from '../local';
+import MapGenerator from '../core/map-generator';
 import AreaAdjuster from './area-adjuster';
 import ExportDialog from './export-dialog';
 import {
@@ -26,7 +26,7 @@ import {
 	DPI,
 	type Language,
 	type ScalebarOptions
-} from './interfaces';
+} from '../interfaces';
 import {
 	defaultAttributionOptions,
 	defaultMarkerCirclePaint,
@@ -35,7 +35,7 @@ import {
 	defaultScalebarOptions,
 	MapGeneratorBase,
 	type MapGeneratorConfig
-} from './map-generator-base';
+} from '../core/map-generator-base';
 
 /**
  * MapLibre GL Export Control.

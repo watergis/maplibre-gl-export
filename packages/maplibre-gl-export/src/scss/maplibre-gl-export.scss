@@ -659,10 +659,6 @@
 	display: flex;
 	align-items: center;
 	gap: 8px;
-
-	.maplibregl-export-icon {
-		color: var(--gl-export-accent);
-	}
 }
 
 .maplibregl-export-adjust-bar__actions {

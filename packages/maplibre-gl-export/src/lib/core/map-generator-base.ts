@@ -48,7 +48,7 @@ import {
 	SvgVectorOptions,
 	Unit,
 	UnitType
-} from './interfaces';
+} from '../interfaces';
 import {
 	createAttributionOverlay,
 	createNorthIconOverlay,

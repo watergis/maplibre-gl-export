@@ -2,8 +2,7 @@ import type { Map as MaplibreMap } from 'maplibre-gl';
 import type { Map as MapboxMap } from 'mapbox-gl';
 import CrosshairManager from './crosshair-manager';
 import { toExportZoom, toMapZoom } from './export-dialog-utils';
-import { createIcon } from './icons';
-import type { MapView, Translation } from './interfaces';
+import type { MapView, Translation } from '../interfaces';
 import PrintableAreaManager from './printable-area-manager';
 
 export interface AreaAdjusterOptions {
@@ -58,7 +57,7 @@ export default class AreaAdjuster {
 		bar.setAttribute('aria-label', t.AdjustArea);
 		const hint = document.createElement('span');
 		hint.className = cls('adjust-bar__hint');
-		hint.append(createIcon('adjustArea', prefix), document.createTextNode(t.AdjustAreaHint));
+		hint.textContent = t.AdjustAreaHint;
 		const cancelButton = document.createElement('button');
 		cancelButton.type = 'button';
 		cancelButton.className = `${cls('btn')} ${cls('btn--secondary')}`;
@@ -66,7 +65,7 @@ export default class AreaAdjuster {
 		const doneButton = document.createElement('button');
 		doneButton.type = 'button';
 		doneButton.className = `${cls('btn')} ${cls('btn--primary')}`;
-		doneButton.append(createIcon('done', prefix), document.createTextNode(t.Done));
+		doneButton.textContent = t.Done;
 		const actions = document.createElement('div');
 		actions.className = cls('adjust-bar__actions');
 		actions.append(cancelButton, doneButton);

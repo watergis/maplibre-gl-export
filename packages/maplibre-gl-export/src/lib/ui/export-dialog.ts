@@ -6,7 +6,26 @@ import {
 	orientSize,
 	sanitizeFileName
 } from './export-dialog-utils';
-import { createIcon, type IconKey } from './icons';
+import {
+	Compass,
+	Download,
+	File,
+	FileImage,
+	FilePenLine,
+	Move,
+	MoveHorizontal,
+	MoveVertical,
+	Printer,
+	Proportions,
+	RectangleHorizontal,
+	RectangleVertical,
+	RulerDimensionLine,
+	Type,
+	VectorPolygon,
+	X,
+	createElement,
+	type IconNode
+} from 'lucide';
 import {
 	DPI,
 	Format,
@@ -19,7 +38,7 @@ import {
 	type PageOrientationType,
 	type ShowSaveFilePicker,
 	type SizeType
-} from './interfaces';
+} from '../interfaces';
 
 /** Counter making the ids of the form elements unique when the dialog is opened several times */
 let dialogCount = 0;
@@ -150,6 +169,21 @@ export default class ExportDialog {
 		return `${this.prefix}-export-${name}`;
 	}
 
+	/**
+	 * Create a Lucide icon (https://lucide.dev/icons/).
+	 *
+	 * The SVG is wrapped in `<span class="{prefix}-export-icon {prefix}-export-icon--{name}">`
+	 * so that an icon can be restyled or replaced from CSS (see the SCSS file).
+	 * @param icon Lucide icon
+	 * @param name used in the class name of the icon
+	 */
+	private createIcon(icon: IconNode, name: string): HTMLSpanElement {
+		const span = this.el('span', `${this.cls('icon')} ${this.cls(`icon--${name}`)}`);
+		span.setAttribute('aria-hidden', 'true');
+		span.appendChild(createElement(icon, { 'aria-hidden': 'true' }));
+		return span;
+	}
+
 	private el<K extends keyof HTMLElementTagNameMap>(
 		tag: K,
 		className?: string,
@@ -195,13 +229,13 @@ export default class ExportDialog {
 		const header = this.el('header', this.cls('dialog__header'));
 		const title = this.el('h2', this.cls('dialog__title'));
 		title.id = `${this.idPrefix}-title`;
-		title.append(createIcon('title', this.prefix), this.el('span', undefined, this.t.Title));
+		title.append(this.createIcon(Printer, 'title'), this.el('span', undefined, this.t.Title));
 
 		const closeButton = this.el('button', this.cls('dialog__close'));
 		closeButton.type = 'button';
 		closeButton.setAttribute('aria-label', this.t.Close);
 		closeButton.title = this.t.Close;
-		closeButton.appendChild(createIcon('close', this.prefix));
+		closeButton.appendChild(this.createIcon(X, 'close'));
 		closeButton.addEventListener('click', () => this.close());
 
 		header.append(title, closeButton);
@@ -237,7 +271,7 @@ export default class ExportDialog {
 		const saveButton = this.el('button', `${this.cls('btn')} ${this.cls('btn--primary')}`);
 		saveButton.type = 'button';
 		saveButton.append(
-			createIcon('save', this.prefix),
+			this.createIcon(Download, 'save'),
 			this.el('span', this.cls('btn__label'), this.t.Save),
 			this.el('span', this.cls('spinner'))
 		);
@@ -250,21 +284,23 @@ export default class ExportDialog {
 
 	/**
 	 * Create a settings row: an icon and a label, then the control.
+	 * @param name added as `{prefix}-export-field--{name}` and used in the class name of the icon
 	 * @param modifier added as `{prefix}-export-field--{modifier}`
 	 */
 	private createField(
-		icon: IconKey,
+		name: string,
+		icon: IconNode,
 		label: string,
 		control: HTMLElement,
 		id?: string,
 		modifier?: string
 	) {
 		const field = this.el('div', this.cls('field'));
-		field.classList.add(this.cls(`field--${icon}`));
+		field.classList.add(this.cls(`field--${name}`));
 		if (modifier) field.classList.add(this.cls(`field--${modifier}`));
 		const labelElement = this.el('label', this.cls('field__label'));
 		if (id) labelElement.htmlFor = id;
-		labelElement.append(createIcon(icon, this.prefix), this.el('span', undefined, label));
+		labelElement.append(this.createIcon(icon, name), this.el('span', undefined, label));
 		const controlWrapper = this.el('div', this.cls('field__control'));
 		controlWrapper.appendChild(control);
 		field.append(labelElement, controlWrapper);
@@ -286,7 +322,8 @@ export default class ExportDialog {
 
 	/** Create a checkbox styled as a switch, in a field row */
 	private createSwitch(
-		icon: IconKey,
+		name: string,
+		icon: IconNode,
 		label: string,
 		id: string,
 		checked: boolean,
@@ -299,7 +336,7 @@ export default class ExportDialog {
 		input.name = id;
 		input.checked = checked;
 		input.addEventListener('change', () => onChange(input.checked));
-		return this.createField(icon, label, input, input.id, 'switch');
+		return this.createField(name, icon, label, input, input.id, 'switch');
 	}
 
 	/** Create a number input with a trailing unit, used for the custom page size */
@@ -331,7 +368,7 @@ export default class ExportDialog {
 		const pageSize = this.createSelect('page-size', sizeOptions, this.state.sizeValue);
 		pageSize.addEventListener('change', () => this.onPageSizeChange());
 		this.elements.pageSize = pageSize;
-		fields.push(this.createField('pageSize', this.t.PageSize, pageSize, pageSize.id));
+		fields.push(this.createField('pageSize', File, this.t.PageSize, pageSize, pageSize.id));
 
 		// custom width / height
 		const width = this.createNumberInput('custom-width', this.state.customWidth, (value) => {
@@ -345,9 +382,17 @@ export default class ExportDialog {
 		this.elements.customWidth = width.input;
 		this.elements.customHeight = height.input;
 		this.elements.customFields = [
-			this.createField('customWidth', this.t.Width, width.wrapper, width.input.id, 'custom-size'),
+			this.createField(
+				'customWidth',
+				MoveHorizontal,
+				this.t.Width,
+				width.wrapper,
+				width.input.id,
+				'custom-size'
+			),
 			this.createField(
 				'customHeight',
+				MoveVertical,
 				this.t.Height,
 				height.wrapper,
 				height.input.id,
@@ -360,6 +405,7 @@ export default class ExportDialog {
 		const orientation = this.createOrientationControl();
 		this.elements.orientationField = this.createField(
 			'landscape',
+			RectangleHorizontal,
 			this.t.PageOrientation,
 			orientation
 		);
@@ -377,11 +423,12 @@ export default class ExportDialog {
 			this.syncFormat();
 		});
 		this.elements.format = format;
-		fields.push(this.createField('format', this.t.Format, format, format.id));
+		fields.push(this.createField('format', FileImage, this.t.Format, format, format.id));
 
 		// vector export, only for SVG and PDF
 		this.elements.vectorField = this.createSwitch(
 			'vector',
+			VectorPolygon,
 			this.t.ExportAsVector,
 			'vector',
 			this.state.vector,
@@ -392,6 +439,7 @@ export default class ExportDialog {
 		);
 		this.elements.vectorLabelsField = this.createSwitch(
 			'vectorLabels',
+			Type,
 			this.t.ExportLabelsAsVector,
 			'vector-labels',
 			this.state.vectorLabels,
@@ -414,16 +462,24 @@ export default class ExportDialog {
 		dpi.addEventListener('change', () => {
 			this.state.dpi = Number(dpi.value);
 		});
-		fields.push(this.createField('dpi', this.t.DPI, dpi, dpi.id));
+		fields.push(this.createField('dpi', Proportions, this.t.DPI, dpi, dpi.id));
 
 		// overlays
 		fields.push(
-			this.createSwitch('scalebar', this.t.Scalebar, 'scalebar', this.state.scalebar, (checked) => {
-				this.state.scalebar = checked;
-				this.requestRender();
-			}),
+			this.createSwitch(
+				'scalebar',
+				RulerDimensionLine,
+				this.t.Scalebar,
+				'scalebar',
+				this.state.scalebar,
+				(checked) => {
+					this.state.scalebar = checked;
+					this.requestRender();
+				}
+			),
 			this.createSwitch(
 				'northIcon',
+				Compass,
 				this.t.NorthIcon,
 				'north-icon',
 				this.state.northIcon,
@@ -446,9 +502,9 @@ export default class ExportDialog {
 		const group = this.el('div', this.cls('segmented'));
 		group.setAttribute('role', 'radiogroup');
 		group.setAttribute('aria-label', this.t.PageOrientation);
-		const choices: { value: PageOrientationType; icon: IconKey; label: string }[] = [
-			{ value: PageOrientation.Landscape, icon: 'landscape', label: this.t.Landscape },
-			{ value: PageOrientation.Portrait, icon: 'portrait', label: this.t.Portrait }
+		const choices: { value: PageOrientationType; icon: IconNode; label: string }[] = [
+			{ value: PageOrientation.Landscape, icon: RectangleHorizontal, label: this.t.Landscape },
+			{ value: PageOrientation.Portrait, icon: RectangleVertical, label: this.t.Portrait }
 		];
 		choices.forEach((choice) => {
 			const option = this.el('label', this.cls('segmented__option'));
@@ -464,7 +520,7 @@ export default class ExportDialog {
 			});
 			option.append(
 				input,
-				createIcon(choice.icon, this.prefix),
+				this.createIcon(choice.icon, choice.value),
 				this.el('span', this.cls('segmented__label'), choice.label)
 			);
 			group.appendChild(option);
@@ -492,7 +548,7 @@ export default class ExportDialog {
 		this.elements.fileName = input;
 		this.elements.fileExtension = extension;
 		wrapper.append(input, extension);
-		return this.createField('fileName', this.t.FileName, wrapper, input.id);
+		return this.createField('fileName', FilePenLine, this.t.FileName, wrapper, input.id);
 	}
 
 	private getSaveFilePicker(): ShowSaveFilePicker | undefined {
@@ -733,7 +789,7 @@ export default class ExportDialog {
 		button.type = 'button';
 		button.title = this.t.PreviewHint;
 		button.append(
-			createIcon('adjustArea', this.prefix),
+			this.createIcon(Move, 'adjustArea'),
 			this.el('span', undefined, this.t.AdjustArea)
 		);
 		button.addEventListener('click', () => this.adjustArea());

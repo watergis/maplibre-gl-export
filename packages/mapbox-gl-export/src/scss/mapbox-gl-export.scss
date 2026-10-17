@@ -659,10 +659,6 @@
 	display: flex;
 	align-items: center;
 	gap: 8px;
-
-	.mapboxgl-export-icon {
-		color: var(--gl-export-accent);
-	}
 }
 
 .mapboxgl-export-adjust-bar__actions {

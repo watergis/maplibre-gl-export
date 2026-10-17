@@ -5,7 +5,7 @@ import {
 	ScaleControl,
 	StyleSpecification
 } from 'maplibre-gl';
-import { AttributionOptions, ScalebarOptions } from './interfaces';
+import { AttributionOptions, ScalebarOptions } from '../interfaces';
 import { MapGeneratorBase, MapGeneratorConfig } from './map-generator-base';
 
 export default class MapGenerator extends MapGeneratorBase {
