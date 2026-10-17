@@ -1,6 +1,29 @@
 import { type Map as MaplibreMap } from 'maplibre-gl';
 import { type Map as MapboxMap } from 'mapbox-gl';
-import { Unit } from './interfaces';
+
+/** Space kept free around the printable area, leaving room for the toolbar below it */
+const PADDING = 72;
+
+/**
+ * Size of the largest rectangle with the ratio of the page which fits in the viewport.
+ * @param viewportWidth width of the viewport in CSS pixels
+ * @param viewportHeight height of the viewport in CSS pixels
+ * @param pageWidth width of the page in mm
+ * @param pageHeight height of the page in mm
+ * @param padding space kept free on every side, in CSS pixels
+ */
+export const fitPageInViewport = (
+	viewportWidth: number,
+	viewportHeight: number,
+	pageWidth: number,
+	pageHeight: number,
+	padding = 0
+) => {
+	const width = Math.max(viewportWidth - padding * 2, 1);
+	const height = Math.max(viewportHeight - padding * 2, 1);
+	const scale = Math.min(width / pageWidth, height / pageHeight);
+	return { width: pageWidth * scale, height: pageHeight * scale };
+};
 
 export default class PrintableAreaManager {
 	private map: MaplibreMap | MapboxMap | undefined;
@@ -9,11 +32,12 @@ export default class PrintableAreaManager {
 
 	private height!: number;
 
-	private unit!: string;
-
 	private svgCanvas: SVGElement | undefined;
 
 	private svgPath: SVGElement | undefined;
+
+	/** width in CSS pixels of the area shown on the map */
+	private cutoutWidth = 0;
 
 	constructor(map: MaplibreMap | MapboxMap | undefined) {
 		this.map = map;
@@ -46,18 +70,29 @@ export default class PrintableAreaManager {
 	public updateArea(width: number, height: number) {
 		this.width = width;
 		this.height = height;
-		this.unit = Unit.mm;
 		this.generateCutOut();
+	}
+
+	/** Width in CSS pixels of the area shown on the map */
+	public getCutoutWidth() {
+		return this.cutoutWidth;
 	}
 
 	private generateCutOut() {
 		if (this.map === undefined || this.svgCanvas === undefined || this.svgPath === undefined) {
 			return;
 		}
-		const width = this.toPixels(this.width);
-		const height = this.toPixels(this.height);
 		const clientWidth = this.map?.getCanvas().clientWidth;
 		const clientHeight = this.map?.getCanvas().clientHeight;
+		// the page is fitted into the map, as it is often larger than the map at 96 DPI
+		const { width, height } = fitPageInViewport(
+			clientWidth,
+			clientHeight,
+			this.width,
+			this.height,
+			PADDING
+		);
+		this.cutoutWidth = width;
 		const startX = clientWidth / 2 - width / 2;
 		const endX = startX + width;
 		const startY = clientHeight / 2 - height / 2;
@@ -81,17 +116,5 @@ export default class PrintableAreaManager {
 			(this.map as MaplibreMap).off('resize', this.mapResize);
 			this.map = undefined;
 		}
-	}
-
-	/**
-	 * Convert mm/inch to pixel
-	 * @param length mm/inch length
-	 * @param conversionFactor DPI value. default is 96.
-	 */
-	private toPixels(length: number, conversionFactor = 96) {
-		if (this.unit === Unit.mm) {
-			conversionFactor /= 25.4;
-		}
-		return conversionFactor * length;
 	}
 }

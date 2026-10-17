@@ -24,7 +24,7 @@ See [documentation](https://maplibre-gl-export.water-gis.com/).
 
 ## Vector export (experimental)
 
-By default `svg` and `pdf` wrap an image of the map. Tick **Export as vector** in the export panel,
+By default `svg` and `pdf` wrap an image of the map. Turn on **Export as vector** in the export dialog,
 which is shown while SVG or PDF is selected, or set `svgVectorOptions: { enabled: true }` to try exporting
 the fill, line and point layers as real vector paths:
 
@@ -34,39 +34,5 @@ map.addControl(new MapboxExportControl({ Format: Format.SVG, svgVectorOptions: {
 
 Layers which have no vector counterpart (raster, hillshade, heatmap, fill-extrusion, ...) are
 embedded as images at their place in the layer order, and so are labels unless **Export labels as vector**
-is ticked (`labels: 'vector'`), which writes them as editable text at an approximated position. The map is exported as an image as before when
+is turned on (`labels: 'vector'`), which writes them as editable text at an approximated position. The map is exported as an image as before when
 it cannot be converted at all. See [maplibre2svg](../maplibre2svg) for what is supported.
-
-## WebP
-
-Select **WEBP** (`Format.WEBP`, saved as `.webp`) to export the map as a WebP image, which is usually much
-smaller than the PNG. Browsers which cannot encode WebP, such as Safari, export a PNG instead with a warning
-in the console.
-
-```ts
-map.addControl(new MapboxExportControl({ Format: Format.WEBP }));
-```
-
-## GeoPDF
-
-PDF files are georeferenced as a GeoPDF (the geospatial extension of ISO 32000), so that GIS
-software such as QGIS (GDAL) or Avenza Maps places them on the map. The four corners of the page
-are written in latitude and longitude with the Web Mercator (EPSG:3857) projection the map is drawn in,
-so a rotated map is georeferenced correctly too. It is skipped when the map is pitched, has terrain or
-uses the globe projection. Set `geoPdf: false` to export a plain PDF:
-
-```ts
-map.addControl(new MapboxExportControl({ Format: Format.PDF, geoPdf: false }));
-```
-
-## GeoTIFF
-
-Select **GEOTIFF** (`Format.GEOTIFF`, saved as `.tif`) to export the map as a GeoTIFF, which GIS software
-such as QGIS (GDAL) places on the map. The image is the same as the PNG, including the scale bar, north icon
-and attribution, and is written with the Web Mercator (EPSG:3857) projection the map is drawn in, so a rotated
-map is georeferenced correctly too. The attribution of the map is also written into the `Artist` tag. A plain
-TIFF is exported when the map is pitched, has terrain or uses the globe projection.
-
-```ts
-map.addControl(new MapboxExportControl({ Format: Format.GEOTIFF }));
-```

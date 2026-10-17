@@ -5,7 +5,7 @@ import {
 	ScaleControl,
 	StyleSpecification
 } from 'maplibre-gl';
-import { AttributionOptions, ScalebarOptions } from './interfaces';
+import { AttributionOptions, ScalebarOptions } from '../interfaces';
 import { MapGeneratorBase, MapGeneratorConfig } from './map-generator-base';
 
 export default class MapGenerator extends MapGeneratorBase {
@@ -19,14 +19,15 @@ export default class MapGenerator extends MapGeneratorBase {
 	}
 
 	protected getRenderedMap(container: HTMLElement, style: StyleSpecification) {
+		const view = this.renderView;
 		// Render map
 		const renderMap: MaplibreMap = new MaplibreMap({
 			container,
 			style,
-			center: this.map.getCenter(),
-			zoom: this.map.getZoom(),
-			bearing: this.map.getBearing(),
-			pitch: this.map.getPitch(),
+			center: view.center,
+			zoom: view.zoom,
+			bearing: view.bearing,
+			pitch: view.pitch,
 			interactive: false,
 			canvasContextAttributes: {
 				// required: the canvas is read after the `idle` event (or after its timeout), which
@@ -48,7 +49,7 @@ export default class MapGenerator extends MapGeneratorBase {
 		if (terrain) {
 			// if terrain is enabled, restore pitch correctly
 			renderMap.setMaxPitch(85);
-			renderMap.setPitch(this.map.getPitch());
+			renderMap.setPitch(view.pitch);
 		}
 
 		// the below code was added by https://github.com/watergis/maplibre-gl-export/pull/18.

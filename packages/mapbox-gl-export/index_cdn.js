@@ -14,8 +14,6 @@ map.addControl(
 		PageOrientation: MapboxExportControl.PageOrientation.Landscape,
 		Format: MapboxExportControl.Format.PNG,
 		DPI: MapboxExportControl.DPI[300],
-		Crosshair: true,
-		PrintableArea: true,
 		Local: 'fr',
 		accessToken: mapboxgl.accessToken
 	}),

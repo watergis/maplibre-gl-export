@@ -1,45 +1,35 @@
-.maplibregl-export-list {
-	display: none;
-	// the table below adds its own outer spacing through `border-spacing`
-	padding: 4px;
-}
+/*
+ * Styles of maplibre-gl-export.
+ *
+ * Everything the plugin shows is plain HTML styled here. Every element has a class prefixed with
+ * `maplibregl-export-`, and the theme is driven by the `--gl-export-*` custom properties defined
+ * below (light defaults, then the dark mode overrides), so the look can be changed by overriding
+ * these rules or, for most cases, just the custom properties.
+ *
+ * Changing the theme:
+ *   .maplibregl-export-dialog {
+ *     --gl-export-accent: #0f766e;
+ *     --gl-export-radius: 4px;
+ *     --gl-export-font: 'Inter', sans-serif;
+ *   }
+ *
+ * Replacing an icon: icons are from Lucide (https://lucide.dev/icons/) and every icon is
+ *   <span class="maplibregl-export-icon maplibregl-export-icon--{key}"><svg>…</svg></span>
+ * where {key} is one of title, close, pageSize, customWidth, customHeight, landscape,
+ * portrait, format, vector, vectorLabels, dpi, scalebar, northIcon, fileName, save, adjustArea,
+ * zoomOut, zoomIn.
+ * Hide the default Lucide SVG and draw another image with a mask (it keeps the text color):
+ *   .maplibregl-export-icon--pageSize svg { display: none; }
+ *   .maplibregl-export-icon--pageSize {
+ *     background-color: currentColor;
+ *     mask: url('my-icon.svg') center / contain no-repeat;
+ *   }
+ * or hide all icons with `.maplibregl-export-icon { display: none; }`.
+ */
 
-.maplibregl-export-list .print-table {
-	// `separate` is required for `border-spacing`: it gives every column/row the same
-	// gutter so the labels and inputs are not cramped against each other.
-	border-collapse: separate;
-	border-spacing: 10px 6px;
-
-	td {
-		padding: 0;
-		vertical-align: middle;
-		white-space: nowrap;
-	}
-}
-
-.maplibregl-ctrl-group .maplibregl-export-list button {
-	background: none;
-	border: none;
-	cursor: pointer;
-	display: block;
-	font-size: 14px;
-	padding: 8px 8px 6px;
-	width: 100%;
-	height: auto;
-	text-align: center;
-}
-
-.maplibregl-export-list button.active {
-	font-weight: bold;
-}
-
-.maplibregl-export-list button:hover {
-	background-color: rgba(0, 0, 0, 0.05);
-}
-
-.maplibregl-export-list button + button {
-	border-top: 1px solid #ddd;
-}
+/* ---------------------------------------------------------------------------
+ * Print button of the map control
+ * ------------------------------------------------------------------------- */
 
 .maplibregl-export-control {
 	background: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' id='Capa_1' height='512' width='512'  fill='%23333' viewBox='0 0 512 512'%3E%3Cpath d='m422.5 99v-24c0-41.355-33.645-75-75-75h-184c-41.355 0-75 33.645-75 75v24z'/><path d='m118.5 319v122 26 15c0 16.568 13.431 30 30 30h214c16.569 0 30-13.432 30-30v-15-26-122zm177 128h-80c-8.284 0-15-6.716-15-15s6.716-15 15-15h80c8.284 0 15 6.716 15 15s-6.716 15-15 15zm0-64h-80c-8.284 0-15-6.716-15-15s6.716-15 15-15h80c8.284 0 15 6.716 15 15s-6.716 15-15 15z'/><path d='m436.5 129h-361c-41.355 0-75 33.645-75 75v120c0 41.355 33.645 75 75 75h13v-80h-9c-8.284 0-15-6.716-15-15s6.716-15 15-15h24 304 24c8.284 0 15 6.716 15 15s-6.716 15-15 15h-9v80h14c41.355 0 75-33.645 75-75v-120c0-41.355-33.645-75-75-75zm-309 94h-48c-8.284 0-15-6.716-15-15s6.716-15 15-15h48c8.284 0 15 6.716 15 15s-6.716 15-15 15z'/%3E%3C/svg%3E");
@@ -48,23 +38,896 @@
 	background-size: 70%;
 }
 
-.maplibregl-export-custom-size {
-	display: flex;
-	align-items: center;
-	gap: 4px;
+/* ---------------------------------------------------------------------------
+ * Dialog
+ * ------------------------------------------------------------------------- */
 
-	input {
-		// wide enough for ~4 digits so the panel keeps the preset layout width
-		width: 4em;
-		flex: none;
-		min-width: 0;
+/* theme, shared by the dialog and the toolbar shown on the map while adjusting the area */
+.maplibregl-export-dialog,
+.maplibregl-export-adjust-bar {
+	/* theme */
+	--gl-export-font:
+		system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
+	--gl-export-font-size: 14px;
+	--gl-export-bg: #ffffff;
+	--gl-export-fg: #1f2933;
+	--gl-export-muted: #64748b;
+	--gl-export-border: #e2e8f0;
+	--gl-export-surface: #f8fafc;
+	--gl-export-preview-bg: #eef2f6;
+	--gl-export-input-bg: #ffffff;
+	--gl-export-accent: #2563eb;
+	--gl-export-accent-hover: #1d4ed8;
+	--gl-export-accent-fg: #ffffff;
+	--gl-export-focus: rgba(37, 99, 235, 0.35);
+	--gl-export-danger: #dc2626;
+	--gl-export-backdrop: rgba(15, 23, 42, 0.55);
+	--gl-export-radius: 10px;
+	--gl-export-radius-sm: 6px;
+	--gl-export-shadow: 0 24px 64px rgba(15, 23, 42, 0.28);
+	--gl-export-icon-size: 18px;
+	/* layout */
+	--gl-export-width: 1080px;
+	--gl-export-height: 720px;
+	--gl-export-settings-width: 340px;
+	--gl-export-gap: 16px;
+}
+
+.maplibregl-export-dialog {
+	box-sizing: border-box;
+	width: min(var(--gl-export-width), calc(100vw - 32px));
+	height: min(var(--gl-export-height), calc(100dvh - 32px));
+	max-width: none;
+	max-height: none;
+	margin: auto;
+	padding: 0;
+	overflow: hidden;
+	border: none;
+	border-radius: var(--gl-export-radius);
+	background: var(--gl-export-bg);
+	color: var(--gl-export-fg);
+	box-shadow: var(--gl-export-shadow);
+	font-family: var(--gl-export-font);
+	font-size: var(--gl-export-font-size);
+	line-height: 1.4;
+
+	*,
+	*::before,
+	*::after {
+		box-sizing: border-box;
 	}
 
-	.maplibregl-export-unit {
-		flex: none;
-		font-size: 12px;
+	&::backdrop {
+		background: var(--gl-export-backdrop);
+		backdrop-filter: blur(2px);
+	}
+
+	&[open] {
+		animation: maplibregl-export-dialog-in 0.18s ease-out;
+	}
+
+	[hidden] {
+		display: none !important;
 	}
 }
+
+@media (prefers-color-scheme: dark) {
+	.maplibregl-export-dialog,
+	.maplibregl-export-adjust-bar {
+		--gl-export-bg: #1e2430;
+		--gl-export-fg: #e5e9f0;
+		--gl-export-muted: #94a3b8;
+		--gl-export-border: #334155;
+		--gl-export-surface: #252c3a;
+		--gl-export-preview-bg: #151a23;
+		--gl-export-input-bg: #151a23;
+		--gl-export-accent: #3b82f6;
+		--gl-export-accent-hover: #60a5fa;
+		--gl-export-focus: rgba(96, 165, 250, 0.4);
+		--gl-export-danger: #f87171;
+		--gl-export-backdrop: rgba(2, 6, 23, 0.7);
+	}
+}
+
+@keyframes maplibregl-export-dialog-in {
+	from {
+		opacity: 0;
+		transform: translateY(8px) scale(0.98);
+	}
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+.maplibregl-export-dialog__container {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	height: 100%;
+}
+
+/* header */
+
+.maplibregl-export-dialog__header {
+	display: flex;
+	flex: none;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	padding: 12px 12px 12px 20px;
+	border-bottom: 1px solid var(--gl-export-border);
+}
+
+.maplibregl-export-dialog__title {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin: 0;
+	font-size: 16px;
+	font-weight: 600;
+
+	.maplibregl-export-icon {
+		color: var(--gl-export-accent);
+		--gl-export-icon-size: 20px;
+	}
+}
+
+.maplibregl-export-dialog__close {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 36px;
+	height: 36px;
+	padding: 0;
+	border: none;
+	border-radius: 50%;
+	background: transparent;
+	color: var(--gl-export-muted);
+	cursor: pointer;
+	transition:
+		background-color 0.15s,
+		color 0.15s;
+
+	&:hover {
+		background: var(--gl-export-surface);
+		color: var(--gl-export-fg);
+	}
+
+	&:focus-visible {
+		outline: none;
+		box-shadow: 0 0 0 3px var(--gl-export-focus);
+	}
+}
+
+/* body: preview on the left, settings on the right */
+
+.maplibregl-export-dialog__body {
+	display: flex;
+	flex: 1;
+	min-height: 0;
+}
+
+.maplibregl-export-dialog__preview {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 10px;
+	min-width: 0;
+	padding: var(--gl-export-gap);
+	background: var(--gl-export-preview-bg);
+}
+
+/*
+ * The frame keeps the ratio of the page and is as large as the preview pane allows.
+ * `--gl-export-page-ratio` (width / height) is set by the plugin.
+ */
+.maplibregl-export-dialog__frame {
+	position: relative;
+	flex: 1;
+	width: 100%;
+	min-height: 0;
+	container-type: size;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	/* the preview image is zoomed and dragged inside the frame */
+	overflow: hidden;
+	user-select: none;
+}
+
+/* zoomed in above 100%: the preview image can be dragged */
+.maplibregl-export-dialog__frame--zoomed {
+	cursor: grab;
+	touch-action: none;
+}
+
+.maplibregl-export-dialog__frame--dragging {
+	cursor: grabbing;
+}
+
+.maplibregl-export-dialog__page {
+	position: relative;
+	width: min(100cqw, 100cqh * var(--gl-export-page-ratio, 1.414));
+	aspect-ratio: var(--gl-export-page-ratio, 1.414);
+	flex: none;
+	overflow: hidden;
+	/* zoom and offset of the preview image, set by the plugin */
+	transform-origin: center;
+	background: var(--gl-export-bg);
+	box-shadow:
+		0 0 0 1px var(--gl-export-border),
+		0 6px 20px rgba(15, 23, 42, 0.18);
+}
+
+/* the rendered export image */
+.maplibregl-export-dialog__canvas {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+}
+
+/* shown while the preview is rendered */
+.maplibregl-export-dialog__loading {
+	position: absolute;
+	inset: 0;
+	z-index: 1;
+	display: none;
+	align-items: center;
+	justify-content: center;
+	background: rgba(255, 255, 255, 0.35);
+	color: var(--gl-export-accent);
+	pointer-events: none;
+
+	.maplibregl-export-spinner {
+		display: inline-block;
+		width: 28px;
+		height: 28px;
+		border-width: 3px;
+	}
+}
+
+.maplibregl-export-dialog__page--loading .maplibregl-export-dialog__loading {
+	display: flex;
+}
+
+.maplibregl-export-dialog__preview-error {
+	position: absolute;
+	right: 12px;
+	bottom: 12px;
+	left: 12px;
+	z-index: 2;
+	margin: 0;
+	padding: 8px 10px;
+	border-radius: var(--gl-export-radius-sm);
+	background: var(--gl-export-bg);
+	color: var(--gl-export-danger);
+	font-size: 13px;
+	text-align: center;
+}
+
+/* zoom buttons above the preview and adjust area button below it, both centered */
+.maplibregl-export-adjust-area {
+	flex: none;
+}
+
+.maplibregl-export-zoom,
+.maplibregl-export-adjust-area {
+	box-shadow: 0 1px 3px rgba(15, 23, 42, 0.12);
+}
+
+.maplibregl-export-zoom {
+	display: inline-flex;
+	flex: none;
+	align-items: center;
+	height: 36px;
+	overflow: hidden;
+	border: 1px solid var(--gl-export-border);
+	border-radius: var(--gl-export-radius-sm);
+	background: var(--gl-export-input-bg);
+}
+
+.maplibregl-export-zoom__button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 34px;
+	height: 100%;
+	padding: 0;
+	border: none;
+	background: transparent;
+	color: var(--gl-export-fg);
+	font: inherit;
+	cursor: pointer;
+	transition:
+		background-color 0.15s,
+		color 0.15s;
+
+	&:hover:not(:disabled) {
+		background: var(--gl-export-surface);
+	}
+
+	&:focus-visible {
+		outline: none;
+		box-shadow: inset 0 0 0 2px var(--gl-export-focus);
+	}
+
+	&:disabled {
+		cursor: default;
+		opacity: 0.35;
+	}
+
+	.maplibregl-export-icon {
+		--gl-export-icon-size: 16px;
+	}
+}
+
+/* zoom level, click to reset to 100% */
+.maplibregl-export-zoom__reset {
+	min-width: 56px;
+	color: var(--gl-export-muted);
+	font-size: 13px;
+	font-variant-numeric: tabular-nums;
+}
+
+.maplibregl-export-dialog__settings {
+	display: flex;
+	flex: none;
+	flex-direction: column;
+	gap: 14px;
+	width: var(--gl-export-settings-width);
+	margin: 0;
+	padding: 20px;
+	overflow-y: auto;
+	border-left: 1px solid var(--gl-export-border);
+}
+
+/* footer */
+
+.maplibregl-export-dialog__footer {
+	display: flex;
+	flex: none;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 12px;
+	padding: 12px 20px;
+	border-top: 1px solid var(--gl-export-border);
+}
+
+.maplibregl-export-dialog__error {
+	flex: 1;
+	margin: 0;
+	color: var(--gl-export-danger);
+	font-size: 13px;
+}
+
+/* ---------------------------------------------------------------------------
+ * Form
+ * ------------------------------------------------------------------------- */
+
+.maplibregl-export-icon {
+	display: inline-flex;
+	flex: none;
+	align-items: center;
+	justify-content: center;
+	width: var(--gl-export-icon-size);
+	height: var(--gl-export-icon-size);
+
+	svg {
+		width: 100%;
+		height: 100%;
+	}
+}
+
+.maplibregl-export-field {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.maplibregl-export-field__label {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	color: var(--gl-export-fg);
+	font-weight: 500;
+
+	.maplibregl-export-icon {
+		color: var(--gl-export-muted);
+	}
+}
+
+.maplibregl-export-field__control {
+	display: flex;
+	min-width: 0;
+}
+
+/* a switch sits on the same line as its label */
+.maplibregl-export-field--switch {
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+
+	/* the label fills the row, so a click between the text and the switch toggles it */
+	.maplibregl-export-field__label {
+		flex: 1;
+		align-self: stretch;
+		cursor: pointer;
+	}
+}
+
+.maplibregl-export-select,
+.maplibregl-export-input {
+	width: 100%;
+	min-width: 0;
+	height: 36px;
+	padding: 0 10px;
+	border: 1px solid var(--gl-export-border);
+	border-radius: var(--gl-export-radius-sm);
+	background-color: var(--gl-export-input-bg);
+	color: var(--gl-export-fg);
+	font: inherit;
+	transition:
+		border-color 0.15s,
+		box-shadow 0.15s;
+
+	&:hover {
+		border-color: var(--gl-export-muted);
+	}
+
+	&:focus {
+		border-color: var(--gl-export-accent);
+		outline: none;
+		box-shadow: 0 0 0 3px var(--gl-export-focus);
+	}
+
+	&:invalid {
+		border-color: var(--gl-export-danger);
+	}
+}
+
+.maplibregl-export-select {
+	appearance: none;
+	padding-right: 32px;
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+	background-position: right 10px center;
+	background-repeat: no-repeat;
+	background-size: 16px;
+	cursor: pointer;
+}
+
+/* input with a trailing unit or extension */
+.maplibregl-export-input-group {
+	display: flex;
+	width: 100%;
+
+	.maplibregl-export-input {
+		flex: 1;
+		border-top-right-radius: 0;
+		border-bottom-right-radius: 0;
+	}
+}
+
+.maplibregl-export-input-addon {
+	display: inline-flex;
+	flex: none;
+	align-items: center;
+	padding: 0 10px;
+	border: 1px solid var(--gl-export-border);
+	border-left: none;
+	border-radius: 0 var(--gl-export-radius-sm) var(--gl-export-radius-sm) 0;
+	background: var(--gl-export-surface);
+	color: var(--gl-export-muted);
+	font-size: 13px;
+}
+
+/* segmented control of the page orientation */
+.maplibregl-export-segmented {
+	display: flex;
+	width: 100%;
+	padding: 3px;
+	gap: 3px;
+	border: 1px solid var(--gl-export-border);
+	border-radius: var(--gl-export-radius-sm);
+	background: var(--gl-export-surface);
+}
+
+.maplibregl-export-segmented__option {
+	position: relative;
+	display: flex;
+	flex: 1;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	height: 30px;
+	border-radius: calc(var(--gl-export-radius-sm) - 2px);
+	color: var(--gl-export-muted);
+	cursor: pointer;
+	transition:
+		background-color 0.15s,
+		color 0.15s;
+
+	&:hover {
+		color: var(--gl-export-fg);
+	}
+
+	&:has(.maplibregl-export-segmented__input:checked) {
+		background: var(--gl-export-input-bg);
+		color: var(--gl-export-accent);
+		box-shadow: 0 1px 3px rgba(15, 23, 42, 0.15);
+	}
+
+	&:has(.maplibregl-export-segmented__input:focus-visible) {
+		box-shadow: 0 0 0 3px var(--gl-export-focus);
+	}
+
+	.maplibregl-export-icon {
+		--gl-export-icon-size: 16px;
+	}
+}
+
+.maplibregl-export-segmented__input {
+	position: absolute;
+	opacity: 0;
+	pointer-events: none;
+}
+
+/* many short options, e.g. the formats */
+.maplibregl-export-segmented--compact {
+	gap: 2px;
+
+	.maplibregl-export-segmented__option {
+		/* longer labels, e.g. GEOTIFF, take more room */
+		flex: 1 1 auto;
+		min-width: 0;
+		padding: 0 4px;
+		font-size: 12px;
+		font-weight: 500;
+	}
+
+	.maplibregl-export-segmented__label {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+}
+
+/* value shown at the end of a field label, e.g. the DPI */
+.maplibregl-export-field__value {
+	margin-left: auto;
+	color: var(--gl-export-accent);
+	font-weight: 600;
+	font-variant-numeric: tabular-nums;
+}
+
+/* slider snapping to presets, with the value of every preset below it (DPI) */
+.maplibregl-export-range {
+	--gl-export-range-thumb: 18px;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	width: 100%;
+}
+
+.maplibregl-export-range__input {
+	--gl-export-range-track: linear-gradient(
+		to right,
+		var(--gl-export-accent) var(--gl-export-range-progress, 0%),
+		var(--gl-export-border) var(--gl-export-range-progress, 0%)
+	);
+	width: 100%;
+	height: 22px;
+	margin: 0;
+	background: transparent;
+	appearance: none;
+	cursor: pointer;
+
+	&::-webkit-slider-runnable-track {
+		height: 4px;
+		border-radius: 2px;
+		background: var(--gl-export-range-track);
+	}
+
+	&::-moz-range-track {
+		height: 4px;
+		border-radius: 2px;
+		background: var(--gl-export-range-track);
+	}
+
+	&::-webkit-slider-thumb {
+		width: var(--gl-export-range-thumb);
+		height: var(--gl-export-range-thumb);
+		margin-top: calc((4px - var(--gl-export-range-thumb)) / 2);
+		border: 2px solid #ffffff;
+		border-radius: 50%;
+		background: var(--gl-export-accent);
+		box-shadow: 0 1px 3px rgba(15, 23, 42, 0.35);
+		appearance: none;
+	}
+
+	&::-moz-range-thumb {
+		box-sizing: border-box;
+		width: var(--gl-export-range-thumb);
+		height: var(--gl-export-range-thumb);
+		border: 2px solid #ffffff;
+		border-radius: 50%;
+		background: var(--gl-export-accent);
+		box-shadow: 0 1px 3px rgba(15, 23, 42, 0.35);
+	}
+
+	&:focus {
+		outline: none;
+	}
+
+	&:focus-visible::-webkit-slider-thumb {
+		box-shadow: 0 0 0 4px var(--gl-export-focus);
+	}
+
+	&:focus-visible::-moz-range-thumb {
+		box-shadow: 0 0 0 4px var(--gl-export-focus);
+	}
+}
+
+/* every tick sits under the center of the thumb at that position */
+.maplibregl-export-range__ticks {
+	display: flex;
+	justify-content: space-between;
+	padding: 0 calc(var(--gl-export-range-thumb) / 2);
+}
+
+.maplibregl-export-range__tick {
+	display: flex;
+	justify-content: center;
+	width: 0;
+	padding: 0;
+	border: none;
+	background: none;
+	color: var(--gl-export-muted);
+	font: inherit;
+	font-size: 12px;
+	font-variant-numeric: tabular-nums;
+	white-space: nowrap;
+	cursor: pointer;
+
+	&:hover {
+		color: var(--gl-export-fg);
+	}
+}
+
+.maplibregl-export-range__tick--active {
+	color: var(--gl-export-accent);
+	font-weight: 600;
+}
+
+/* checkbox drawn as a switch */
+.maplibregl-export-switch {
+	position: relative;
+	flex: none;
+	width: 38px;
+	height: 22px;
+	margin: 0;
+	border-radius: 11px;
+	background: var(--gl-export-border);
+	appearance: none;
+	cursor: pointer;
+	transition: background-color 0.15s;
+
+	&::before {
+		position: absolute;
+		top: 3px;
+		left: 3px;
+		width: 16px;
+		height: 16px;
+		border-radius: 50%;
+		background: #ffffff;
+		box-shadow: 0 1px 2px rgba(15, 23, 42, 0.3);
+		content: '';
+		transition: transform 0.15s;
+	}
+
+	&:checked {
+		background: var(--gl-export-accent);
+
+		&::before {
+			transform: translateX(16px);
+		}
+	}
+
+	&:focus-visible {
+		outline: none;
+		box-shadow: 0 0 0 3px var(--gl-export-focus);
+	}
+}
+
+/* buttons */
+
+.maplibregl-export-btn {
+	position: relative;
+	display: inline-flex;
+	flex: none;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	height: 36px;
+	padding: 0 14px;
+	border: 1px solid transparent;
+	border-radius: var(--gl-export-radius-sm);
+	font: inherit;
+	font-weight: 500;
+	cursor: pointer;
+	transition:
+		background-color 0.15s,
+		border-color 0.15s,
+		opacity 0.15s;
+
+	&:focus-visible {
+		outline: none;
+		box-shadow: 0 0 0 3px var(--gl-export-focus);
+	}
+
+	&:disabled {
+		cursor: progress;
+		opacity: 0.75;
+	}
+}
+
+.maplibregl-export-btn--primary {
+	min-width: 120px;
+	background: var(--gl-export-accent);
+	color: var(--gl-export-accent-fg);
+
+	&:hover:not(:disabled) {
+		background: var(--gl-export-accent-hover);
+	}
+}
+
+.maplibregl-export-btn--secondary {
+	border-color: var(--gl-export-border);
+	background: var(--gl-export-input-bg);
+	color: var(--gl-export-fg);
+
+	&:hover:not(:disabled) {
+		background: var(--gl-export-surface);
+	}
+}
+
+/* spinner of the save button, shown while the map is exported */
+.maplibregl-export-spinner {
+	display: none;
+	width: 16px;
+	height: 16px;
+	border: 2px solid currentColor;
+	border-bottom-color: transparent;
+	border-radius: 50%;
+	animation: rotation 0.8s linear infinite;
+}
+
+.maplibregl-export-dialog--saving {
+	.maplibregl-export-btn--primary {
+		.maplibregl-export-spinner {
+			display: inline-block;
+		}
+
+		.maplibregl-export-icon {
+			display: none;
+		}
+	}
+
+	.maplibregl-export-dialog__close {
+		visibility: hidden;
+	}
+}
+
+/* ---------------------------------------------------------------------------
+ * Adjusting the area on the map: toolbar shown over the map
+ * ------------------------------------------------------------------------- */
+
+.maplibregl-export-adjust-bar {
+	position: absolute;
+	bottom: 16px;
+	left: 50%;
+	z-index: 10;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: center;
+	gap: 12px;
+	box-sizing: border-box;
+	width: max-content;
+	max-width: calc(100% - 32px);
+	padding: 10px 10px 10px 16px;
+	border-radius: 999px;
+	background: var(--gl-export-bg);
+	color: var(--gl-export-fg);
+	box-shadow: var(--gl-export-shadow);
+	font-family: var(--gl-export-font);
+	font-size: var(--gl-export-font-size);
+	line-height: 1.4;
+	transform: translateX(-50%);
+	animation: maplibregl-export-fade-in 0.18s ease-out;
+
+	*,
+	*::before,
+	*::after {
+		box-sizing: border-box;
+	}
+}
+
+@keyframes maplibregl-export-fade-in {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+.maplibregl-export-adjust-bar__hint {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.maplibregl-export-adjust-bar__actions {
+	display: flex;
+	gap: 8px;
+
+	.maplibregl-export-btn--primary {
+		min-width: 96px;
+	}
+}
+
+/* ---------------------------------------------------------------------------
+ * Mobile: full screen, preview on top and settings below in one scrolling body
+ * ------------------------------------------------------------------------- */
+
+@media (max-width: 767px) {
+	.maplibregl-export-adjust-bar {
+		border-radius: var(--gl-export-radius);
+		padding: 12px;
+	}
+
+	.maplibregl-export-dialog {
+		width: 100vw;
+		height: 100dvh;
+		border-radius: 0;
+	}
+
+	.maplibregl-export-dialog__body {
+		flex-direction: column;
+		overflow-y: auto;
+		-webkit-overflow-scrolling: touch;
+		overscroll-behavior: contain;
+	}
+
+	.maplibregl-export-dialog__preview {
+		flex: none;
+		padding: 12px;
+	}
+
+	.maplibregl-export-dialog__frame {
+		flex: none;
+		height: auto;
+		container-type: inline-size;
+	}
+
+	.maplibregl-export-dialog__page {
+		width: min(100cqw, 55dvh * var(--gl-export-page-ratio, 1.414));
+	}
+
+	.maplibregl-export-dialog__settings {
+		width: 100%;
+		overflow-y: visible;
+		border-left: none;
+	}
+}
+
+/* ---------------------------------------------------------------------------
+ * Export rendering
+ * ------------------------------------------------------------------------- */
 
 /*
  * Hide high-res map rendering
@@ -76,30 +939,11 @@
 	position: fixed;
 }
 
-.map-export-loader {
-	&.is-active {
-		position: absolute;
-		z-index: 100;
-		top: 50%;
-		left: 50%;
-		transform: translate(-50%, -50%);
-
-		width: 48px;
-		height: 48px;
-		border: 5px solid #ffffff;
-		border-bottom-color: transparent;
-		border-radius: 50%;
-		display: inline-block;
-		box-sizing: border-box;
-		animation: rotation 1s linear infinite;
+@keyframes rotation {
+	0% {
+		transform: rotate(0deg);
 	}
-
-	@keyframes rotation {
-		0% {
-			transform: rotate(0deg);
-		}
-		100% {
-			transform: rotate(360deg);
-		}
+	100% {
+		transform: rotate(360deg);
 	}
 }

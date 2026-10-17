@@ -134,8 +134,6 @@
 			PageOrientation: PageOrientation.Portrait,
 			Format: Format.PNG,
 			DPI: DPI[96],
-			Crosshair: true,
-			PrintableArea: true,
 			Local: language,
 			// georeference exported PDF as GeoPDF (default is true)
 			geoPdf: true
@@ -155,8 +153,6 @@
 			PageOrientation: PageOrientation.Landscape,
 			Format: Format.PNG,
 			DPI: DPI[96],
-			Crosshair: true,
-			PrintableArea: true,
 			Local: language,
 			download: false,
 			onExport: ({ blob, fileName, format }) => {
