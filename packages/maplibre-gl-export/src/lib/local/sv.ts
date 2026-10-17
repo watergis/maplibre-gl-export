@@ -18,6 +18,9 @@ const translation: Translation = {
 	AdjustArea: 'Justera området på kartan',
 	AdjustAreaHint:
 		'Flytta, zooma, rotera eller luta kartan för att rama in området som ska exporteras',
+	ZoomIn: 'Zooma in',
+	ZoomOut: 'Zooma ut',
+	ResetZoom: 'Återställ zoom till 100 %',
 	Done: 'Klar',
 	Cancel: 'Avbryt',
 	Scalebar: 'Skalstock',

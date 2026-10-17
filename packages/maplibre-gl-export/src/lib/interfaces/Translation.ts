@@ -14,6 +14,9 @@ export type Translation = {
 	PreviewFailed: string;
 	AdjustArea: string;
 	AdjustAreaHint: string;
+	ZoomIn: string;
+	ZoomOut: string;
+	ResetZoom: string;
 	Done: string;
 	Cancel: string;
 	Scalebar: string;

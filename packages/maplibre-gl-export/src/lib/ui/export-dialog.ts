@@ -1,10 +1,14 @@
 import {
 	CUSTOM_SIZE_VALUE,
 	MIME_TYPES,
+	PREVIEW_ZOOM_MAX,
+	PREVIEW_ZOOM_MIN,
+	clampPreviewPan,
 	getPreviewDpi,
 	isVectorFormat,
 	orientSize,
-	sanitizeFileName
+	sanitizeFileName,
+	stepPreviewZoom
 } from './export-dialog-utils';
 import {
 	Compass,
@@ -12,9 +16,11 @@ import {
 	File,
 	FileImage,
 	FilePenLine,
+	Minus,
 	Move,
 	MoveHorizontal,
 	MoveVertical,
+	Plus,
 	Printer,
 	Proportions,
 	RectangleHorizontal,
@@ -102,6 +108,21 @@ export default class ExportDialog {
 
 	private adjustButton: HTMLButtonElement | undefined;
 
+	/** zoom of the preview image, changed with the zoom buttons below the preview */
+	private previewZoom = 1;
+
+	/** offset of the preview image from the center of the frame, changed by dragging it */
+	private previewPan = { x: 0, y: 0 };
+
+	/** pointer dragging the preview image, with the offset and pointer position when it started */
+	private drag: { pointerId: number; x: number; y: number; panX: number; panY: number } | undefined;
+
+	private zoomElements: {
+		zoomOut?: HTMLButtonElement;
+		zoomIn?: HTMLButtonElement;
+		reset?: HTMLButtonElement;
+	} = {};
+
 	/** last valid `[width, height]` of the page, used while the custom size is being typed */
 	private pageSize: [number, number];
 
@@ -117,7 +138,6 @@ export default class ExportDialog {
 		customWidth?: HTMLInputElement;
 		customHeight?: HTMLInputElement;
 		orientationField?: HTMLElement;
-		format?: HTMLSelectElement;
 		vectorField?: HTMLElement;
 		vectorLabelsField?: HTMLElement;
 		fileName?: HTMLInputElement;
@@ -250,8 +270,10 @@ export default class ExportDialog {
 		this.page = this.createPage();
 		this.frame.appendChild(this.page);
 		this.updateFrameRatio();
-		preview.appendChild(this.frame);
-		preview.appendChild(this.createAdjustButton());
+		this.setupPreviewDrag();
+
+		// zoom buttons above the preview, adjust area button below it
+		preview.append(this.createZoomControl(), this.frame, this.createAdjustButton());
 
 		const settings = this.el('form', this.cls('dialog__settings'));
 		settings.addEventListener('submit', (event) => event.preventDefault());
@@ -413,17 +435,18 @@ export default class ExportDialog {
 		fields.push(this.elements.orientationField);
 
 		// format
-		const format = this.createSelect(
+		const format = this.createSegmented<FormatType>(
 			'format',
+			this.t.Format,
 			Object.entries(Format).map(([label, value]) => ({ label, value })),
-			this.state.format
+			this.state.format,
+			(value) => {
+				this.state.format = value;
+				this.syncFormat();
+			}
 		);
-		format.addEventListener('change', () => {
-			this.state.format = format.value as FormatType;
-			this.syncFormat();
-		});
-		this.elements.format = format;
-		fields.push(this.createField('format', FileImage, this.t.Format, format, format.id));
+		format.classList.add(this.cls('segmented--compact'));
+		fields.push(this.createField('format', FileImage, this.t.Format, format));
 
 		// vector export, only for SVG and PDF
 		this.elements.vectorField = this.createSwitch(
@@ -450,19 +473,7 @@ export default class ExportDialog {
 		fields.push(this.elements.vectorField, this.elements.vectorLabelsField);
 
 		// DPI
-		const dpiValues: number[] = Object.values(DPI);
-		if (!dpiValues.includes(this.state.dpi)) dpiValues.push(this.state.dpi);
-		const dpi = this.createSelect(
-			'dpi',
-			dpiValues
-				.sort((a, b) => a - b)
-				.map((value) => ({ label: String(value), value: String(value) })),
-			String(this.state.dpi)
-		);
-		dpi.addEventListener('change', () => {
-			this.state.dpi = Number(dpi.value);
-		});
-		fields.push(this.createField('dpi', Proportions, this.t.DPI, dpi, dpi.id));
+		fields.push(this.createDpiField());
 
 		// overlays
 		fields.push(
@@ -497,35 +508,217 @@ export default class ExportDialog {
 		return fields;
 	}
 
-	/** Two radio buttons styled as a segmented control */
-	private createOrientationControl() {
+	/**
+	 * Radio buttons styled as a segmented control.
+	 * @param name used in the name of the radio buttons
+	 * @param label accessible name of the group
+	 * @param choices options; the value is also used in the class name of the icon
+	 * @param value checked option
+	 * @param onChange called with the value of the option the user checked
+	 */
+	private createSegmented<T extends string>(
+		name: string,
+		label: string,
+		choices: { value: T; label: string; icon?: IconNode }[],
+		value: T,
+		onChange: (value: T) => void
+	) {
 		const group = this.el('div', this.cls('segmented'));
 		group.setAttribute('role', 'radiogroup');
-		group.setAttribute('aria-label', this.t.PageOrientation);
-		const choices: { value: PageOrientationType; icon: IconNode; label: string }[] = [
-			{ value: PageOrientation.Landscape, icon: RectangleHorizontal, label: this.t.Landscape },
-			{ value: PageOrientation.Portrait, icon: RectangleVertical, label: this.t.Portrait }
-		];
+		group.setAttribute('aria-label', label);
 		choices.forEach((choice) => {
 			const option = this.el('label', this.cls('segmented__option'));
 			const input = this.el('input', this.cls('segmented__input'));
 			input.type = 'radio';
-			input.name = `${this.idPrefix}-orientation`;
+			input.name = `${this.idPrefix}-${name}`;
 			input.value = choice.value;
-			input.checked = this.state.orientation === choice.value;
+			input.checked = value === choice.value;
 			input.addEventListener('change', () => {
-				if (!input.checked) return;
-				this.state.orientation = choice.value;
-				this.onPageLayoutChange();
+				if (input.checked) onChange(choice.value);
 			});
-			option.append(
-				input,
-				this.createIcon(choice.icon, choice.value),
-				this.el('span', this.cls('segmented__label'), choice.label)
-			);
+			option.appendChild(input);
+			if (choice.icon) option.appendChild(this.createIcon(choice.icon, choice.value));
+			option.appendChild(this.el('span', this.cls('segmented__label'), choice.label));
 			group.appendChild(option);
 		});
 		return group;
+	}
+
+	/** Landscape / portrait segmented control */
+	private createOrientationControl() {
+		return this.createSegmented<PageOrientationType>(
+			'orientation',
+			this.t.PageOrientation,
+			[
+				{ value: PageOrientation.Landscape, icon: RectangleHorizontal, label: this.t.Landscape },
+				{ value: PageOrientation.Portrait, icon: RectangleVertical, label: this.t.Portrait }
+			],
+			this.state.orientation,
+			(value) => {
+				this.state.orientation = value;
+				this.onPageLayoutChange();
+			}
+		);
+	}
+
+	/**
+	 * Slider snapping to the DPI presets, with the value of every preset below it.
+	 * The slider holds the index of the preset, so the presets are evenly spaced.
+	 */
+	private createDpiField() {
+		const values: number[] = Object.values(DPI);
+		if (!values.includes(this.state.dpi)) values.push(this.state.dpi);
+		values.sort((a, b) => a - b);
+
+		const wrapper = this.el('div', this.cls('range'));
+		const input = this.el('input', this.cls('range__input'));
+		input.type = 'range';
+		input.id = `${this.idPrefix}-dpi`;
+		input.name = 'dpi';
+		input.min = '0';
+		input.max = String(values.length - 1);
+		input.step = '1';
+
+		const field = this.createField('dpi', Proportions, this.t.DPI, wrapper, input.id);
+		const readout = this.el('span', this.cls('field__value'));
+		field.querySelector(`.${this.cls('field__label')}`)?.appendChild(readout);
+
+		const ticks = this.el('div', this.cls('range__ticks'));
+		const tickButtons = values.map((value, index) => {
+			const tick = this.el('button', this.cls('range__tick'), String(value));
+			tick.type = 'button';
+			// the slider itself is reachable with the keyboard
+			tick.tabIndex = -1;
+			tick.addEventListener('click', () => {
+				input.value = String(index);
+				update();
+				input.focus();
+			});
+			return tick;
+		});
+		ticks.append(...tickButtons);
+
+		const update = () => {
+			const index = Number(input.value);
+			this.state.dpi = values[index];
+			readout.textContent = String(this.state.dpi);
+			input.setAttribute('aria-valuetext', `${this.state.dpi} DPI`);
+			input.style.setProperty(
+				'--gl-export-range-progress',
+				`${(index / Math.max(values.length - 1, 1)) * 100}%`
+			);
+			tickButtons.forEach((tick, i) =>
+				tick.classList.toggle(this.cls('range__tick--active'), i === index)
+			);
+		};
+		input.value = String(values.indexOf(this.state.dpi));
+		input.addEventListener('input', update);
+		update();
+
+		wrapper.append(input, ticks);
+		return field;
+	}
+
+	/** Zoom out / zoom level (click to reset) / zoom in buttons of the preview image */
+	private createZoomControl() {
+		const group = this.el('div', this.cls('zoom'));
+		group.setAttribute('role', 'group');
+
+		const createButton = (className: string, label: string) => {
+			const button = this.el('button', `${this.cls('zoom__button')} ${this.cls(className)}`);
+			button.type = 'button';
+			button.title = label;
+			button.setAttribute('aria-label', label);
+			return button;
+		};
+
+		const zoomOut = createButton('zoom__out', this.t.ZoomOut);
+		zoomOut.appendChild(this.createIcon(Minus, 'zoomOut'));
+		zoomOut.addEventListener('click', () =>
+			this.setPreviewZoom(stepPreviewZoom(this.previewZoom, -1))
+		);
+
+		const reset = createButton('zoom__reset', this.t.ResetZoom);
+		reset.addEventListener('click', () => {
+			this.previewPan = { x: 0, y: 0 };
+			this.setPreviewZoom(1);
+		});
+
+		const zoomIn = createButton('zoom__in', this.t.ZoomIn);
+		zoomIn.appendChild(this.createIcon(Plus, 'zoomIn'));
+		zoomIn.addEventListener('click', () =>
+			this.setPreviewZoom(stepPreviewZoom(this.previewZoom, 1))
+		);
+
+		this.zoomElements = { zoomOut, zoomIn, reset };
+		group.append(zoomOut, reset, zoomIn);
+		this.syncPreviewZoom();
+		return group;
+	}
+
+	private setPreviewZoom(zoom: number) {
+		this.previewZoom = Math.min(Math.max(zoom, PREVIEW_ZOOM_MIN), PREVIEW_ZOOM_MAX);
+		this.syncPreviewZoom();
+		// the image may need more pixels to stay sharp
+		this.onFrameResize();
+	}
+
+	/** Apply the zoom and offset of the preview image and update the zoom buttons */
+	private syncPreviewZoom() {
+		if (this.page) {
+			// the whole page is visible up to 100%, so it is only dragged when zoomed in
+			if (this.previewZoom <= 1) this.previewPan = { x: 0, y: 0 };
+			this.previewPan = clampPreviewPan(
+				this.previewPan,
+				[this.page.offsetWidth, this.page.offsetHeight],
+				[this.frame.clientWidth, this.frame.clientHeight],
+				this.previewZoom
+			);
+			const { x, y } = this.previewPan;
+			this.page.style.transform =
+				x === 0 && y === 0 && this.previewZoom === 1
+					? ''
+					: `translate(${x}px, ${y}px) scale(${this.previewZoom})`;
+			// touch drags scroll the dialog on mobile until the preview is zoomed in
+			this.frame.classList.toggle(this.cls('dialog__frame--zoomed'), this.previewZoom > 1);
+		}
+		const { zoomOut, zoomIn, reset } = this.zoomElements;
+		if (reset) reset.textContent = `${Math.round(this.previewZoom * 100)}%`;
+		if (zoomOut) zoomOut.disabled = this.previewZoom <= PREVIEW_ZOOM_MIN;
+		if (zoomIn) zoomIn.disabled = this.previewZoom >= PREVIEW_ZOOM_MAX;
+	}
+
+	/** Let the user move the preview image by dragging it */
+	private setupPreviewDrag() {
+		const frame = this.frame;
+		frame.addEventListener('pointerdown', (event) => {
+			if (event.button !== 0 || this.drag || this.previewZoom <= 1) return;
+			this.drag = {
+				pointerId: event.pointerId,
+				x: event.clientX,
+				y: event.clientY,
+				panX: this.previewPan.x,
+				panY: this.previewPan.y
+			};
+			frame.setPointerCapture(event.pointerId);
+			frame.classList.add(this.cls('dialog__frame--dragging'));
+			event.preventDefault();
+		});
+		frame.addEventListener('pointermove', (event) => {
+			if (!this.drag || event.pointerId !== this.drag.pointerId) return;
+			this.previewPan = {
+				x: this.drag.panX + event.clientX - this.drag.x,
+				y: this.drag.panY + event.clientY - this.drag.y
+			};
+			this.syncPreviewZoom();
+		});
+		const endDrag = (event: PointerEvent) => {
+			if (!this.drag || event.pointerId !== this.drag.pointerId) return;
+			this.drag = undefined;
+			frame.classList.remove(this.cls('dialog__frame--dragging'));
+		};
+		frame.addEventListener('pointerup', endDrag);
+		frame.addEventListener('pointercancel', endDrag);
 	}
 
 	private createFileNameField() {
@@ -646,6 +839,9 @@ export default class ExportDialog {
 		if (!size) return;
 		this.pageSize = size;
 		this.updateFrameRatio();
+		// the page changed shape: show it centered again
+		this.previewPan = { x: 0, y: 0 };
+		this.syncPreviewZoom();
 		this.requestRender();
 	}
 
@@ -672,9 +868,17 @@ export default class ExportDialog {
 		return page;
 	}
 
-	/** Render the preview again when the frame grew enough for the image to look blurry */
+	/** Width in CSS pixels the preview image is shown at, including the zoom of the preview */
+	private get previewWidth() {
+		return this.page.clientWidth * this.previewZoom;
+	}
+
+	/**
+	 * Render the preview again when the frame grew, or the preview was zoomed in, enough for the
+	 * image to look blurry
+	 */
 	private onFrameResize() {
-		const width = this.page.clientWidth;
+		const width = this.previewWidth;
 		if (!this.rendered || width > this.rendered.width * RESIZE_RENDER_RATIO) {
 			this.requestRender();
 		}
@@ -716,7 +920,7 @@ export default class ExportDialog {
 	}
 
 	private async renderPreview() {
-		const width = this.page.clientWidth;
+		const width = this.previewWidth;
 		if (this.closed || width <= 0) return;
 		const pageSize: [number, number] = [...this.pageSize];
 		const view = { ...this.view };

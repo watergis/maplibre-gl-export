@@ -5,6 +5,7 @@
 feat: replaced the export panel with an export dialog with a preview
 
 - The print button opens a modal dialog with a live preview of the exported page on the left and the settings (page size, orientation, format, DPI, scale bar, north icon and file name) on the right.
+- The preview can be zoomed from 50% to 300% with the buttons above it (click the percentage to reset to 100%) and, when zoomed in, dragged to look at the details. The format is chosen with a segmented control and the DPI with a slider.
 - **Adjust area on map** hides the dialog and shows the page on the map with a crosshair. Move, zoom or rotate the map, then press **Done** to return to the dialog.
 - **Save** asks where to save the file in Chrome / Edge (File System Access API) and downloads it in other browsers.
 - Icons are from Lucide (`lucide` is a new dependency). The dialog can be restyled with the `maplibregl-export-*` classes and the `--gl-export-*` custom properties (see the comment at the top of `maplibre-gl-export.css`).

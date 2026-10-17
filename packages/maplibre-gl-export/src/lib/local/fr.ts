@@ -18,6 +18,9 @@ const translation: Translation = {
 	AdjustArea: 'Ajuster la zone sur la carte',
 	AdjustAreaHint:
 		'Déplacez, zoomez, faites pivoter ou inclinez la carte pour cadrer la zone à exporter',
+	ZoomIn: 'Zoom avant',
+	ZoomOut: 'Zoom arrière',
+	ResetZoom: 'Réinitialiser le zoom à 100 %',
 	Done: 'Terminé',
 	Cancel: 'Annuler',
 	Scalebar: "Barre d'échelle",
