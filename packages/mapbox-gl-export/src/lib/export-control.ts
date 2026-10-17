@@ -1,18 +1,18 @@
 import { IControl, Map as MapboxMap } from 'mapbox-gl';
 import {
-	SizeType,
-	DPIType,
-	FormatType,
 	MaplibreExportControl,
-	UnitType,
-	ControlOptions as MaplibreControlOptions
+	type ControlOptions as MaplibreControlOptions,
+	type MapGeneratorBase,
+	type MapGeneratorConfig
 } from '@watergis/maplibre-gl-export';
 import { ControlOptions } from './interfaces';
 import MapGenerator from './map-generator';
 
 /**
  * Mapbox GL Export Control.
- * @param {Object} targets - Object of layer.id and title
+ *
+ * It adds a print button to the map, which opens a dialog with a preview of the page and the
+ * export settings. Both the preview and the export are rendered by the Mapbox generator.
  */
 // eslint-disable-next-line
 // @ts-ignore
@@ -27,30 +27,7 @@ export default class MapboxExportControl extends MaplibreExportControl implement
 
 	// eslint-disable-next-line
 	// @ts-ignore
-	protected generateMap(
-		map: MapboxMap,
-		size: SizeType,
-		dpi: DPIType,
-		format: FormatType,
-		unit: UnitType,
-		filename?: string
-	) {
-		const mapGenerator = new MapGenerator(map as MapboxMap, {
-			size,
-			dpi,
-			format,
-			unit,
-			fileName: filename,
-			markerCirclePaint: this.options.markerCirclePaint,
-			attributionOptions: this.options.attributionOptions,
-			scalebarOptions: this.options.scalebarOptions,
-			northIconOptions: this.options.northIconOptions,
-			download: this.options.download,
-			onExport: this.options.onExport,
-			svgVectorOptions: this.options.svgVectorOptions,
-			geoPdf: this.options.geoPdf,
-			accessToken: this.accessToken
-		});
-		mapGenerator.generate();
+	protected createGenerator(map: MapboxMap, config: MapGeneratorConfig): MapGeneratorBase {
+		return new MapGenerator(map, { ...config, accessToken: this.accessToken });
 	}
 }

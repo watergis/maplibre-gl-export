@@ -22,9 +22,52 @@ npm install mapbox-gl @watergis/mapbox-gl-export
 
 See [documentation](https://maplibre-gl-export.water-gis.com/).
 
+## Export dialog
+
+The print button opens a dialog with a preview of the page on the left and the export settings
+(page size, orientation, format, DPI, scale bar, north icon and file name) on the right.
+The preview is the exported image itself, rendered at a lower resolution, so what you see is what is
+saved (scale bar, north icon, attribution, labels and markers drawn as circles). Adjust the exported area
+with **Adjust area on map**: the dialog is hidden and the page is shown on the map as a cut-out of a mask with
+a crosshair at its center. Move, zoom, rotate or tilt the map, then press **Done** to return to the
+dialog with that area (or **Cancel** / Esc to keep the previous one). The dialog closes with the × button, the Esc key or a click outside of it.
+
+**Save**: browsers which support the
+[File System Access API](https://developer.mozilla.org/en-US/docs/Web/API/Window/showSaveFilePicker)
+(Chrome, Edge) ask where to save the file when **Save** is pressed. Other browsers save it to their
+download folder. Nothing is saved when `download: false` is set.
+
+### Customizing the look
+
+The dialog is plain HTML styled only by `mapbox-gl-export.css`. Every element has a class prefixed with
+`mapboxgl-export-`, and the theme is driven by CSS custom properties:
+
+```css
+.mapboxgl-export-dialog {
+	--gl-export-accent: #0f766e;
+	--gl-export-radius: 4px;
+	--gl-export-font: 'Inter', sans-serif;
+}
+```
+
+Icons are from [Lucide](https://lucide.dev/icons/). Each is wrapped in
+`<span class="mapboxgl-export-icon mapboxgl-export-icon--{key}">`, so it can be replaced from CSS:
+
+```css
+.mapboxgl-export-icon--pageSize svg {
+	display: none;
+}
+.mapboxgl-export-icon--pageSize {
+	background-color: currentColor;
+	mask: url('my-icon.svg') center / contain no-repeat;
+}
+```
+
+See the comment at the top of [`src/scss/mapbox-gl-export.scss`](./src/scss/mapbox-gl-export.scss) for every variable and icon key.
+
 ## Vector export (experimental)
 
-By default `svg` and `pdf` wrap an image of the map. Tick **Export as vector** in the export panel,
+By default `svg` and `pdf` wrap an image of the map. Turn on **Export as vector** in the export dialog,
 which is shown while SVG or PDF is selected, or set `svgVectorOptions: { enabled: true }` to try exporting
 the fill, line and point layers as real vector paths:
 
@@ -34,7 +77,7 @@ map.addControl(new MapboxExportControl({ Format: Format.SVG, svgVectorOptions: {
 
 Layers which have no vector counterpart (raster, hillshade, heatmap, fill-extrusion, ...) are
 embedded as images at their place in the layer order, and so are labels unless **Export labels as vector**
-is ticked (`labels: 'vector'`), which writes them as editable text at an approximated position. The map is exported as an image as before when
+is turned on (`labels: 'vector'`), which writes them as editable text at an approximated position. The map is exported as an image as before when
 it cannot be converted at all. See [maplibre2svg](../maplibre2svg) for what is supported.
 
 ## WebP

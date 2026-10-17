@@ -40,6 +40,7 @@ import {
 	ExportResult,
 	Format,
 	FormatType,
+	MapView,
 	NorthIconOptions,
 	ScalebarOptions,
 	Size,
@@ -135,6 +136,16 @@ export interface MapGeneratorConfig {
 	 * It is skipped when the map is pitched, has terrain, or uses the globe projection.
 	 */
 	geoPdf?: boolean;
+	/**
+	 * Camera of the exported map. The current view of the source map is used when it is not set.
+	 * The zoom level is the one of the page laid out at 96 DPI.
+	 */
+	view?: MapView;
+	/**
+	 * Whether a loader is shown over the source map while the map is rendered. default is true.
+	 * The export dialog turns it off for its previews.
+	 */
+	showLoader?: boolean;
 }
 
 /** Timeout for waiting the `load` event of the hidden map */
@@ -187,6 +198,11 @@ export abstract class MapGeneratorBase {
 
 	protected geoPdf: boolean;
 
+	protected view: MapView | undefined;
+
+	/** whether the loader is shown over the source map while rendering */
+	protected useLoader: boolean;
+
 	/** Hidden container holding the map used for rendering. Available while generating. */
 	protected hiddenContainer: HTMLElement | undefined;
 
@@ -213,6 +229,20 @@ export abstract class MapGeneratorBase {
 		this.onExport = config.onExport;
 		this.svgVectorOptions = { ...defaultSvgVectorOptions, ...config.svgVectorOptions };
 		this.geoPdf = config.geoPdf ?? true;
+		this.useLoader = config.showLoader ?? true;
+		this.view = config.view;
+	}
+
+	/** Camera of the exported map: the configured `view`, or the current view of the source map */
+	protected get renderView(): MapView {
+		if (this.view) return this.view;
+		const center = this.map.getCenter();
+		return {
+			center: [center.lng, center.lat],
+			zoom: this.map.getZoom(),
+			bearing: this.map.getBearing(),
+			pitch: this.map.getPitch()
+		};
 	}
 
 	/** Class name of markers of the underlying library */
@@ -271,6 +301,11 @@ export abstract class MapGeneratorBase {
 		return this.map.getCanvasContainer().getElementsByClassName(this.markerClassName);
 	}
 
+	/** Whether the marker is the default pin of the library, a 27x41 SVG */
+	private isDefaultMarker(marker: Element) {
+		return marker.firstElementChild?.getAttribute('viewBox') === '0 0 27 41';
+	}
+
 	protected renderMarkers(renderMap: MaplibreMap | MapboxMap) {
 		const markers = this.getMarkers();
 		for (let i = 0; i < markers.length; i++) {
@@ -282,7 +317,8 @@ export abstract class MapGeneratorBase {
 			const match = style.match(translateRegex);
 			if (!match) continue;
 			const translateX = parseInt(match[1]);
-			const translateY = parseInt(match[2]);
+			// the default pin is offset by [0, -14] so that its tip, not its center, is on the point
+			const translateY = parseInt(match[2]) + (this.isDefaultMarker(marker) ? 14 : 0);
 
 			const lngLat = this.map.unproject([translateX, translateY]);
 
@@ -311,8 +347,9 @@ export abstract class MapGeneratorBase {
 	 * The map is rendered on a hidden map object at the requested page size and DPI,
 	 * then its canvas is composed with the scale bar, north icon and attribution
 	 * onto a 2D canvas which is what actually gets exported.
+	 * @returns whether the map was exported. Errors are logged rather than thrown.
 	 */
-	async generate() {
+	async generate(): Promise<boolean> {
 		try {
 			await this.withRenderedMap(async (renderMap) => {
 				const canvas = await this.composeCanvas(renderMap);
@@ -332,10 +369,12 @@ export abstract class MapGeneratorBase {
 					});
 				}
 			});
+			return true;
 		} catch (err) {
 			// `generate` is called from the export button, so there is nobody to hand the
 			// error to. `toCanvas` / `toBlob` let the caller handle it instead.
 			console.error('Failed to generate map image:', err);
+			return false;
 		}
 	}
 
@@ -370,8 +409,10 @@ export abstract class MapGeneratorBase {
 	 * requested DPI, and everything is cleaned up again afterwards.
 	 */
 	private async withRenderedMap<T>(fn: (renderMap: MaplibreMap) => T | Promise<T>) {
-		this.addLoader();
-		this.showLoader();
+		if (this.useLoader) {
+			this.addLoader();
+			this.showLoader();
+		}
 
 		// Calculate pixel ratio
 		const actualPixelRatio: number = window.devicePixelRatio;
@@ -430,7 +471,7 @@ export abstract class MapGeneratorBase {
 				get: () => actualPixelRatio,
 				configurable: true
 			});
-			this.hideLoader();
+			if (this.useLoader) this.hideLoader();
 		}
 	}
 

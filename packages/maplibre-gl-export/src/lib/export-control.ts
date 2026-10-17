@@ -1,64 +1,65 @@
 import { ControlPosition, IControl, Map as MaplibreMap } from 'maplibre-gl';
 import { Map as MapboxMap } from 'mapbox-gl';
-import CrosshairManager from './crosshair-manager';
-import PrintableAreaManager from './printable-area-manager';
 import { getTranslation } from './local';
 import MapGenerator from './map-generator';
+import AreaAdjuster from './area-adjuster';
+import ExportDialog from './export-dialog';
+import {
+	CUSTOM_SIZE_VALUE,
+	isSameSize,
+	orientSize,
+	resolveAllowedSizes
+} from './export-dialog-utils';
 import {
 	Format,
 	type ControlOptions,
-	FormatType,
+	type ExportDialogState,
+	type ExportResult,
+	type ExportSettings,
+	type FormatType,
 	Unit,
 	SizeType,
 	SizeKey,
-	CustomSize,
 	Size,
 	Translation,
 	PageOrientation,
 	DPI,
-	DPIType,
-	UnitType,
-	type Language
+	type Language,
+	type ScalebarOptions
 } from './interfaces';
 import {
 	defaultAttributionOptions,
 	defaultMarkerCirclePaint,
 	defaultNorthIconOptions,
 	defaultSvgVectorOptions,
-	defaultScalebarOptions
+	defaultScalebarOptions,
+	MapGeneratorBase,
+	type MapGeneratorConfig
 } from './map-generator-base';
 
 /**
- * Sentinel value of the page-size `<select>` option that switches the control to the
- * user-entered custom width/height inputs. It is intentionally not valid JSON so it can
- * never be confused with a serialized `[width, height]` preset tuple.
- */
-const CUSTOM_SIZE_VALUE = 'custom';
-
-/**
  * MapLibre GL Export Control.
- * @param {Object} targets - Object of layer.id and title
+ *
+ * It adds a print button to the map, which opens a dialog with a preview of the page and the
+ * export settings.
  */
 export default class MaplibreExportControl implements IControl {
 	protected controlContainer!: HTMLElement;
 
-	protected exportContainer!: HTMLElement;
-
-	protected crosshair: CrosshairManager | undefined;
-
-	protected printableArea: PrintableAreaManager | undefined;
-
 	protected map?: MaplibreMap | MapboxMap;
 
 	protected exportButton!: HTMLButtonElement;
+
+	protected dialog: ExportDialog | undefined;
+
+	/** state of the dialog form, kept so that reopening the dialog restores it */
+	protected dialogState: ExportDialogState | undefined;
 
 	protected options: ControlOptions = {
 		PageSize: Size.A4 as SizeType,
 		PageOrientation: PageOrientation.Landscape,
 		Format: Format.PDF,
 		DPI: DPI[300],
-		Crosshair: false,
-		PrintableArea: false,
 		Local: 'en',
 		AllowedSizes: Object.keys(Size) as SizeKey[],
 		Filename: 'map',
@@ -91,7 +92,6 @@ export default class MaplibreExportControl implements IControl {
 			);
 			this.options = Object.assign(this.options, options);
 		}
-		this.onDocumentClick = this.onDocumentClick.bind(this);
 	}
 
 	public getDefaultPosition(): ControlPosition {
@@ -109,536 +109,156 @@ export default class MaplibreExportControl implements IControl {
 		this.controlContainer = document.createElement('div');
 		this.controlContainer.classList.add(`${this.MAPLIB_CSS_PREFIX}-ctrl`);
 		this.controlContainer.classList.add(`${this.MAPLIB_CSS_PREFIX}-ctrl-group`);
-		this.exportContainer = document.createElement('div');
-		this.exportContainer.classList.add(`${this.MAPLIB_CSS_PREFIX}-export-list`);
 		this.exportButton = document.createElement('button');
 		this.exportButton.classList.add(`${this.MAPLIB_CSS_PREFIX}-ctrl-icon`);
 		this.exportButton.classList.add(`${this.MAPLIB_CSS_PREFIX}-export-control`);
 		this.exportButton.type = 'button';
-		this.exportButton.addEventListener('click', () => {
-			this.exportButton.style.display = 'none';
-			this.exportContainer.style.display = 'block';
-			this.toggleCrosshair(true);
-			this.togglePrintableArea(true);
-		});
-		document.addEventListener('click', this.onDocumentClick);
+		this.exportButton.title = this.getTranslation().Title;
+		this.exportButton.setAttribute('aria-label', this.getTranslation().Title);
+		this.exportButton.setAttribute('aria-haspopup', 'dialog');
+		this.exportButton.addEventListener('click', () => this.openDialog());
 		this.controlContainer.appendChild(this.exportButton);
-		this.controlContainer.appendChild(this.exportContainer);
-
-		const table = document.createElement('TABLE');
-		table.className = 'print-table';
-
-		const sizes = this.resolveAllowedSizes();
-		const tr1 = this.createSelection(
-			sizes,
-			this.getTranslation().PageSize,
-			'page-size',
-			this.options.PageSize as [number, number],
-			(data: { [key: string]: unknown }, key) => JSON.stringify(data[key])
-		);
-		// add a "Custom" entry so the end-user can type an arbitrary width/height (see below)
-		const pageSizeSelect = tr1.querySelector('select') as HTMLSelectElement;
-		const customOption = document.createElement('option');
-		customOption.value = CUSTOM_SIZE_VALUE;
-		customOption.textContent = this.getTranslation().Custom;
-		pageSizeSelect.appendChild(customOption);
-		table.appendChild(tr1);
-
-		// custom width/height inputs, prefilled from the default page size and hidden until
-		// the "Custom" entry is selected. Width and Height are separate rows so the panel
-		// keeps the same width as the preset layout.
-		const defaultSize = (this.options.PageSize as [number, number]) ?? Size.A4;
-		const { rows: customRows, widthInput, heightInput } = this.createCustomSizeRows(defaultSize);
-		customRows.forEach((row) => table.appendChild(row));
-
-		const tr2 = this.createSelection(
-			PageOrientation,
-			this.getTranslation().PageOrientation,
-			'page-orientation',
-			this.options.PageOrientation as string,
-			(data: { [key: string]: unknown }, key) => data[key]
-		);
-		const pageOrientationSelect = tr2.querySelector('select') as HTMLSelectElement;
-		table.appendChild(tr2);
-
-		// resolve a preset `<option>` value (a JSON `[long, short]` tuple) into an oriented
-		// `[width, height]` tuple using the current orientation dropdown.
-		const resolvePresetSize = (value: string): [number, number] | null => {
-			if (!value || value === CUSTOM_SIZE_VALUE) {
-				return null;
-			}
-			let size: [number, number];
-			try {
-				size = JSON.parse(value) as [number, number];
-			} catch {
-				return null;
-			}
-			return pageOrientationSelect.value === PageOrientation.Portrait
-				? [size[1], size[0]]
-				: [size[0], size[1]];
-		};
-
-		// show the custom inputs only for the "Custom" entry. Orientation is meaningless then
-		// because the two inputs already define both dimensions, so hide its row. Switching to
-		// "Custom" prefills the inputs from the last selected preset (oriented), so the user
-		// starts from the size they were just looking at.
-		let lastPresetValue = pageSizeSelect.value;
-		const syncCustomSize = () => {
-			const isCustom = pageSizeSelect.value === CUSTOM_SIZE_VALUE;
-			if (isCustom) {
-				const size = resolvePresetSize(lastPresetValue);
-				if (size) {
-					widthInput.value = String(size[0]);
-					heightInput.value = String(size[1]);
-				}
-			} else {
-				lastPresetValue = pageSizeSelect.value;
-			}
-			customRows.forEach((row) => {
-				row.style.display = isCustom ? '' : 'none';
-			});
-			tr2.style.display = isCustom ? 'none' : '';
-			this.updatePrintableArea();
-		};
-		pageSizeSelect.addEventListener('change', syncCustomSize);
-		widthInput.addEventListener('input', () => this.updatePrintableArea());
-		heightInput.addEventListener('input', () => this.updatePrintableArea());
-		syncCustomSize();
-
-		const tr3 = this.createSelection(
-			Format,
-			this.getTranslation().Format,
-			'format-type',
-			this.options.Format as string,
-			(data: { [key: string]: unknown }, key) => data[key]
-		);
-		table.appendChild(tr3);
-
-		// exporting as vectors only applies to SVG and PDF, so the rows are hidden for the
-		// other formats. Labels can only be vectors when the map itself is.
-		const vectorRow = this.createCheckbox(
-			this.getTranslation().ExportAsVector,
-			'vector',
-			this.options.svgVectorOptions?.enabled === true
-		);
-		table.appendChild(vectorRow);
-		const vectorLabelsRow = this.createCheckbox(
-			this.getTranslation().ExportLabelsAsVector,
-			'vector-labels',
-			this.options.svgVectorOptions?.labels === 'vector'
-		);
-		table.appendChild(vectorLabelsRow);
-		const formatSelect = tr3.querySelector('select') as HTMLSelectElement;
-		const vectorInput = vectorRow.querySelector('input') as HTMLInputElement;
-		const syncVectorRows = () => {
-			const isVectorFormat = this.isVectorFormat(formatSelect.value);
-			vectorRow.style.display = isVectorFormat ? '' : 'none';
-			vectorLabelsRow.style.display = isVectorFormat && vectorInput.checked ? '' : 'none';
-		};
-		formatSelect.addEventListener('change', syncVectorRows);
-		vectorInput.addEventListener('change', syncVectorRows);
-		syncVectorRows();
-
-		const tr4 = this.createSelection(
-			DPI,
-			this.getTranslation().DPI,
-			'dpi-type',
-			this.options.DPI as number,
-			(data: { [key: string]: unknown }, key) => data[key]
-		);
-		table.appendChild(tr4);
-
-		const tr5 = this.createCheckbox(
-			this.getTranslation().Scalebar,
-			'scalebar',
-			this.options.scalebarOptions?.visibility !== 'none'
-		);
-		table.appendChild(tr5);
-
-		const tr6 = this.createCheckbox(
-			this.getTranslation().NorthIcon,
-			'north-icon',
-			this.options.northIconOptions?.visibility !== 'none'
-		);
-		table.appendChild(tr6);
-
-		this.exportContainer.appendChild(table);
-
-		const generateButton = document.createElement('button');
-		generateButton.type = 'button';
-		generateButton.textContent = this.getTranslation().Generate;
-		generateButton.classList.add('generate-button');
-		generateButton.addEventListener('click', () => {
-			const formatType = this.getElement<HTMLSelectElement>('format-type');
-			const dpiType = this.getElement<HTMLSelectElement>('dpi-type');
-			const scalebar = this.getElement<HTMLInputElement>('scalebar');
-			const northIcon = this.getElement<HTMLInputElement>('north-icon');
-			const vector = this.getElement<HTMLInputElement>('vector');
-			const vectorLabels = this.getElement<HTMLInputElement>('vector-labels');
-			if (!formatType || !dpiType) {
-				return;
-			}
-			// abort when the custom size is empty/invalid so we never generate a 0-sized map
-			const pageSizeValue = this.getSelectedSize();
-			if (!pageSizeValue) {
-				return;
-			}
-
-			// reflect the panel toggles before generating so that `generateMap` (which is also
-			// overridden by MapboxExportControl) can simply read them from `this.options`.
-			if (this.options.scalebarOptions) {
-				this.options.scalebarOptions.visibility = scalebar?.checked ? 'visible' : 'none';
-			}
-			if (this.options.northIconOptions) {
-				this.options.northIconOptions.visibility = northIcon?.checked ? 'visible' : 'none';
-			}
-			this.options.svgVectorOptions = {
-				...this.options.svgVectorOptions,
-				enabled: vector?.checked === true,
-				labels: vectorLabels?.checked ? 'vector' : 'raster'
-			};
-
-			this.generateMap(
-				map,
-				pageSizeValue,
-				Number(dpiType.value) as DPIType,
-				formatType.value as FormatType,
-				Unit.mm,
-				this.options.Filename
-			);
-		});
-		this.exportContainer.appendChild(generateButton);
-
 		return this.controlContainer;
 	}
 
-	protected generateMap(
-		map: MaplibreMap | MapboxMap,
-		size: SizeType,
-		dpi: DPIType,
-		format: FormatType,
-		unit: UnitType,
-		filename?: string
-	) {
-		const mapGenerator = new MapGenerator(map as MaplibreMap, {
-			size,
-			dpi,
-			format,
-			unit,
-			fileName: filename,
-			markerCirclePaint: this.options.markerCirclePaint,
-			attributionOptions: this.options.attributionOptions,
-			scalebarOptions: this.options.scalebarOptions,
-			northIconOptions: this.options.northIconOptions,
-			download: this.options.download,
-			onExport: this.options.onExport,
-			svgVectorOptions: this.options.svgVectorOptions,
-			geoPdf: this.options.geoPdf
-		});
-		mapGenerator.generate();
-	}
-
-	/**
-	 * Resolve the `AllowedSizes` option into the `label -> [width, height]` map backing the
-	 * page size dropdown. Entries are either a preset name or a developer-defined
-	 * `{ name, size }` pair; invalid entries are skipped so a single bad entry cannot break
-	 * the panel. Falls back to every preset when nothing valid is left.
-	 */
-	private resolveAllowedSizes(): Record<string, SizeType> {
-		const sizes: Record<string, SizeType> = {};
-		this.options.AllowedSizes?.forEach((allowedSize) => {
-			let name: string;
-			let size: SizeType;
-			if (typeof allowedSize === 'string') {
-				const dimensions = Size[allowedSize];
-				if (!dimensions) {
-					return;
-				}
-				name = allowedSize;
-				size = dimensions;
-			} else {
-				if (!this.isValidCustomSize(allowedSize)) {
-					console.warn('maplibre-gl-export: ignoring invalid AllowedSizes entry', allowedSize);
-					return;
-				}
-				name = allowedSize.name;
-				size = allowedSize.size;
-			}
-			// first entry wins so the dropdown never shows the same label twice
-			if (name in sizes) {
-				return;
-			}
-			sizes[name] = size;
-		});
-		if (Object.keys(sizes).length === 0) {
-			return { ...Size };
-		}
-		return sizes;
-	}
-
-	private isValidCustomSize(customSize: CustomSize): boolean {
-		if (typeof customSize?.name !== 'string' || customSize.name.length === 0) {
-			return false;
-		}
-		const size = customSize.size;
-		return (
-			Array.isArray(size) &&
-			size.length === 2 &&
-			size.every((value) => typeof value === 'number' && Number.isFinite(value) && value > 0)
-		);
-	}
-
-	/** Whether the format can hold the map as vectors */
-	private isVectorFormat(format: string) {
-		return format === Format.SVG || format === Format.PDF;
-	}
-
-	private createSelection(
-		data: Record<string, unknown>,
-		title: string,
-		type: string,
-		defaultValue: string | number | [number, number],
-		converter: (data: { [key: string]: unknown }, key: string) => unknown
-	): HTMLElement {
-		const label = document.createElement('label');
-		label.textContent = title;
-
-		const content = document.createElement('select');
-		content.setAttribute('id', `mapbox-gl-export-${type}`);
-		content.style.width = '100%';
-		Object.keys(data).forEach((key) => {
-			const optionLayout = document.createElement('option');
-			optionLayout.setAttribute('value', converter(data, key) as string);
-			optionLayout.appendChild(document.createTextNode(key));
-			optionLayout.setAttribute('name', type);
-			if (this.isSameSelectionValue(defaultValue, data[key])) {
-				optionLayout.selected = true;
-			}
-			content.appendChild(optionLayout);
-		});
-		content.addEventListener('change', () => {
-			this.updatePrintableArea();
-		});
-
-		const tr1 = document.createElement('TR');
-		const tdLabel = document.createElement('TD');
-		const tdContent = document.createElement('TD');
-		tdLabel.appendChild(label);
-		tdContent.appendChild(content);
-		tr1.appendChild(tdLabel);
-		tr1.appendChild(tdContent);
-		return tr1;
-	}
-
-	/**
-	 * Whether the option value equals the configured default. Page sizes are compared by
-	 * value because `PageSize` may be a tuple the caller built themselves rather than one of
-	 * the `Size` presets; anything else keeps the plain identity comparison.
-	 */
-	private isSameSelectionValue(defaultValue: string | number | [number, number], value: unknown) {
-		if (Array.isArray(defaultValue) && Array.isArray(value)) {
-			return (
-				defaultValue.length === value.length &&
-				defaultValue.every((item, index) => item === value[index])
-			);
-		}
-		return (defaultValue as unknown) === value;
-	}
-
-	/**
-	 * Create a table row with a checkbox. It shares the layout of {@link createSelection}.
-	 * @param title label of the checkbox
-	 * @param type suffix of the element id (`mapbox-gl-export-${type}`)
-	 * @param checked initial state
-	 */
-	private createCheckbox(title: string, type: string, checked: boolean): HTMLElement {
-		const label = document.createElement('label');
-		label.textContent = title;
-
-		const content = document.createElement('input');
-		content.type = 'checkbox';
-		content.setAttribute('id', `mapbox-gl-export-${type}`);
-		content.setAttribute('name', type);
-		content.checked = checked;
-		// ids repeat when several controls share a page, so `for` could target another
-		// control's input. Forward the label click to this row's input instead.
-		label.addEventListener('click', () => content.click());
-
-		const tr = document.createElement('TR');
-		const tdLabel = document.createElement('TD');
-		const tdContent = document.createElement('TD');
-		tdLabel.appendChild(label);
-		tdContent.appendChild(content);
-		tr.appendChild(tdLabel);
-		tr.appendChild(tdContent);
-		return tr;
-	}
-
 	public onRemove(): void {
-		if (
-			!this.controlContainer ||
-			!this.controlContainer.parentNode ||
-			!this.map ||
-			!this.exportButton
-		) {
-			return;
-		}
-		this.exportButton.removeEventListener('click', this.onDocumentClick);
-		this.controlContainer.parentNode.removeChild(this.controlContainer);
-		document.removeEventListener('click', this.onDocumentClick);
-
-		if (this.crosshair !== undefined) {
-			this.crosshair.destroy();
-			this.crosshair = undefined;
-		}
-
-		if (this.printableArea !== undefined) {
-			this.printableArea.destroy();
-			this.printableArea = undefined;
-		}
-
+		this.dialog?.close();
+		this.dialog = undefined;
+		this.controlContainer?.parentNode?.removeChild(this.controlContainer);
 		this.map = undefined;
 	}
 
-	private onDocumentClick(event: MouseEvent): void {
-		if (
-			this.controlContainer &&
-			!this.controlContainer.contains(event.target as Element) &&
-			this.exportContainer &&
-			this.exportButton
-		) {
-			this.exportContainer.style.display = 'none';
-			this.exportButton.style.display = 'block';
-			this.toggleCrosshair(false);
-			this.togglePrintableArea(false);
-		}
-	}
-
-	private toggleCrosshair(state: boolean) {
-		if (this.options.Crosshair === true) {
-			if (state === false) {
-				if (this.crosshair !== undefined) {
-					this.crosshair.destroy();
-					this.crosshair = undefined;
-				}
-			} else {
-				this.crosshair = new CrosshairManager(this.map);
-				this.crosshair.create();
+	/** Open the export dialog */
+	public openDialog() {
+		if (!this.map || this.dialog) return;
+		const map = this.map;
+		const translation = this.getTranslation();
+		const sizes = resolveAllowedSizes(this.options.AllowedSizes);
+		this.dialog = new ExportDialog({
+			map,
+			cssPrefix: this.MAPLIB_CSS_PREFIX,
+			translation,
+			sizes,
+			state: this.dialogState ?? this.createDialogState(sizes),
+			renderPreview: (settings, dpi) => this.renderPreview(map, settings, dpi),
+			adjustArea: (view, pageSize) =>
+				new AreaAdjuster({ map, cssPrefix: this.MAPLIB_CSS_PREFIX, translation }).adjust(
+					view,
+					pageSize
+				),
+			// nothing is saved when the application handles the image itself through `onExport`
+			useSaveFilePicker: this.options.download !== false,
+			onSave: (settings) => this.exportMap(map, settings),
+			onClose: (state) => {
+				this.dialogState = state;
+				this.dialog = undefined;
+				this.exportButton?.focus();
 			}
-		}
+		});
+		this.dialog.open();
 	}
 
-	private togglePrintableArea(state: boolean) {
-		if (this.options.PrintableArea === true) {
-			if (state === false) {
-				if (this.printableArea !== undefined) {
-					this.printableArea.destroy();
-					this.printableArea = undefined;
-				}
-			} else {
-				this.printableArea = new PrintableAreaManager(this.map);
-				this.updatePrintableArea();
-			}
-		}
-	}
-
-	private updatePrintableArea() {
-		if (this.printableArea === undefined) {
-			return;
-		}
-		const pageSizeValue = this.getSelectedSize();
-		if (!pageSizeValue) {
-			return;
-		}
-		this.printableArea.updateArea(pageSizeValue[0], pageSizeValue[1]);
-	}
-
-	/**
-	 * Look up a form element of this control by the suffix of its id
-	 * (`mapbox-gl-export-${type}`). The lookup is scoped to this control's own panel because
-	 * the ids repeat when several export controls are added to the same page.
-	 */
-	private getElement<T extends HTMLElement>(type: string): T | null {
-		return this.exportContainer.querySelector<T>(`#mapbox-gl-export-${type}`);
-	}
-
-	/**
-	 * Read the currently selected page size as a `[width, height]` mm tuple.
-	 *
-	 * For a preset the orientation dropdown is applied by swapping the stored landscape
-	 * tuple. For the "Custom" entry the two number inputs are used verbatim (they already
-	 * define the orientation); `null` is returned when either value is missing or not a
-	 * positive number so callers can skip generating / previewing.
-	 */
-	private getSelectedSize(): [number, number] | null {
-		const pageSize = this.getElement<HTMLSelectElement>('page-size');
-		if (!pageSize) {
-			return null;
-		}
-		if (pageSize.value === CUSTOM_SIZE_VALUE) {
-			const widthInput = this.getElement<HTMLInputElement>('custom-width');
-			const heightInput = this.getElement<HTMLInputElement>('custom-height');
-			const width = Number(widthInput?.value);
-			const height = Number(heightInput?.value);
-			if (!Number.isFinite(width) || width <= 0 || !Number.isFinite(height) || height <= 0) {
-				return null;
-			}
-			return [width, height];
-		}
-		const pageOrientation = this.getElement<HTMLSelectElement>('page-orientation');
-		const size = JSON.parse(pageSize.value) as [number, number];
-		if (pageOrientation?.value === PageOrientation.Portrait) {
-			return [size[1], size[0]];
-		}
-		return [size[0], size[1]];
-	}
-
-	/**
-	 * Build the two stacked table rows holding the custom width and height number inputs
-	 * (in mm). Each dimension is its own row so the panel keeps the preset layout width.
-	 * @param defaultSize `[width, height]` used to prefill the inputs
-	 */
-	private createCustomSizeRows(defaultSize: readonly [number, number]): {
-		rows: HTMLElement[];
-		widthInput: HTMLInputElement;
-		heightInput: HTMLInputElement;
-	} {
-		const createRow = (type: string, title: string, value: number) => {
-			const label = document.createElement('label');
-			label.textContent = title;
-
-			const input = document.createElement('input');
-			input.type = 'number';
-			input.min = '1';
-			input.step = '1';
-			input.value = String(value);
-			input.setAttribute('id', `mapbox-gl-export-${type}`);
-			input.setAttribute('name', type);
-			// see createCheckbox: `for` is unreliable because ids repeat across controls
-			label.addEventListener('click', () => input.focus());
-
-			const unit = document.createElement('span');
-			unit.className = `${this.MAPLIB_CSS_PREFIX}-export-unit`;
-			unit.textContent = 'mm';
-
-			const wrapper = document.createElement('div');
-			wrapper.className = `${this.MAPLIB_CSS_PREFIX}-export-custom-size`;
-			wrapper.appendChild(input);
-			wrapper.appendChild(unit);
-
-			const row = document.createElement('TR');
-			row.style.display = 'none';
-			const tdLabel = document.createElement('TD');
-			const tdContent = document.createElement('TD');
-			tdLabel.appendChild(label);
-			tdContent.appendChild(wrapper);
-			row.appendChild(tdLabel);
-			row.appendChild(tdContent);
-			return { row, input };
+	/** Initial state of the dialog form, derived from the control options */
+	protected createDialogState(sizes: Record<string, SizeType>): ExportDialogState {
+		const pageSize = (this.options.PageSize ?? Size.A4) as SizeType;
+		const orientation = this.options.PageOrientation ?? PageOrientation.Landscape;
+		const preset = Object.values(sizes).find((size) => isSameSize(size, pageSize));
+		const customSize = orientSize(pageSize, orientation);
+		return {
+			// a `PageSize` which is not offered in the dropdown is shown as a custom size
+			sizeValue: preset ? JSON.stringify(preset) : CUSTOM_SIZE_VALUE,
+			orientation,
+			customWidth: customSize[0],
+			customHeight: customSize[1],
+			format: (this.options.Format ?? Format.PDF) as FormatType,
+			dpi: this.options.DPI ?? DPI[300],
+			scalebar: this.options.scalebarOptions?.visibility !== 'none',
+			northIcon: this.options.northIconOptions?.visibility !== 'none',
+			vector: this.options.svgVectorOptions?.enabled === true,
+			vectorLabels: this.options.svgVectorOptions?.labels === 'vector',
+			fileName: this.options.Filename ?? 'map'
 		};
+	}
 
-		const width = createRow('custom-width', this.getTranslation().Width, defaultSize[0]);
-		const height = createRow('custom-height', this.getTranslation().Height, defaultSize[1]);
-		return { rows: [width.row, height.row], widthInput: width.input, heightInput: height.input };
+	/** Create the generator which renders and exports the map */
+	protected createGenerator(
+		map: MaplibreMap | MapboxMap,
+		config: MapGeneratorConfig
+	): MapGeneratorBase {
+		return new MapGenerator(map as MaplibreMap, config);
+	}
+
+	/** Generator settings for the settings chosen in the dialog */
+	protected createGeneratorConfig(settings: ExportSettings): MapGeneratorConfig {
+		return {
+			size: settings.size,
+			dpi: settings.dpi as MapGeneratorConfig['dpi'],
+			format: settings.format,
+			unit: Unit.mm,
+			fileName: settings.fileName,
+			view: settings.view,
+			markerCirclePaint: this.options.markerCirclePaint,
+			attributionOptions: this.options.attributionOptions,
+			scalebarOptions: {
+				...defaultScalebarOptions,
+				...this.options.scalebarOptions,
+				visibility: settings.scalebar ? 'visible' : 'none'
+			} as ScalebarOptions,
+			northIconOptions: {
+				...defaultNorthIconOptions,
+				...this.options.northIconOptions,
+				visibility: settings.northIcon ? 'visible' : 'none'
+			},
+			svgVectorOptions: {
+				...this.options.svgVectorOptions,
+				enabled: settings.vector,
+				labels: settings.vectorLabels ? 'vector' : 'raster'
+			},
+			geoPdf: this.options.geoPdf
+		};
+	}
+
+	/**
+	 * Render the preview of the dialog: the exported image itself, at a lower DPI. The page is
+	 * laid out at 96 DPI whatever the DPI, so only the number of pixels differs from the export.
+	 */
+	protected renderPreview(
+		map: MaplibreMap | MapboxMap,
+		settings: ExportSettings,
+		dpi: number
+	): Promise<HTMLCanvasElement> {
+		const generator = this.createGenerator(map, {
+			...this.createGeneratorConfig(settings),
+			dpi: dpi as MapGeneratorConfig['dpi'],
+			download: false,
+			showLoader: false
+		});
+		return generator.toCanvas();
+	}
+
+	/**
+	 * Export the map with the settings chosen in the dialog.
+	 * @returns whether the map was exported
+	 */
+	protected async exportMap(map: MaplibreMap | MapboxMap, settings: ExportSettings) {
+		const fileHandle = settings.fileHandle;
+		const onExport = this.options.onExport;
+		const generator = this.createGenerator(map, {
+			...this.createGeneratorConfig(settings),
+			// a file chosen with the save file picker is written below instead of being downloaded
+			download: fileHandle ? false : this.options.download,
+			onExport:
+				fileHandle || onExport
+					? async (result: ExportResult) => {
+							if (fileHandle) {
+								const writable = await fileHandle.createWritable();
+								await writable.write(result.blob);
+								await writable.close();
+							}
+							await onExport?.(result);
+						}
+					: undefined
+		});
+		return generator.generate();
 	}
 }

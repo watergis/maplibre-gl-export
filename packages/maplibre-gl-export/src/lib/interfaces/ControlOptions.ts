@@ -50,11 +50,9 @@ export interface ControlOptions {
 	PageOrientation?: PageOrientationType;
 	Format?: FormatType;
 	DPI?: number;
-	Crosshair?: boolean;
-	PrintableArea?: boolean;
 	Local?: Language;
 	/**
-	 * List of page sizes offered in the export panel. An entry is either the name of one of
+	 * List of page sizes offered in the export dialog. An entry is either the name of one of
 	 * the presets (`'A4'`, `'LETTER'`, ...) or a developer-defined `{ name, size }` pair such
 	 * as `{ name: '16:9', size: [320, 180] }`.
 	 */
@@ -67,7 +65,7 @@ export interface ControlOptions {
 	/** whether the exported image is downloaded as a file. default is true */
 	download?: boolean;
 	/**
-	 * Called with the exported image once the generate button has produced it. Use it to pass
+	 * Called with the exported image once the save button of the dialog has produced it. Use it to pass
 	 * the image on to the rest of the application instead of (or in addition to) downloading it.
 	 */
 	onExport?: (result: ExportResult) => void | Promise<void>;
@@ -76,7 +74,7 @@ export interface ControlOptions {
 	 * real vectors instead of an image of the map. It is disabled by default.
 	 *
 	 * `enabled` and `labels` are the initial states of the "Export as vector" and "Export
-	 * labels as vector" checkboxes, which the export panel shows while SVG or PDF is selected.
+	 * labels as vector" switches, which the export dialog shows while SVG or PDF is selected.
 	 * @experimental
 	 */
 	svgVectorOptions?: SvgVectorOptions;

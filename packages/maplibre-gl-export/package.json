@@ -80,6 +80,7 @@
 	"dependencies": {
 		"html-to-image": "^1.11.13",
 		"jspdf": "^4.2.1",
+		"lucide": "^1.57.0",
 		"svg2pdf.js": "^2.8.1"
 	},
 	"peerDependencies": {

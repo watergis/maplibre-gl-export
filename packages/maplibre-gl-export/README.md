@@ -26,9 +26,52 @@ pnpm add @watergis/maplibre-gl-export maplibre-gl
 CDN examples: [stable default](./index_cdn.html), [v5](./index_cdn_v5.html), and
 [v6](./index_cdn_v6.html).
 
+## Export dialog
+
+The print button opens a dialog with a preview of the page on the left and the export settings
+(page size, orientation, format, DPI, scale bar, north icon and file name) on the right.
+The preview is the exported image itself, rendered at a lower resolution, so what you see is what is
+saved (scale bar, north icon, attribution, labels and markers drawn as circles). Adjust the exported area
+with **Adjust area on map**: the dialog is hidden and the page is shown on the map as a cut-out of a mask with
+a crosshair at its center. Move, zoom, rotate or tilt the map, then press **Done** to return to the
+dialog with that area (or **Cancel** / Esc to keep the previous one). The dialog closes with the × button, the Esc key or a click outside of it.
+
+**Save**: browsers which support the
+[File System Access API](https://developer.mozilla.org/en-US/docs/Web/API/Window/showSaveFilePicker)
+(Chrome, Edge) ask where to save the file when **Save** is pressed. Other browsers save it to their
+download folder. Nothing is saved when `download: false` is set.
+
+### Customizing the look
+
+The dialog is plain HTML styled only by `maplibre-gl-export.css`. Every element has a class prefixed with
+`maplibregl-export-`, and the theme is driven by CSS custom properties:
+
+```css
+.maplibregl-export-dialog {
+	--gl-export-accent: #0f766e;
+	--gl-export-radius: 4px;
+	--gl-export-font: 'Inter', sans-serif;
+}
+```
+
+Icons are from [Lucide](https://lucide.dev/icons/). Each is wrapped in
+`<span class="maplibregl-export-icon maplibregl-export-icon--{key}">`, so it can be replaced from CSS:
+
+```css
+.maplibregl-export-icon--pageSize svg {
+	display: none;
+}
+.maplibregl-export-icon--pageSize {
+	background-color: currentColor;
+	mask: url('my-icon.svg') center / contain no-repeat;
+}
+```
+
+See the comment at the top of [`src/scss/maplibre-gl-export.scss`](./src/scss/maplibre-gl-export.scss) for every variable and icon key.
+
 ## Vector export (experimental)
 
-By default `svg` and `pdf` wrap an image of the map. Tick **Export as vector** in the export panel,
+By default `svg` and `pdf` wrap an image of the map. Turn on **Export as vector** in the export dialog,
 which is shown while SVG or PDF is selected, or set `svgVectorOptions: { enabled: true }` to try exporting
 the fill, line and point layers as real vector paths:
 
@@ -38,7 +81,7 @@ map.addControl(new MaplibreExportControl({ Format: Format.SVG, svgVectorOptions:
 
 Layers which have no vector counterpart (raster, hillshade, heatmap, fill-extrusion, ...) are
 embedded as images at their place in the layer order, and so are labels unless **Export labels as vector**
-is ticked (`labels: 'vector'`), which writes them as editable text at an approximated position. The map is exported as an image as before when
+is turned on (`labels: 'vector'`), which writes them as editable text at an approximated position. The map is exported as an image as before when
 it cannot be converted at all. See [maplibre2svg](../maplibre2svg) for what is supported.
 
 ## WebP

@@ -42,8 +42,6 @@
 					PageOrientation: MaplibreExportControl.PageOrientation.Landscape,
 					Format: MaplibreExportControl.Format.PNG,
 					DPI: MaplibreExportControl.DPI[300],
-					Crosshair: true,
-					PrintableArea: true,
 					Local: '{language}'
 				}),
 				'top-right'
