@@ -53,6 +53,7 @@ import {
 	createAttributionOverlay,
 	createNorthIconOverlay,
 	createScalebarOverlay,
+	getWrappedLines,
 	type OverlayBox
 } from './vector-overlays';
 import { createGeoPdfViewport, type GeoCorners } from './geopdf';
@@ -153,6 +154,37 @@ const LOAD_TIMEOUT_MS = 30000;
 
 /** Timeout for waiting the `idle` event of the hidden map */
 const IDLE_TIMEOUT_MS = 5000;
+
+/**
+ * Narrowest the attribution may become, as a ratio of the page width, to leave room for the
+ * scale bar beside it. The scale bar is stacked over the attribution when it would be narrower.
+ */
+const MIN_ATTRIBUTION_WIDTH_RATIO = 0.4;
+
+/**
+ * Stack an overlay on top of / below another one when they overlap, e.g. the scale bar and
+ * the attribution which share a corner or spread over the width of a narrow page.
+ * @param box box of the overlay to move. It is updated in place.
+ * @param other box of the overlay which is kept in place
+ * @param position corner of `box`. It is moved towards the center of the page.
+ * @param margin gap between the two overlays
+ */
+export function stackOverlay(
+	box: OverlayBox,
+	other: OverlayBox,
+	position: ControlPosition,
+	margin: number
+) {
+	const overlaps =
+		box.x < other.x + other.width &&
+		other.x < box.x + box.width &&
+		box.y < other.y + other.height &&
+		other.y < box.y + box.height;
+	if (!overlaps) return;
+	box.y = position.startsWith('top')
+		? other.y + other.height + margin
+		: other.y - box.height - margin;
+}
 
 /**
  * What is written into the exported PDF or GeoTIFF besides the map. It is read from the
@@ -525,6 +557,8 @@ export abstract class MapGeneratorBase {
 		ctx.imageSmoothingQuality = 'high';
 		ctx.drawImage(mapCanvas, 0, 0);
 
+		this.fitAttributionWidth();
+
 		// attribution is drawn first because the scale bar is stacked on top of it
 		// when both are placed in the same corner.
 		const attributionBox = await this.drawAttribution(ctx, canvas);
@@ -532,6 +566,50 @@ export abstract class MapGeneratorBase {
 		await this.drawNorthIcon(ctx, canvas, renderMap.getBearing());
 
 		return canvas;
+	}
+
+	/** Look up a control element of the hidden map by its class name */
+	private getControlElement(className: string) {
+		const element = this.hiddenContainer?.getElementsByClassName(className)?.item(0) as
+			HTMLElement | null | undefined;
+		return element && element.offsetWidth > 0 ? element : undefined;
+	}
+
+	/**
+	 * Limit the width of the attribution control so that it wraps inside of the page instead of
+	 * spreading over its whole width. When the scale bar sits in the other corner of the same
+	 * edge, the attribution is narrowed to leave room for it, unless that makes it too narrow,
+	 * in which case the scale bar is stacked over the attribution instead (see `drawScalebar`).
+	 * It has to run before the controls are measured, both for the canvas and the vector SVG.
+	 */
+	private fitAttributionWidth() {
+		if (this.attributionOptions.visibility === 'none') return;
+		const element = this.getControlElement(this.attributionClassName);
+		const pageWidth = this.hiddenContainer?.firstElementChild?.clientWidth;
+		if (!element || !pageWidth) return;
+
+		const margin = this.attributionOptions.margin ?? 10;
+		const fullWidth = pageWidth - 2 * margin;
+		let maxWidth = fullWidth;
+
+		const scalebar =
+			this.scalebarOptions.visibility === 'none'
+				? undefined
+				: this.getControlElement(this.scalebarClassName);
+		if (scalebar) {
+			const position = this.attributionOptions.position ?? 'bottom-right';
+			const scalebarPosition = this.scalebarOptions.position ?? 'bottom-left';
+			const sameEdge = position.split('-')[0] === scalebarPosition.split('-')[0];
+			if (sameEdge && position !== scalebarPosition) {
+				const scalebarMargin = this.scalebarOptions.margin ?? 10;
+				const besideScalebar = fullWidth - scalebar.offsetWidth - scalebarMargin;
+				if (besideScalebar >= pageWidth * MIN_ATTRIBUTION_WIDTH_RATIO) maxWidth = besideScalebar;
+			}
+		}
+
+		// the padding is counted in the width, so that the control never exceeds `maxWidth`
+		element.style.boxSizing = 'border-box';
+		element.style.maxWidth = `${Math.max(maxWidth, 0)}px`;
 	}
 
 	/**
@@ -634,15 +712,10 @@ export abstract class MapGeneratorBase {
 				margin
 			);
 
-			// stack the scale bar on top of / below the attribution when they share a corner
-			let { y } = origin;
-			if (attributionBox && this.attributionOptions.position === position) {
-				y = position.startsWith('top')
-					? attributionBox.y + attributionBox.height + margin
-					: attributionBox.y - scalebarCanvas.height - margin;
-			}
+			const box = { ...origin, width: scalebarCanvas.width, height: scalebarCanvas.height };
+			if (attributionBox) stackOverlay(box, attributionBox, position, margin);
 
-			ctx.drawImage(scalebarCanvas, origin.x, y);
+			ctx.drawImage(scalebarCanvas, box.x, box.y);
 		} catch (err) {
 			console.warn('Failed to render scale bar:', err);
 		}
@@ -770,20 +843,16 @@ export abstract class MapGeneratorBase {
 			this.attributionOptions,
 			attributionPosition
 		);
-		const text = attribution?.element.textContent?.trim();
-		if (attribution && text) svg.appendChild(createAttributionOverlay(text, attribution.box));
+		const lines = attribution ? getWrappedLines(attribution.element) : [];
+		const hasText = lines.length > 0;
+		if (attribution && hasText) svg.appendChild(createAttributionOverlay(lines, attribution.box));
 
 		const scalebar = boxOf(this.scalebarClassName, this.scalebarOptions, 'bottom-left');
 		if (scalebar) {
 			const { box } = scalebar;
 			const position = this.scalebarOptions.position ?? 'bottom-left';
 			const margin = this.scalebarOptions.margin ?? 10;
-			// stack the scale bar on top of / below the attribution when they share a corner
-			if (attribution && text && attributionPosition === position) {
-				box.y = position.startsWith('top')
-					? attribution.box.y + attribution.box.height + margin
-					: attribution.box.y - box.height - margin;
-			}
+			if (attribution && hasText) stackOverlay(box, attribution.box, position, margin);
 			svg.appendChild(createScalebarOverlay(scalebar.element.textContent?.trim() ?? '', box));
 		}
 

@@ -20,25 +20,55 @@ function create(name: string, attrs: Record<string, string | number>, text?: str
 	return node;
 }
 
-/** Draw the attribution as text on a translucent box, like the attribution control */
-export function createAttributionOverlay(text: string, box: OverlayBox) {
+/**
+ * Split the text of an element into the lines it is wrapped into by the browser, so that
+ * the SVG text can be wrapped the same way.
+ */
+export function getWrappedLines(element: HTMLElement) {
+	const lines: { top: number; words: string[] }[] = [];
+	const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
+	const range = document.createRange();
+	for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+		const content = node.textContent ?? '';
+		const regex = /\S+/g;
+		for (let match = regex.exec(content); match; match = regex.exec(content)) {
+			range.setStart(node, match.index);
+			range.setEnd(node, match.index + match[0].length);
+			const top = range.getBoundingClientRect().top;
+			const last = lines[lines.length - 1];
+			// words at the same height as the current line belong to it, others start a new line
+			if (last && Math.abs(top - last.top) < 1) last.words.push(match[0]);
+			else lines.push({ top, words: [match[0]] });
+		}
+	}
+	return lines.map((line) => line.words.join(' '));
+}
+
+/** Draw the attribution as lines of text on a translucent box, like the attribution control */
+export function createAttributionOverlay(lines: string[], box: OverlayBox) {
 	const fontSize = 12;
+	const lineHeight = box.height / Math.max(lines.length, 1);
 	const group = create('g', { 'data-overlay': 'attribution' });
 	group.appendChild(create('rect', { ...box, fill: '#ffffff', 'fill-opacity': 0.5 }));
-	group.appendChild(
-		create(
-			'text',
-			{
-				x: box.x + PADDING,
-				y: box.y + box.height / 2 + fontSize * 0.35,
-				'font-family': FONT_FAMILY,
-				'font-size': fontSize,
-				fill: '#000000',
-				'fill-opacity': 0.75
-			},
-			text
-		)
-	);
+	const text = create('text', {
+		'font-family': FONT_FAMILY,
+		'font-size': fontSize,
+		fill: '#000000',
+		'fill-opacity': 0.75
+	});
+	lines.forEach((line, i) => {
+		text.appendChild(
+			create(
+				'tspan',
+				{
+					x: box.x + PADDING,
+					y: box.y + lineHeight * (i + 0.5) + fontSize * 0.35
+				},
+				line
+			)
+		);
+	});
+	group.appendChild(text);
 	return group as SVGGElement;
 }
 
