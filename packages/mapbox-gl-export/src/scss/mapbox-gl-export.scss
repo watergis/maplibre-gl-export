@@ -1,19 +1,22 @@
 /*
  * Styles of mapbox-gl-export.
  *
- * Everything the plugin shows is styled here, so the look can be changed by overriding
- * these rules or, for most cases, just the custom properties below.
+ * Everything the plugin shows is plain HTML styled here. Every element has a class prefixed with
+ * `mapboxgl-export-`, and the theme is driven by the `--gl-export-*` custom properties defined
+ * below (light defaults, then the dark mode overrides), so the look can be changed by overriding
+ * these rules or, for most cases, just the custom properties.
  *
  * Changing the theme:
  *   .mapboxgl-export-dialog {
  *     --gl-export-accent: #0f766e;
  *     --gl-export-radius: 4px;
+ *     --gl-export-font: 'Inter', sans-serif;
  *   }
  *
- * Replacing an icon: every icon is
+ * Replacing an icon: icons are from Lucide (https://lucide.dev/icons/) and every icon is
  *   <span class="mapboxgl-export-icon mapboxgl-export-icon--{key}"><svg>…</svg></span>
  * where {key} is one of title, close, pageSize, customWidth, customHeight, landscape,
- * portrait, format, vector, vectorLabels, dpi, scalebar, northIcon, fileName, save, adjustArea, done.
+ * portrait, format, vector, vectorLabels, dpi, scalebar, northIcon, fileName, save, adjustArea.
  * Hide the default Lucide SVG and draw another image with a mask (it keeps the text color):
  *   .mapboxgl-export-icon--pageSize svg { display: none; }
  *   .mapboxgl-export-icon--pageSize {
