@@ -1,13 +1,22 @@
 export * from './AttributionStyle';
 export * from './ControlOptions';
-export * from './DPI';
-export * from './ExportDialog';
 export * from './ExportResult';
-export * from './Format';
-export * from './Language';
-export * from './MapView';
-export * from './PageOrientation';
 export * from './ScalebarOptions';
-export * from './Size';
-export * from './Translation';
 export * from './Unit';
+// types and constants of the export UI, bundled from the internal `@watergis/export-ui` package
+export {
+	DPI,
+	Format,
+	PageOrientation,
+	Size,
+	type AllowedSize,
+	type CustomSize,
+	type DPIType,
+	type FormatType,
+	type Language,
+	type MapView,
+	type PageOrientationType,
+	type SizeKey,
+	type SizeType,
+	type Translation
+} from '@watergis/export-ui';

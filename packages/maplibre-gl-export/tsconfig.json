@@ -8,6 +8,7 @@
 		"declarationDir": "./dist/types",
 		"experimentalDecorators": true,
 		"lib": ["dom", "ESNext"],
+		"types": ["vite/client"],
 		"module": "ESNext",
 		"moduleResolution": "bundler",
 		"noImplicitThis": true,

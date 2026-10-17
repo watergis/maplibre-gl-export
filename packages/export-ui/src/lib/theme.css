@@ -1,0 +1,81 @@
+/*
+ * Theme of the export UI: the `--gl-export-*` custom properties (light defaults, then the dark
+ * mode overrides) and the base rules every root of the UI shares. The components keep the rest of
+ * their styles in their own `<style>`.
+ *
+ * The roots are the dialog, the toolbar shown on the map while the area is adjusted, and
+ * `gl-export-theme`, which applies the theme to the components used on their own (e.g. Storybook).
+ *
+ * Changing the theme:
+ *   .gl-export-dialog {
+ *     --gl-export-accent: #0f766e;
+ *     --gl-export-radius: 4px;
+ *     --gl-export-font: 'Inter', sans-serif;
+ *   }
+ */
+.gl-export-dialog,
+.gl-export-adjust-bar,
+.gl-export-theme {
+	--gl-export-font:
+		system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
+	--gl-export-font-size: 14px;
+	--gl-export-bg: #ffffff;
+	--gl-export-fg: #1f2933;
+	--gl-export-muted: #64748b;
+	--gl-export-border: #e2e8f0;
+	--gl-export-surface: #f8fafc;
+	--gl-export-preview-bg: #eef2f6;
+	--gl-export-input-bg: #ffffff;
+	--gl-export-accent: #2563eb;
+	--gl-export-accent-hover: #1d4ed8;
+	--gl-export-accent-fg: #ffffff;
+	--gl-export-focus: rgba(37, 99, 235, 0.35);
+	--gl-export-danger: #dc2626;
+	--gl-export-backdrop: rgba(15, 23, 42, 0.55);
+	--gl-export-radius: 10px;
+	--gl-export-radius-sm: 6px;
+	--gl-export-shadow: 0 24px 64px rgba(15, 23, 42, 0.28);
+	--gl-export-icon-size: 18px;
+	/* layout */
+	--gl-export-width: 1080px;
+	--gl-export-height: 720px;
+	--gl-export-settings-width: 340px;
+	--gl-export-gap: 16px;
+}
+
+@media (prefers-color-scheme: dark) {
+	.gl-export-dialog,
+	.gl-export-adjust-bar,
+	.gl-export-theme {
+		--gl-export-bg: #1e2430;
+		--gl-export-fg: #e5e9f0;
+		--gl-export-muted: #94a3b8;
+		--gl-export-border: #334155;
+		--gl-export-surface: #252c3a;
+		--gl-export-preview-bg: #151a23;
+		--gl-export-input-bg: #151a23;
+		--gl-export-accent: #3b82f6;
+		--gl-export-accent-hover: #60a5fa;
+		--gl-export-focus: rgba(96, 165, 250, 0.4);
+		--gl-export-danger: #f87171;
+		--gl-export-backdrop: rgba(2, 6, 23, 0.7);
+	}
+}
+
+.gl-export-dialog *,
+.gl-export-dialog *::before,
+.gl-export-dialog *::after,
+.gl-export-adjust-bar *,
+.gl-export-adjust-bar *::before,
+.gl-export-adjust-bar *::after,
+.gl-export-theme *,
+.gl-export-theme *::before,
+.gl-export-theme *::after {
+	box-sizing: border-box;
+}
+
+/* rows which do not apply to the current settings are hidden */
+.gl-export-dialog [hidden],
+.gl-export-theme [hidden] {
+	display: none !important;
+}

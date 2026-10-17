@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "This repository to manage plugin of maplibre-gl-export.",
   "scripts": {
+    "dev": "pnpm --filter ./sites/demo dev",
     "lint": "pnpm -r lint",
     "format": "pnpm -r format",
     "build": "pnpm -r build",

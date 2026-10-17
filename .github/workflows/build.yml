@@ -33,6 +33,10 @@ jobs:
 
     - run: pnpm lint
 
+    # the stories of @watergis/export-ui are tested in a browser
+    - name: install Playwright Chromium
+      run: pnpm --filter @watergis/export-ui exec playwright install --with-deps chromium
+
     - name: test
       run: pnpm test
 
@@ -60,6 +64,8 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - name: Build maplibre2svg
         run: pnpm --filter @watergis/maplibre2svg build
+      - name: Build export-ui
+        run: pnpm --filter @watergis/export-ui build
       - name: Use MapLibre GL JS ${{ matrix.maplibre-version }}
         working-directory: packages/maplibre-gl-export
         run: pnpm add --save-dev --lockfile=false "maplibre-gl@${{ matrix.maplibre-version }}"

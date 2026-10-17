@@ -1,6 +1,7 @@
 import mapboxgl from 'mapbox-gl';
 import { MapboxExportControl, Size, PageOrientation, Format, DPI } from './src/lib/index';
-import './src/scss/mapbox-gl-export.scss';
+// the styles are the ones of maplibre-gl-export, see `build:css`
+import '@watergis/maplibre-gl-export/dist/maplibre-gl-export.css';
 import { IControl } from 'mapbox-gl';
 
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_ACCESSTOKEN;

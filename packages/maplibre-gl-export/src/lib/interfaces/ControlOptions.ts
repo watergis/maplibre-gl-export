@@ -1,9 +1,12 @@
 import type { ControlPosition } from 'maplibre-gl';
 import { CirclePaint } from 'mapbox-gl';
-import { FormatType } from './Format';
-import { Language } from './Language';
-import { PageOrientationType } from './PageOrientation';
-import { AllowedSize, SizeType } from './Size';
+import type {
+	AllowedSize,
+	FormatType,
+	Language,
+	PageOrientationType,
+	SizeType
+} from '@watergis/export-ui';
 import { AttributionOptions } from './AttributionStyle';
 import { ExportResult } from './ExportResult';
 import { ScalebarOptions } from './ScalebarOptions';

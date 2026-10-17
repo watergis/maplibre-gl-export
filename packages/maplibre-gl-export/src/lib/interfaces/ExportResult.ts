@@ -1,4 +1,4 @@
-import { FormatType } from './Format';
+import { FormatType } from '@watergis/export-ui';
 
 /** Exported image, handed to the `onExport` callback */
 export interface ExportResult {

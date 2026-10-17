@@ -226,7 +226,7 @@
 		<div class="flex justify-center space-x-2">
 			<img
 				class=" h-auto max-w-sm md:max-w-lg rounded-lg"
-				src="/assets/plugin-overview.webp"
+				src="/assets/plugin-demo.gif"
 				alt="Overview of Plugin"
 			/>
 		</div>
