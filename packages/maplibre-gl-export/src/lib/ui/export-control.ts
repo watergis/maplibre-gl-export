@@ -3,13 +3,8 @@ import { Map as MapboxMap } from 'mapbox-gl';
 import { getTranslation } from '../local';
 import MapGenerator from '../core/map-generator';
 import AreaAdjuster from './area-adjuster';
-import ExportDialog from './export-dialog';
-import {
-	CUSTOM_SIZE_VALUE,
-	isSameSize,
-	orientSize,
-	resolveAllowedSizes
-} from './export-dialog-utils';
+import ExportDialog from './export-dialog/export-dialog';
+import { CUSTOM_SIZE_VALUE, isSameSize, orientSize, resolveAllowedSizes } from './page-size';
 import {
 	Format,
 	type ControlOptions,

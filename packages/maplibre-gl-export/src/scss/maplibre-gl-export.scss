@@ -451,7 +451,10 @@
 	align-items: center;
 	justify-content: space-between;
 
+	/* the label fills the row, so a click between the text and the switch toggles it */
 	.maplibregl-export-field__label {
+		flex: 1;
+		align-self: stretch;
 		cursor: pointer;
 	}
 }

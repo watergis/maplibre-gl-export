@@ -1,9 +1,29 @@
 import { type Map as MaplibreMap } from 'maplibre-gl';
 import { type Map as MapboxMap } from 'mapbox-gl';
-import { fitPageInViewport } from './export-dialog-utils';
 
 /** Space kept free around the printable area, leaving room for the toolbar below it */
 const PADDING = 72;
+
+/**
+ * Size of the largest rectangle with the ratio of the page which fits in the viewport.
+ * @param viewportWidth width of the viewport in CSS pixels
+ * @param viewportHeight height of the viewport in CSS pixels
+ * @param pageWidth width of the page in mm
+ * @param pageHeight height of the page in mm
+ * @param padding space kept free on every side, in CSS pixels
+ */
+export const fitPageInViewport = (
+	viewportWidth: number,
+	viewportHeight: number,
+	pageWidth: number,
+	pageHeight: number,
+	padding = 0
+) => {
+	const width = Math.max(viewportWidth - padding * 2, 1);
+	const height = Math.max(viewportHeight - padding * 2, 1);
+	const scale = Math.min(width / pageWidth, height / pageHeight);
+	return { width: pageWidth * scale, height: pageHeight * scale };
+};
 
 export default class PrintableAreaManager {
 	private map: MaplibreMap | MapboxMap | undefined;
