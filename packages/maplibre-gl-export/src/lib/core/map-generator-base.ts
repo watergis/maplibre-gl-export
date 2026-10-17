@@ -27,9 +27,6 @@
  * THE SOFTWARE.
  */
 
-import { jsPDF } from 'jspdf';
-import 'svg2pdf.js';
-import { maplibre2svg, svgToString } from '@watergis/maplibre2svg';
 import { Map as MaplibreMap, StyleSpecification } from 'maplibre-gl';
 import { CirclePaint, Map as MapboxMap } from 'mapbox-gl';
 import {
@@ -47,9 +44,8 @@ import {
 	Unit,
 	UnitType
 } from '../interfaces';
-import { AttributionOverlay, NorthIconOverlay, ScalebarOverlay } from './overlays';
-import { createGeoPdfViewport, type GeoCorners } from './geopdf';
-import { createGeoTiff } from './geotiff';
+import { createFormat } from './formats';
+import { toPixels } from './units';
 
 // kept exported from here, where it used to be defined
 export { stackOverlay } from './overlays';
@@ -150,17 +146,6 @@ const LOAD_TIMEOUT_MS = 30000;
 /** Timeout for waiting the `idle` event of the hidden map */
 const IDLE_TIMEOUT_MS = 5000;
 
-/**
- * What is written into the exported PDF or GeoTIFF besides the map. It is read from the
- * hidden map, which is removed before some of the files are created.
- */
-interface ExportInfo {
-	/** geographic coordinates of the corners of the map, which georeference the file */
-	corners?: GeoCorners;
-	/** attribution of the map, which is written as the author of the file */
-	author?: string;
-}
-
 export abstract class MapGeneratorBase {
 	protected map: MaplibreMap | MapboxMap;
 
@@ -198,9 +183,6 @@ export abstract class MapGeneratorBase {
 
 	/** whether the loader is shown over the source map while rendering */
 	protected useLoader: boolean;
-
-	/** Hidden container holding the map used for rendering. Available while generating. */
-	protected hiddenContainer: HTMLElement | undefined;
 
 	/**
 	 * Constructor
@@ -244,21 +226,6 @@ export abstract class MapGeneratorBase {
 	/** Class name of markers of the underlying library */
 	protected get markerClassName() {
 		return `${this.cssPrefix}-marker`;
-	}
-
-	/** Class name of the attribution control element of the underlying library */
-	protected get attributionClassName() {
-		return `${this.cssPrefix}-ctrl-attrib`;
-	}
-
-	/** Class name of the scale control element of the underlying library */
-	protected get scalebarClassName() {
-		return `${this.cssPrefix}-ctrl-scale`;
-	}
-
-	/** Name of the plugin which is written as the creator of the exported PDF */
-	protected get creatorName() {
-		return this.cssPrefix === 'mapboxgl' ? 'Mapbox GL Export Plugin' : 'MapLibre GL Export Plugin';
 	}
 
 	/** Ratio between the exported resolution and the base 96 DPI layout */
@@ -348,20 +315,20 @@ export abstract class MapGeneratorBase {
 	async generate(): Promise<boolean> {
 		try {
 			await this.withRenderedMap(async (renderMap) => {
-				const canvas = await this.composeCanvas(renderMap);
-				const svg = await this.composeVectorSVG(renderMap);
-				const exportInfo = this.getExportInfo(renderMap);
+				if (!this.download && !this.onExport) return;
+				const format = this.getFormat(renderMap);
+				// the file is created once, and handed to both the download and the callback
+				const blob = await format.toBlob();
 				if (this.download) {
-					await this.exportImage(canvas, renderMap, svg, exportInfo);
+					await format.download(blob);
 				}
 				if (this.onExport) {
-					const blob = await this.toBlobOfFormat(canvas, svg, exportInfo);
 					await this.onExport({
-						canvas,
+						canvas: await format.getCanvas(),
 						blob,
-						fileName: `${this.fileName}.${this.format}`,
+						fileName: format.fileName,
 						format: this.format,
-						svg: svg ? svgToString(svg) : undefined
+						svg: await format.getVectorSvg()
 					});
 				}
 			});
@@ -381,7 +348,7 @@ export abstract class MapGeneratorBase {
 	 * would be written to the exported file.
 	 */
 	async toCanvas() {
-		return this.withRenderedMap((renderMap) => this.composeCanvas(renderMap));
+		return this.withRenderedMap((renderMap) => this.getFormat(renderMap).getCanvas());
 	}
 
 	/**
@@ -390,11 +357,7 @@ export abstract class MapGeneratorBase {
 	 * downloaded file is, or hold the map as vectors when `svgVectorOptions.enabled` is true.
 	 */
 	async toBlob() {
-		return this.withRenderedMap(async (renderMap) => {
-			const canvas = await this.composeCanvas(renderMap);
-			const svg = await this.composeVectorSVG(renderMap);
-			return this.toBlobOfFormat(canvas, svg, this.getExportInfo(renderMap));
-		});
+		return this.withRenderedMap((renderMap) => this.getFormat(renderMap).toBlob());
 	}
 
 	/**
@@ -421,10 +384,9 @@ export abstract class MapGeneratorBase {
 		const hidden = document.createElement('div');
 		hidden.className = 'hidden-map';
 		document.body.appendChild(hidden);
-		this.hiddenContainer = hidden;
 		const container = document.createElement('div');
-		container.style.width = this.toPixels(this.width);
-		container.style.height = this.toPixels(this.height);
+		container.style.width = toPixels(this.width, this.unit);
+		container.style.height = toPixels(this.height, this.unit);
 		hidden.appendChild(container);
 
 		const style = this.map.getStyle();
@@ -462,7 +424,6 @@ export abstract class MapGeneratorBase {
 		} finally {
 			hidden.parentNode?.removeChild(hidden);
 			hidden.remove();
-			this.hiddenContainer = undefined;
 			Object.defineProperty(window, 'devicePixelRatio', {
 				get: () => actualPixelRatio,
 				configurable: true
@@ -500,64 +461,6 @@ export abstract class MapGeneratorBase {
 	}
 
 	/**
-	 * Compose the exported image from the rendered map canvas and the overlays.
-	 * @param renderMap hidden Map object which has finished rendering
-	 * @returns 2D canvas containing the final image
-	 */
-	private async composeCanvas(renderMap: MaplibreMap | MapboxMap) {
-		const mapCanvas = renderMap.getCanvas();
-
-		const canvas = document.createElement('canvas');
-		canvas.width = mapCanvas.width;
-		canvas.height = mapCanvas.height;
-
-		const ctx = canvas.getContext('2d');
-		if (!ctx) throw new Error('Failed to get 2D context for the export canvas');
-
-		// fill white first, otherwise transparent areas turn black in JPEG
-		ctx.fillStyle = '#ffffff';
-		ctx.fillRect(0, 0, canvas.width, canvas.height);
-		ctx.imageSmoothingEnabled = true;
-		ctx.imageSmoothingQuality = 'high';
-		ctx.drawImage(mapCanvas, 0, 0);
-
-		const { attribution, scalebar, overlays } = this.createOverlays(renderMap.getBearing());
-		// it has to run before the controls are measured, which the vector SVG does as well
-		attribution.fitWidth(this.hiddenContainer?.firstElementChild?.clientWidth ?? 0, scalebar);
-		const layout = { width: canvas.width, height: canvas.height, scale: this.scaleFactor };
-		for (const overlay of overlays) await overlay.draw(ctx, layout);
-
-		return canvas;
-	}
-
-	/** Look up a control element of the hidden map by its class name */
-	private getControlElement(className: string) {
-		const element = this.hiddenContainer?.getElementsByClassName(className)?.item(0) as
-			HTMLElement | null | undefined;
-		return element && element.offsetWidth > 0 ? element : undefined;
-	}
-
-	/**
-	 * Create the overlays drawn over the map, in the order they are drawn. The attribution comes
-	 * first because the scale bar is stacked over it when they overlap. They keep the box they
-	 * were drawn in, so new ones are created for the canvas and for the vector SVG.
-	 * @param bearing bearing of the rendered map in degrees
-	 */
-	private createOverlays(bearing: number) {
-		const attribution = new AttributionOverlay(
-			this.attributionOptions,
-			this.getControlElement(this.attributionClassName)
-		);
-		const scalebar = new ScalebarOverlay(
-			this.scalebarOptions,
-			this.getControlElement(this.scalebarClassName),
-			attribution
-		);
-		const northIcon = new NorthIconOverlay(this.northIconOptions, bearing);
-		return { attribution, scalebar, overlays: [attribution, scalebar, northIcon] };
-	}
-
-	/**
 	 * Whether the hidden map can be exported as vectors. The image of the map is exported
 	 * when it cannot. Terrain and the globe projection are refused by the conversion itself,
 	 * so this only has to tell what is specific to the underlying library.
@@ -569,480 +472,23 @@ export abstract class MapGeneratorBase {
 	}
 
 	/**
-	 * Convert the rendered map into an SVG which holds its layers as vectors, with the
-	 * overlays drawn on top. It has to run after `composeCanvas`, because it hides layers
-	 * of the hidden map to render the ones which cannot be converted.
-	 *
-	 * @returns undefined when vectors were not asked for, or when the map cannot be
-	 * converted. The image of the map is exported in that case.
-	 */
-	private async composeVectorSVG(renderMap: MaplibreMap | MapboxMap) {
-		if (!this.svgVectorOptions.enabled) return undefined;
-		if (this.format !== Format.SVG && this.format !== Format.PDF) return undefined;
-		if (!this.isVectorExportSupported(renderMap)) {
-			console.warn('The map cannot be exported as vectors, exporting it as an image instead');
-			return undefined;
-		}
-
-		try {
-			// the conversion is written for MapLibre GL JS. A Mapbox GL JS map is passed as it is,
-			// which works for what both libraries have in common.
-			const svg = await maplibre2svg(renderMap as unknown as Parameters<typeof maplibre2svg>[0], {
-				width: this.width,
-				height: this.height,
-				unit: this.unit,
-				labels: this.svgVectorOptions.labels
-			});
-			this.appendVectorOverlays(svg, renderMap.getBearing());
-			return svg;
-		} catch (err) {
-			console.warn('Failed to export the map as vectors, exporting it as an image instead:', err);
-			return undefined;
-		}
-	}
-
-	/**
-	 * Draw the attribution, the scale bar and the north icon on the vector SVG. They are
-	 * laid out like on the export canvas, but in CSS pixels which the SVG is drawn in.
-	 */
-	private appendVectorOverlays(svg: SVGSVGElement, bearing: number) {
-		const layout = {
-			width: parseFloat(this.toPixels(this.width)),
-			height: parseFloat(this.toPixels(this.height)),
-			scale: 1
-		};
-		for (const overlay of this.createOverlays(bearing).overlays) {
-			const element = overlay.create(layout);
-			if (element) svg.appendChild(element);
-		}
-	}
-
-	/**
-	 * Whether the hidden map can be georeferenced by the geographic coordinates of its four
-	 * corners, which needs a flat Web Mercator map seen from straight above.
+	 * Create the class which exports the hidden map as a file of the configured format.
 	 * @param renderMap hidden Map object which has finished rendering
 	 */
-	protected isGeoreferenceSupported(renderMap: MaplibreMap | MapboxMap) {
-		if (renderMap.getPitch() !== 0) return false;
-		const map = renderMap as unknown as {
-			getTerrain?: () => unknown;
-			getProjection?: () => { type?: unknown; name?: unknown } | undefined | null;
-		};
-		if (map.getTerrain?.()) return false;
-		const projection = map.getProjection?.();
-		// MapLibre names it `type`, Mapbox names it `name`
-		const name = projection?.type ?? projection?.name;
-		return name === undefined || name === null || name === 'mercator';
-	}
-
-	/**
-	 * Read the geographic coordinates of the corners of the hidden map, which georeference
-	 * the exported PDF or GeoTIFF. They have to be read while the hidden map still exists.
-	 * @returns undefined when the map cannot be georeferenced
-	 */
-	private getGeoCorners(renderMap: MaplibreMap | MapboxMap): GeoCorners | undefined {
-		if (!this.isGeoreferenceSupported(renderMap)) {
-			console.warn(
-				`The map cannot be georeferenced, exporting the ${this.format.toUpperCase()} without its location`
-			);
-			return undefined;
-		}
-		const container = renderMap.getContainer();
-		const width = container.clientWidth;
-		const height = container.clientHeight;
-		const corner = (x: number, y: number): [number, number] => {
-			const { lng, lat } = renderMap.unproject([x, y]);
-			return [lng, lat];
-		};
-		return {
-			topLeft: corner(0, 0),
-			topRight: corner(width, 0),
-			bottomRight: corner(width, height),
-			bottomLeft: corner(0, height)
-		};
-	}
-
-	/**
-	 * Read the attribution of the hidden map as plain text, as it is shown on the map.
-	 * The sources of the style are used when the attribution control is hidden.
-	 */
-	private getAttributionText(renderMap: MaplibreMap | MapboxMap) {
-		const element = this.hiddenContainer
-			?.getElementsByClassName(`${this.attributionClassName}-inner`)
-			?.item(0);
-		const fromElement = (() => {
-			if (!element) return undefined;
-			const clone = element.cloneNode(true) as HTMLElement;
-			// Mapbox appends a link to its map feedback page, which is no attribution
-			clone.querySelectorAll(`.mapbox-improve-map`).forEach((link) => link.remove());
-			return clone.textContent;
-		})();
-		const text =
-			fromElement ??
-			Object.values(renderMap.getStyle()?.sources ?? {})
-				.map((source) => (source as { attribution?: string }).attribution)
-				.filter((attribution): attribution is string => !!attribution)
-				.map((html) => new DOMParser().parseFromString(html, 'text/html').body.textContent ?? '')
-				.filter((attribution, i, all) => attribution && all.indexOf(attribution) === i)
-				.join(' | ');
-		return text.replace(/\s+/g, ' ').trim() || undefined;
-	}
-
-	/**
-	 * Read what is written into the exported PDF or GeoTIFF from the hidden map, while it
-	 * still exists. A GeoTIFF is always georeferenced, a PDF only when `geoPdf` is true.
-	 * @param renderMap hidden Map object which has finished rendering
-	 */
-	private getExportInfo(renderMap: MaplibreMap | MapboxMap): ExportInfo {
-		if (this.format !== Format.PDF && this.format !== Format.GEOTIFF) return {};
-		const georeference = this.format === Format.GEOTIFF || this.geoPdf;
-		return {
-			corners: georeference ? this.getGeoCorners(renderMap) : undefined,
-			author: this.getAttributionText(renderMap)
-		};
-	}
-
-	private async exportImage(
-		canvas: HTMLCanvasElement,
-		renderMap: MaplibreMap | MapboxMap,
-		svg?: SVGSVGElement,
-		exportInfo: ExportInfo = {}
-	) {
-		const fileName = `${this.fileName}.${this.format}`;
-		switch (this.format) {
-			case Format.PNG:
-				this.toPNG(canvas, fileName);
-				break;
-			case Format.JPEG:
-				this.toJPEG(canvas, fileName);
-				break;
-			case Format.WEBP:
-				this.downloadBlob(await this.createWebpBlob(canvas), fileName);
-				break;
-			case Format.PDF:
-				if (svg) (await this.createVectorPDF(svg, renderMap, exportInfo)).save(fileName);
-				else this.toPDF(canvas, renderMap, fileName, exportInfo);
-				break;
-			case Format.SVG:
-				if (svg) this.downloadBlob(this.createVectorSVGBlob(svg), fileName);
-				else this.toSVG(canvas, fileName);
-				break;
-			case Format.GEOTIFF:
-				this.downloadBlob(await this.createGeoTiffBlob(canvas, renderMap, exportInfo), fileName);
-				break;
-			default:
-				console.error(`Invalid file format: ${this.format}`);
-				break;
-		}
-	}
-
-	/**
-	 * Convert canvas to PNG
-	 * @param canvas Canvas element
-	 * @param fileName file name
-	 */
-	private toPNG(canvas: HTMLCanvasElement, fileName: string) {
-		const a = document.createElement('a');
-		a.href = canvas.toDataURL();
-		a.download = fileName;
-		a.click();
-		a.remove();
-	}
-
-	/**
-	 * Convert canvas to JPEG
-	 * @param canvas Canvas element
-	 * @param fileName file name
-	 */
-	private toJPEG(canvas: HTMLCanvasElement, fileName: string) {
-		const uri = canvas.toDataURL('image/jpeg', 0.85);
-		const a = document.createElement('a');
-		a.href = uri;
-		a.download = fileName;
-		a.click();
-		a.remove();
-	}
-
-	/**
-	 * Encode the composed canvas as WebP. Browsers which cannot encode WebP, such as Safari,
-	 * return a PNG instead, which is warned about in the console.
-	 * @param canvas composed Canvas element
-	 */
-	private async createWebpBlob(canvas: HTMLCanvasElement) {
-		const blob = await this.canvasToBlob(canvas, 'image/webp', 0.9);
-		if (blob.type !== 'image/webp') {
-			console.warn(`This browser cannot encode WebP, the map is exported as ${blob.type} instead`);
-		}
-		return blob;
-	}
-
-	/**
-	 * Convert canvas to PDF
-	 * @param canvas composed Canvas element
-	 * @param map Map object used to read the document properties
-	 * @param fileName file name
-	 * @param exportInfo what is written into the PDF besides the map
-	 */
-	private toPDF(
-		canvas: HTMLCanvasElement,
-		map: MaplibreMap | MapboxMap,
-		fileName: string,
-		exportInfo: ExportInfo = {}
-	) {
-		this.createPDF(canvas, map, exportInfo).save(fileName);
-	}
-
-	/**
-	 * Wrap the composed canvas in a PDF document of the configured page size.
-	 * @param canvas composed Canvas element
-	 * @param map Map object used to read the document properties
-	 * @param exportInfo what is written into the PDF besides the map
-	 */
-	private createPDF(
-		canvas: HTMLCanvasElement,
-		map: MaplibreMap | MapboxMap,
-		exportInfo: ExportInfo = {}
-	) {
-		const pdf = this.createPDFDocument(map, exportInfo);
-
-		pdf.addImage(
-			canvas.toDataURL('image/png'),
-			'png',
-			0,
-			0,
-			this.width,
-			this.height,
-			undefined,
-			'FAST'
-		);
-
-		return pdf;
-	}
-
-	/**
-	 * Create an empty PDF document of the configured page size.
-	 * @param map Map object used to read the document properties
-	 * @param exportInfo what is written into the PDF besides the map
-	 */
-	private createPDFDocument(map: MaplibreMap | MapboxMap, { corners, author }: ExportInfo = {}) {
-		const pdf = new jsPDF({
-			orientation: this.width > this.height ? 'l' : 'p',
+	private getFormat(renderMap: MaplibreMap | MapboxMap) {
+		return createFormat(this.format, renderMap, {
+			size: [this.width, this.height],
+			dpi: this.dpi as DPIType,
 			unit: this.unit,
-			compress: true,
-			format: [this.width, this.height]
+			fileName: this.fileName,
+			cssPrefix: this.cssPrefix,
+			attributionOptions: this.attributionOptions,
+			scalebarOptions: this.scalebarOptions,
+			northIconOptions: this.northIconOptions,
+			svgVectorOptions: this.svgVectorOptions,
+			geoPdf: this.geoPdf,
+			isVectorExportSupported: (map) => this.isVectorExportSupported(map)
 		});
-
-		const { lng, lat } = map.getCenter();
-		pdf.setProperties({
-			title: map.getStyle().name,
-			subject: `center: [${lng}, ${lat}], zoom: ${map.getZoom()}`,
-			creator: this.creatorName,
-			author: author ?? ''
-		});
-
-		if (corners) {
-			// jsPDF has no API for page dictionary entries, but it publishes `putPage` while it
-			// writes the page dictionary, which is where the viewport has to go.
-			const k = pdf.internal.scaleFactor;
-			const viewport = createGeoPdfViewport(corners, this.width * k, this.height * k);
-			// `write` exists on `internal` but is missing from the typings of jsPDF
-			const internal = pdf.internal as typeof pdf.internal & { write: (value: string) => void };
-			internal.events.subscribe('putPage', () => internal.write(viewport));
-		}
-
-		return pdf;
-	}
-
-	/**
-	 * Draw the vector SVG on a PDF document of the configured page size, as vectors.
-	 * @param svg SVG holding the map as vectors
-	 * @param map Map object used to read the document properties
-	 * @param exportInfo what is written into the PDF besides the map
-	 */
-	private async createVectorPDF(
-		svg: SVGSVGElement,
-		map: MaplibreMap | MapboxMap,
-		exportInfo: ExportInfo = {}
-	) {
-		const pdf = this.createPDFDocument(map, exportInfo);
-		const clone = svg.cloneNode(true) as SVGSVGElement;
-		const objectUrls = await this.replaceDataUrlImages(clone);
-		try {
-			await pdf.svg(clone, { x: 0, y: 0, width: this.width, height: this.height });
-		} finally {
-			objectUrls.forEach((url) => URL.revokeObjectURL(url));
-		}
-		return pdf;
-	}
-
-	/**
-	 * Replace the data URLs of the images in the SVG by object URLs.
-	 *
-	 * svg2pdf.js parses a data URL by a regular expression which overflows the call stack for
-	 * a large image, such as a layer rendered as an image for a large page or a high DPI. Any
-	 * other URL is loaded as it is, and its format is read from the extension, which is given
-	 * by the fragment of the object URL.
-	 * @param svg SVG whose images are replaced
-	 * @returns object URLs which have to be revoked after the SVG was drawn
-	 */
-	private async replaceDataUrlImages(svg: SVGSVGElement) {
-		const xlinkNs = 'http://www.w3.org/1999/xlink';
-		const objectUrls: string[] = [];
-		for (const image of Array.from(svg.getElementsByTagName('image'))) {
-			const href = image.getAttributeNS(xlinkNs, 'href') || image.getAttribute('href');
-			// SVG images are parsed as text by svg2pdf.js, which an object URL would break
-			if (!href?.startsWith('data:image/') || href.startsWith('data:image/svg')) continue;
-			const blob = await (await fetch(href)).blob();
-			const objectUrl = URL.createObjectURL(blob);
-			objectUrls.push(objectUrl);
-			const url = `${objectUrl}#image.${blob.type.split('/')[1] ?? 'png'}`;
-			image.setAttributeNS(xlinkNs, 'xlink:href', url);
-			image.setAttribute('href', url);
-		}
-		return objectUrls;
-	}
-
-	/**
-	 * Write the composed canvas as a GeoTIFF placed on the map in EPSG:3857.
-	 * @param canvas composed Canvas element
-	 * @param map Map object used to read the description of the image
-	 * @param exportInfo what is written into the GeoTIFF besides the map
-	 */
-	private createGeoTiffBlob(
-		canvas: HTMLCanvasElement,
-		map: MaplibreMap | MapboxMap,
-		{ corners, author }: ExportInfo = {}
-	) {
-		const ctx = canvas.getContext('2d');
-		if (!ctx) throw new Error('Failed to get 2D context for the export canvas');
-		const { lng, lat } = map.getCenter();
-		return createGeoTiff(
-			{
-				width: canvas.width,
-				height: canvas.height,
-				read: (y, rows) => ctx.getImageData(0, y, canvas.width, rows).data
-			},
-			{
-				corners,
-				dpi: this.dpi,
-				description: `${map.getStyle().name ?? 'map'}, center: [${lng}, ${lat}], zoom: ${map.getZoom()}`,
-				software: this.creatorName,
-				artist: author
-			}
-		);
-	}
-
-	/** Serialize the vector SVG as a file */
-	private createVectorSVGBlob(svg: SVGSVGElement) {
-		return new Blob([svgToString(svg)], { type: 'image/svg+xml' });
-	}
-
-	/** Download a blob as a file */
-	private downloadBlob(blob: Blob, fileName: string) {
-		const url = URL.createObjectURL(blob);
-		const a = document.createElement('a');
-		a.href = url;
-		a.download = fileName;
-		a.click();
-		a.remove();
-		URL.revokeObjectURL(url);
-	}
-
-	/**
-	 * Convert canvas to SVG
-	 * @param canvas Canvas element
-	 * @param fileName file name
-	 */
-	private toSVG(canvas: HTMLCanvasElement, fileName: string) {
-		const a = document.createElement('a');
-		a.href = `data:application/xml,${encodeURIComponent(this.createSVG(canvas))}`;
-		a.download = fileName;
-		a.click();
-		a.remove();
-	}
-
-	/**
-	 * Wrap the composed canvas in an SVG document of the configured page size.
-	 * @param canvas Canvas element
-	 */
-	private createSVG(canvas: HTMLCanvasElement) {
-		const uri = canvas.toDataURL('image/png');
-
-		const pxWidth = Number(this.toPixels(this.width, this.dpi).replace('px', ''));
-		const pxHeight = Number(this.toPixels(this.height, this.dpi).replace('px', ''));
-
-		const svg = `
-    <svg xmlns="http://www.w3.org/2000/svg"
-      xmlns:xlink="http://www.w3.org/1999/xlink"
-      version="1.1"
-      width="${pxWidth}"
-      height="${pxHeight}"
-      viewBox="0 0 ${pxWidth} ${pxHeight}"
-      xml:space="preserve">
-        <image style="stroke: none; stroke-width: 0; stroke-dasharray: none; stroke-linecap: butt; stroke-dashoffset: 0; stroke-linejoin: miter; stroke-miterlimit: 4; fill: rgb(0,0,0); fill-rule: nonzero; opacity: 1;"
-      xlink:href="${uri}" width="${pxWidth}" height="${pxHeight}"></image>
-    </svg>`;
-
-		return svg;
-	}
-
-	/**
-	 * Convert the composed canvas into a `Blob` of the configured format.
-	 * @param canvas composed Canvas element
-	 * @param svg SVG holding the map as vectors, which SVG and PDF are made of when given
-	 * @param exportInfo what is written into the PDF besides the map
-	 */
-	private async toBlobOfFormat(
-		canvas: HTMLCanvasElement,
-		svg?: SVGSVGElement,
-		exportInfo: ExportInfo = {}
-	): Promise<Blob> {
-		switch (this.format) {
-			case Format.JPEG:
-				return this.canvasToBlob(canvas, 'image/jpeg', 0.85);
-			case Format.WEBP:
-				return this.createWebpBlob(canvas);
-			case Format.PDF:
-				// the source map is used for the document properties. The map which was rendered
-				// shares its center, zoom and style, and it is already removed at this point.
-				if (svg) return (await this.createVectorPDF(svg, this.map, exportInfo)).output('blob');
-				return this.createPDF(canvas, this.map, exportInfo).output('blob');
-			case Format.SVG:
-				if (svg) return this.createVectorSVGBlob(svg);
-				return new Blob([this.createSVG(canvas)], { type: 'image/svg+xml' });
-			case Format.GEOTIFF:
-				return this.createGeoTiffBlob(canvas, this.map, exportInfo);
-			case Format.PNG:
-				return this.canvasToBlob(canvas, 'image/png');
-			default:
-				throw new Error(`Invalid file format: ${this.format}`);
-		}
-	}
-
-	/** Promisified `HTMLCanvasElement.toBlob` */
-	private canvasToBlob(canvas: HTMLCanvasElement, type: string, quality?: number) {
-		return new Promise<Blob>((resolve, reject) => {
-			canvas.toBlob(
-				(blob) => {
-					if (blob) resolve(blob);
-					else reject(new Error(`Failed to convert the map image to ${type}`));
-				},
-				type,
-				quality
-			);
-		});
-	}
-
-	/**
-	 * Convert mm/inch to pixel
-	 * @param length mm/inch length
-	 * @param conversionFactor DPI value. default is 96.
-	 */
-	private toPixels(length: number, conversionFactor = 96) {
-		if (this.unit === Unit.mm) {
-			conversionFactor /= 25.4;
-		}
-		return `${conversionFactor * length}px`;
 	}
 
 	/**
