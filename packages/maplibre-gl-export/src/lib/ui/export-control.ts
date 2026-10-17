@@ -225,8 +225,7 @@ export default class MaplibreExportControl implements IControl {
 		const generator = this.createGenerator(map, {
 			...this.createGeneratorConfig(settings),
 			dpi: dpi as MapGeneratorConfig['dpi'],
-			download: false,
-			showLoader: false
+			download: false
 		});
 		return generator.toCanvas();
 	}

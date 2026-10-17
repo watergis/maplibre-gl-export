@@ -133,11 +133,6 @@ export interface MapGeneratorConfig {
 	 * The zoom level is the one of the page laid out at 96 DPI.
 	 */
 	view?: MapView;
-	/**
-	 * Whether a loader is shown over the source map while the map is rendered. default is true.
-	 * The export dialog turns it off for its previews.
-	 */
-	showLoader?: boolean;
 }
 
 /** Timeout for waiting the `load` event of the hidden map */
@@ -181,9 +176,6 @@ export abstract class MapGeneratorBase {
 
 	protected view: MapView | undefined;
 
-	/** whether the loader is shown over the source map while rendering */
-	protected useLoader: boolean;
-
 	/**
 	 * Constructor
 	 * @param map MaplibreMap or MapboxMap object
@@ -207,7 +199,6 @@ export abstract class MapGeneratorBase {
 		this.onExport = config.onExport;
 		this.svgVectorOptions = { ...defaultSvgVectorOptions, ...config.svgVectorOptions };
 		this.geoPdf = config.geoPdf ?? true;
-		this.useLoader = config.showLoader ?? true;
 		this.view = config.view;
 	}
 
@@ -363,16 +354,10 @@ export abstract class MapGeneratorBase {
 	/**
 	 * Render the map on a hidden map object and run `fn` on it once it has finished rendering.
 	 *
-	 * The loader of the source map is shown while rendering, `window.devicePixelRatio` is
-	 * temporarily raised to the export scale factor so that the map is rendered at the
-	 * requested DPI, and everything is cleaned up again afterwards.
+	 * `window.devicePixelRatio` is temporarily raised to the export scale factor so that the
+	 * map is rendered at the requested DPI, and it is restored again afterwards.
 	 */
 	private async withRenderedMap<T>(fn: (renderMap: MaplibreMap) => T | Promise<T>) {
-		if (this.useLoader) {
-			this.addLoader();
-			this.showLoader();
-		}
-
 		// Calculate pixel ratio
 		const actualPixelRatio: number = window.devicePixelRatio;
 		Object.defineProperty(window, 'devicePixelRatio', {
@@ -428,7 +413,6 @@ export abstract class MapGeneratorBase {
 				get: () => actualPixelRatio,
 				configurable: true
 			});
-			if (this.useLoader) this.hideLoader();
 		}
 	}
 
@@ -489,46 +473,5 @@ export abstract class MapGeneratorBase {
 			geoPdf: this.geoPdf,
 			isVectorExportSupported: (map) => this.isVectorExportSupported(map)
 		});
-	}
-
-	/**
-	 * Add loader in the parent element of maplibre map.
-	 */
-	private addLoader() {
-		const canvas = this.map.getCanvas();
-		const grandParent = canvas.parentElement?.parentElement;
-		if (!grandParent) return;
-		const loaderElements = grandParent.getElementsByClassName('map-export-loader');
-		if (loaderElements.length > 0) return;
-		const loader = document.createElement('span');
-		loader.classList.add('map-export-loader');
-		loader.classList.add('loader-default');
-		grandParent.appendChild(loader);
-	}
-
-	/**
-	 * Show loader
-	 */
-	private showLoader() {
-		const canvas = this.map.getCanvas();
-		const grandParent = canvas.parentElement?.parentElement;
-		if (!grandParent) return;
-		const loaderElements = grandParent.getElementsByClassName('map-export-loader');
-		if (loaderElements && loaderElements.length > 0) {
-			loaderElements.item(0)?.classList.add('is-active');
-		}
-	}
-
-	/**
-	 * Hide loader
-	 */
-	private hideLoader() {
-		const canvas = this.map.getCanvas();
-		const grandParent = canvas.parentElement?.parentElement;
-		if (!grandParent) return;
-		const loaderElements = grandParent.getElementsByClassName('map-export-loader');
-		if (loaderElements && loaderElements.length > 0) {
-			loaderElements.item(0)?.classList.remove('is-active');
-		}
 	}
 }

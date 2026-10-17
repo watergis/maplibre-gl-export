@@ -45,6 +45,8 @@ export default class ExportDialog {
 
 	private saveButton!: HTMLButtonElement;
 
+	private closeButton!: HTMLButtonElement;
+
 	private error!: HTMLElement;
 
 	/** camera of the exported map, changed by adjusting the area on the map */
@@ -121,14 +123,21 @@ export default class ExportDialog {
 			if (event.target === dialog && this.pointerDownOnBackdrop) this.close();
 			this.pointerDownOnBackdrop = false;
 		});
-		// Esc
+		// Esc. Chrome stops letting `cancel` be prevented when Esc is pressed again without any
+		// other user action, so Esc is swallowed at keydown while the map is being exported.
+		dialog.addEventListener('keydown', (event) => {
+			if (event.key === 'Escape' && this.saving) event.preventDefault();
+		});
 		dialog.addEventListener('cancel', (event) => {
 			event.preventDefault();
 			this.close();
 		});
 		// the dialog is also closed (hidden) while the area is adjusted on the map
 		dialog.addEventListener('close', () => {
-			if (!this.adjusting) this.destroy();
+			if (this.adjusting) return;
+			// it must stay open while the map is being exported, whatever closed it
+			if (this.saving) dialog.showModal();
+			else this.destroy();
 		});
 		return dialog;
 	}
@@ -139,7 +148,7 @@ export default class ExportDialog {
 		title.id = `${this.idPrefix}-title`;
 		title.append(createIcon(this.prefix, Printer, 'title'), el('span', undefined, this.t.Title));
 
-		const closeButton = createIconButton({
+		this.closeButton = createIconButton({
 			prefix: this.prefix,
 			className: this.cls('dialog__close'),
 			label: this.t.Close,
@@ -148,7 +157,7 @@ export default class ExportDialog {
 			onClick: () => this.close()
 		});
 
-		header.append(title, closeButton);
+		header.append(title, this.closeButton);
 		return header;
 	}
 
@@ -238,6 +247,7 @@ export default class ExportDialog {
 		this.dialog.classList.toggle(this.cls('dialog--saving'), saving);
 		this.dialog.setAttribute('aria-busy', String(saving));
 		this.saveButton.disabled = saving;
+		this.closeButton.disabled = saving;
 		this.preview.setDisabled(saving);
 	}
 

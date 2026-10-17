@@ -17,3 +17,4 @@ BREAKING CHANGES:
 - `generateMap()` of the control was replaced by `exportMap()` / `createGenerator()`.
 - `PrintableAreaManager` fits the page into the map instead of drawing it at 96 DPI.
 - The `.maplibregl-export-list` styles were replaced by the dialog styles.
+- `MapGenerator` no longer shows a loader over the map while it renders, and the `.map-export-loader` styles were removed. The dialog shows its own progress and stays open until the map is saved.

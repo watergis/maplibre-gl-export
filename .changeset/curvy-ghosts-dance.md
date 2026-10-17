@@ -16,3 +16,4 @@ BREAKING CHANGES:
 - The `Generate` translation was removed, and `Title`, `Close`, `Save`, `FileName`, `Landscape`, `Portrait`, `PreviewHint`, `ExportFailed`, `PreviewFailed`, `AdjustArea`, `AdjustAreaHint`, `Done` and `Cancel` were added.
 - `generateMap()` of the control was replaced by `exportMap()` / `createGenerator()`.
 - The `.mapboxgl-export-list` styles were replaced by the dialog styles.
+- `MapGenerator` no longer shows a loader over the map while it renders, and the `.map-export-loader` styles were removed. The dialog shows its own progress and stays open until the map is saved.
