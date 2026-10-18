@@ -16,6 +16,9 @@
  * The scoped rules are one class more specific than their `gl-export-*` class, so a rule which
  * overrides them needs one more class too, e.g. `.gl-export-dialog .gl-export-btn--primary`.
  *
+ * Light or dark: the UI follows the `color-scheme` of the page, e.g. `:root { color-scheme: dark; }`
+ * (`light dark` follows the OS setting; a page without `color-scheme` is light).
+ *
  * Replacing an icon: icons are from Lucide (https://lucide.dev/icons/) and every icon is
  *   <span class="gl-export-icon gl-export-icon--{key}"><svg>…</svg></span>
  * where {key} is one of title, close, pageSize, customWidth, customHeight, landscape,

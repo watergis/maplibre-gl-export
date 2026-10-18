@@ -1,10 +1,13 @@
 /*
- * Theme of the export UI: the `--gl-export-*` custom properties (light defaults, then the dark
- * mode overrides) and the base rules every root of the UI shares. The components keep the rest of
- * their styles in their own `<style>`.
+ * Theme of the export UI: the `--gl-export-*` custom properties and the base rules every root of
+ * the UI shares. The components keep the rest of their styles in their own `<style>`.
  *
  * The roots are the dialog, the toolbar shown on the map while the area is adjusted, and
  * `gl-export-theme`, which applies the theme to the components used on their own (e.g. Storybook).
+ *
+ * Light or dark: the colors are `light-dark()` pairs, so they follow the `color-scheme` the page
+ * sets (e.g. `:root { color-scheme: dark; }`), which the dialog and the toolbar inherit. A page
+ * without `color-scheme` is light; `:root { color-scheme: light dark; }` follows the OS setting.
  *
  * Changing the theme:
  *   .gl-export-dialog {
@@ -19,19 +22,19 @@
 	--gl-export-font:
 		system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
 	--gl-export-font-size: 14px;
-	--gl-export-bg: #ffffff;
-	--gl-export-fg: #1f2933;
-	--gl-export-muted: #64748b;
-	--gl-export-border: #e2e8f0;
-	--gl-export-surface: #f8fafc;
-	--gl-export-preview-bg: #eef2f6;
-	--gl-export-input-bg: #ffffff;
-	--gl-export-accent: #2563eb;
-	--gl-export-accent-hover: #1d4ed8;
+	--gl-export-bg: light-dark(#ffffff, #1e2430);
+	--gl-export-fg: light-dark(#1f2933, #e5e9f0);
+	--gl-export-muted: light-dark(#64748b, #94a3b8);
+	--gl-export-border: light-dark(#e2e8f0, #334155);
+	--gl-export-surface: light-dark(#f8fafc, #252c3a);
+	--gl-export-preview-bg: light-dark(#eef2f6, #151a23);
+	--gl-export-input-bg: light-dark(#ffffff, #151a23);
+	--gl-export-accent: light-dark(#2563eb, #3b82f6);
+	--gl-export-accent-hover: light-dark(#1d4ed8, #60a5fa);
 	--gl-export-accent-fg: #ffffff;
-	--gl-export-focus: rgba(37, 99, 235, 0.35);
-	--gl-export-danger: #dc2626;
-	--gl-export-backdrop: rgba(15, 23, 42, 0.55);
+	--gl-export-focus: light-dark(rgba(37, 99, 235, 0.35), rgba(96, 165, 250, 0.4));
+	--gl-export-danger: light-dark(#dc2626, #f87171);
+	--gl-export-backdrop: light-dark(rgba(15, 23, 42, 0.55), rgba(2, 6, 23, 0.7));
 	--gl-export-radius: 10px;
 	--gl-export-radius-sm: 6px;
 	--gl-export-shadow: 0 24px 64px rgba(15, 23, 42, 0.28);
@@ -43,23 +46,9 @@
 	--gl-export-gap: 16px;
 }
 
-@media (prefers-color-scheme: dark) {
-	.gl-export-dialog,
-	.gl-export-adjust-bar,
-	.gl-export-theme {
-		--gl-export-bg: #1e2430;
-		--gl-export-fg: #e5e9f0;
-		--gl-export-muted: #94a3b8;
-		--gl-export-border: #334155;
-		--gl-export-surface: #252c3a;
-		--gl-export-preview-bg: #151a23;
-		--gl-export-input-bg: #151a23;
-		--gl-export-accent: #3b82f6;
-		--gl-export-accent-hover: #60a5fa;
-		--gl-export-focus: rgba(96, 165, 250, 0.4);
-		--gl-export-danger: #f87171;
-		--gl-export-backdrop: rgba(2, 6, 23, 0.7);
-	}
+/* the components used on their own follow the OS setting */
+.gl-export-theme {
+	color-scheme: light dark;
 }
 
 .gl-export-dialog *,
