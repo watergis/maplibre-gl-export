@@ -1,0 +1,13 @@
+/* the stories are shown with the theme of the dialog, see `src/lib/theme.css` */
+body.gl-export-theme {
+	background: var(--gl-export-background);
+	color: var(--gl-export-foreground);
+	font-family: var(--gl-export-font);
+	font-size: var(--gl-export-font-size);
+	line-height: 1.4;
+}
+
+/* the form components are as wide as the settings column of the dialog */
+.sb-main-padded #storybook-root {
+	width: var(--gl-export-settings-width);
+}

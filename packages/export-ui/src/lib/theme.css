@@ -1,0 +1,111 @@
+/*
+ * Theme of the export UI: the `--gl-export-*` custom properties and the base rules every root of
+ * the UI shares. The components keep the rest of their styles in their own `<style>`.
+ *
+ * The roots are the dialog, the toolbar shown on the map while the area is adjusted, and
+ * `gl-export-theme`, which applies the theme to the components used on their own (e.g. Storybook).
+ *
+ * Colors come in two layers:
+ *   - the palette: the Tailwind CSS colors in use (`--gl-export-slate-500`, ...), slate as the base
+ *     and indigo as the primary color. Only the roles below refer to them.
+ *   - the roles: named as in shadcn/ui (`background`, `foreground`, `primary`, `muted`, `ring`, ...).
+ *     The components use only these, so the roles are what to change for another look.
+ *
+ * Light or dark: the roles are `light-dark()` pairs, so they follow the `color-scheme` the page
+ * sets (e.g. `:root { color-scheme: dark; }`), which the dialog and the toolbar inherit. A page
+ * without `color-scheme` is light; `:root { color-scheme: light dark; }` follows the OS setting.
+ *
+ * Changing the theme:
+ *   .gl-export-dialog {
+ *     --gl-export-primary: #0f766e;
+ *     --gl-export-radius: 4px;
+ *     --gl-export-font: 'Inter', sans-serif;
+ *   }
+ */
+.gl-export-dialog,
+.gl-export-adjust-bar,
+.gl-export-theme {
+	/* palette: Tailwind CSS colors (https://tailwindcss.com/docs/colors) */
+	--gl-export-white: #ffffff;
+	--gl-export-slate-50: oklch(98.4% 0.003 247.858);
+	--gl-export-slate-100: oklch(96.8% 0.007 247.896);
+	--gl-export-slate-200: oklch(92.9% 0.013 255.508);
+	--gl-export-slate-400: oklch(70.4% 0.04 256.788);
+	--gl-export-slate-500: oklch(55.4% 0.046 257.417);
+	--gl-export-slate-700: oklch(37.2% 0.044 257.287);
+	--gl-export-slate-800: oklch(27.9% 0.041 260.031);
+	--gl-export-slate-900: oklch(20.8% 0.042 265.755);
+	--gl-export-slate-950: oklch(12.9% 0.042 264.695);
+	--gl-export-indigo-400: oklch(67.3% 0.182 276.935);
+	--gl-export-indigo-500: oklch(58.5% 0.233 277.117);
+	--gl-export-indigo-600: oklch(51.1% 0.262 276.966);
+	--gl-export-red-400: oklch(70.4% 0.191 22.216);
+	--gl-export-red-600: oklch(57.7% 0.245 27.325);
+
+	/* roles (shadcn/ui names) */
+	--gl-export-background: light-dark(var(--gl-export-white), var(--gl-export-slate-900));
+	--gl-export-foreground: light-dark(var(--gl-export-slate-900), var(--gl-export-slate-100));
+	--gl-export-primary: light-dark(var(--gl-export-indigo-600), var(--gl-export-indigo-500));
+	--gl-export-primary-foreground: var(--gl-export-white);
+	--gl-export-secondary: light-dark(var(--gl-export-slate-100), var(--gl-export-slate-800));
+	--gl-export-secondary-foreground: light-dark(
+		var(--gl-export-slate-900),
+		var(--gl-export-slate-100)
+	);
+	--gl-export-muted: light-dark(var(--gl-export-slate-50), var(--gl-export-slate-800));
+	--gl-export-muted-foreground: light-dark(var(--gl-export-slate-500), var(--gl-export-slate-400));
+	--gl-export-accent: light-dark(var(--gl-export-slate-100), var(--gl-export-slate-800));
+	--gl-export-accent-foreground: light-dark(var(--gl-export-slate-900), var(--gl-export-slate-100));
+	--gl-export-destructive: light-dark(var(--gl-export-red-600), var(--gl-export-red-400));
+	--gl-export-border: light-dark(var(--gl-export-slate-200), var(--gl-export-slate-700));
+	--gl-export-input: light-dark(var(--gl-export-slate-200), var(--gl-export-slate-700));
+	--gl-export-ring: light-dark(var(--gl-export-indigo-500), var(--gl-export-indigo-400));
+	/* roles of this UI which shadcn/ui does not have */
+	--gl-export-input-background: light-dark(var(--gl-export-white), var(--gl-export-slate-950));
+	--gl-export-preview-background: light-dark(
+		var(--gl-export-slate-100),
+		var(--gl-export-slate-950)
+	);
+	--gl-export-backdrop: light-dark(
+		color-mix(in oklch, var(--gl-export-slate-900) 55%, transparent),
+		color-mix(in oklch, var(--gl-export-slate-950) 70%, transparent)
+	);
+	--gl-export-shadow-color: light-dark(var(--gl-export-slate-900), var(--gl-export-slate-950));
+	--gl-export-shadow: 0 24px 64px
+		color-mix(in oklch, var(--gl-export-shadow-color) 28%, transparent);
+
+	--gl-export-font:
+		system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
+	--gl-export-font-size: 14px;
+	--gl-export-radius: 10px;
+	--gl-export-radius-sm: 6px;
+	--gl-export-icon-size: 18px;
+	/* layout */
+	--gl-export-width: 1080px;
+	--gl-export-height: 720px;
+	--gl-export-settings-width: 340px;
+	--gl-export-gap: 16px;
+}
+
+/* the components used on their own follow the OS setting */
+.gl-export-theme {
+	color-scheme: light dark;
+}
+
+.gl-export-dialog *,
+.gl-export-dialog *::before,
+.gl-export-dialog *::after,
+.gl-export-adjust-bar *,
+.gl-export-adjust-bar *::before,
+.gl-export-adjust-bar *::after,
+.gl-export-theme *,
+.gl-export-theme *::before,
+.gl-export-theme *::after {
+	box-sizing: border-box;
+}
+
+/* rows which do not apply to the current settings are hidden */
+.gl-export-dialog [hidden],
+.gl-export-theme [hidden] {
+	display: none !important;
+}

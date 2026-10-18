@@ -15,6 +15,10 @@
 		"./dist/mapbox-gl-export.css": {
 			"import": "./dist/mapbox-gl-export.css",
 			"require": "./dist/mapbox-gl-export.css"
+		},
+		"./dist/mapbox-gl-export.min.css": {
+			"import": "./dist/mapbox-gl-export.min.css",
+			"require": "./dist/mapbox-gl-export.min.css"
 		}
 	},
 	"files": [
@@ -25,9 +29,7 @@
 		"dev": "vite",
 		"build": "npm run build:js && npm run build:css",
 		"build:js": "tsc && vite build",
-		"build:scss": "sass --no-source-map --style=compressed src/scss/mapbox-gl-export.scss:dist/mapbox-gl-export.css",
-		"build:postcss": "postcss dist/*.css -r",
-		"build:css": "npm run build:scss && npm run build:postcss",
+		"build:css": "node -e \"const fs = require('fs'); for (const ext of ['css', 'min.css']) fs.copyFileSync(require.resolve('@watergis/maplibre-gl-export/dist/maplibre-gl-export.' + ext), 'dist/mapbox-gl-export.' + ext)\"",
 		"preview": "vite preview",
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write ."
@@ -65,7 +67,6 @@
 		"maplibre-gl": "^6.0.0",
 		"path": "^0.12.7",
 		"postcss": "^8.5.21",
-		"postcss-cli": "^12.0.0",
 		"prettier": "^3.9.6",
 		"sass": "^1.101.6",
 		"sass-loader": "^17.0.0",

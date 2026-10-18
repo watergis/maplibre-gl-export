@@ -130,12 +130,10 @@
 		}
 
 		exportControl = new MaplibreExportControl({
-			PageSize: Size.A3,
+			PageSize: Size.A4,
 			PageOrientation: PageOrientation.Portrait,
-			Format: Format.PNG,
+			Format: Format.PDF,
 			DPI: DPI[96],
-			Crosshair: true,
-			PrintableArea: true,
 			Local: language,
 			// georeference exported PDF as GeoPDF (default is true)
 			geoPdf: true
@@ -155,8 +153,6 @@
 			PageOrientation: PageOrientation.Landscape,
 			Format: Format.PNG,
 			DPI: DPI[96],
-			Crosshair: true,
-			PrintableArea: true,
 			Local: language,
 			download: false,
 			onExport: ({ blob, fileName, format }) => {
@@ -182,12 +178,12 @@
 			container: mapContainer,
 			// narok vector style
 			// style: 'https://narwassco.github.io/mapbox-stylefiles/unvt/style.json',
-			// center: [35.87063, -1.08551],
-			// zoom: 12,
+			center: [35.87063, -1.08551],
+			zoom: 12,
 			// terrain testing with Bing aerial
 			style: 'https://narwassco.github.io/mapbox-stylefiles/unvt/style-aerial.json',
-			center: [0, 0],
-			zoom: 1,
+			// center: [0, 0],
+			// zoom: 1,
 			hash: true
 		});
 

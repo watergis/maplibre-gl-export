@@ -1,10 +1,8 @@
-export { default as MaplibreExportControl } from './export-control';
-export { default as MapGenerator } from './map-generator';
-export { default as CrosshairManager } from './crosshair-manager';
-export { default as PrintableAreaManager } from './printable-area-manager';
+// the styles of the plugin; Vite bundles them with the styles of the Svelte components
+import '../scss/maplibre-gl-export.scss';
 
-export * from './local';
+export { default as MaplibreExportControl } from './export-control';
+export * from './core';
 export * from './interfaces';
-export * from './map-generator-base';
-export * from './geopdf';
-export * from './geotiff';
+// translations of the export UI, bundled from the internal `@watergis/export-ui` package
+export { AvailableLanguages, getTranslation, Languages } from '@watergis/export-ui';

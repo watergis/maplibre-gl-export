@@ -40,8 +40,6 @@ map.addControl(
 		PageOrientation: PageOrientation.Portrait,
 		Format: Format.PNG,
 		DPI: DPI[96],
-		Crosshair: true,
-		PrintableArea: true,
 		Local: 'en',
 		// experimental: export SVG and PDF as vectors instead of an image of the map
 		svgVectorOptions: { enabled: true },

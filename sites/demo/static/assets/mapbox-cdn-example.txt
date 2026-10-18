@@ -39,8 +39,6 @@
 				PageOrientation: MapboxExportControl.PageOrientation.Landscape,
 				Format: MapboxExportControl.Format.PNG,
 				DPI: MapboxExportControl.DPI[300],
-				Crosshair: true,
-				PrintableArea: true,
 				Local: '{language}',
 				accessToken: mapboxgl.accessToken
 			}), 'top-right');

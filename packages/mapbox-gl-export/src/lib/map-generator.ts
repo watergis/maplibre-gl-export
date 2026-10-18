@@ -93,15 +93,16 @@ export default class MapGenerator extends MapGeneratorBase {
 	// @ts-ignore
 	protected getRenderedMap(container: HTMLElement, style: mapboxgl.Style) {
 		const s = this.stringify(style);
+		const view = this.renderView;
 		// Render map
 		const renderMap = new MapboxMap({
 			accessToken: this.accesstoken || (mapboxgl.accessToken as string),
 			container,
 			style: JSON.parse(s),
-			center: this.map.getCenter(),
-			zoom: this.map.getZoom(),
-			bearing: this.map.getBearing(),
-			pitch: this.map.getPitch(),
+			center: view.center,
+			zoom: view.zoom,
+			bearing: view.bearing,
+			pitch: view.pitch,
 			interactive: false,
 			// required: the canvas is read after the `idle` event (or after its timeout), which
 			// is not guaranteed to be in the frame it was drawn in. Without this the drawing

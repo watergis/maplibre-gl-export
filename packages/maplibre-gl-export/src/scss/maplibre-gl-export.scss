@@ -1,70 +1,52 @@
-.maplibregl-export-list {
-	display: none;
-	// the table below adds its own outer spacing through `border-spacing`
-	padding: 4px;
-}
+/*
+ * Styles of maplibre-gl-export.
+ *
+ * The export dialog and the toolbar shown on the map while adjusting the area are Svelte
+ * components of the internal `@watergis/export-ui` package. Their styles are scoped to the
+ * components and bundled into this file by Vite, after the rules below.
+ *
+ * Every element of the UI has a `gl-export-*` class, and the theme is driven by the
+ * `--gl-export-*` custom properties, so the look is best changed with the custom properties:
+ *   .gl-export-dialog,
+ *   .gl-export-adjust-bar {
+ *     --gl-export-accent: #0f766e;
+ *     --gl-export-radius: 4px;
+ *     --gl-export-font: 'Inter', sans-serif;
+ *   }
+ * The scoped rules are one class more specific than their `gl-export-*` class, so a rule which
+ * overrides them needs one more class too, e.g. `.gl-export-dialog .gl-export-btn--primary`.
+ *
+ * Light or dark: the UI follows the `color-scheme` of the page, e.g. `:root { color-scheme: dark; }`
+ * (`light dark` follows the OS setting; a page without `color-scheme` is light).
+ *
+ * Replacing an icon: icons are from Lucide (https://lucide.dev/icons/) and every icon is
+ *   <span class="gl-export-icon gl-export-icon--{key}"><svg>…</svg></span>
+ * where {key} is one of title, close, pageSize, customWidth, customHeight, landscape,
+ * portrait, format, vector, vectorLabels, dpi, scalebar, northIcon, fileName, save, adjustArea,
+ * zoomOut, zoomIn. Its size is `--gl-export-icon-size`.
+ * Hide the default Lucide SVG and draw another image with a mask (it keeps the text color):
+ *   .gl-export-icon--pageSize svg { display: none; }
+ *   .gl-export-icon--pageSize {
+ *     background-color: currentColor;
+ *     mask: url('my-icon.svg') center / contain no-repeat;
+ *   }
+ * or hide all icons with `.gl-export-dialog .gl-export-icon { display: none; }`.
+ */
 
-.maplibregl-export-list .print-table {
-	// `separate` is required for `border-spacing`: it gives every column/row the same
-	// gutter so the labels and inputs are not cramped against each other.
-	border-collapse: separate;
-	border-spacing: 10px 6px;
+/* ---------------------------------------------------------------------------
+ * Print button of the map control
+ * ------------------------------------------------------------------------- */
 
-	td {
-		padding: 0;
-		vertical-align: middle;
-		white-space: nowrap;
-	}
-}
-
-.maplibregl-ctrl-group .maplibregl-export-list button {
-	background: none;
-	border: none;
-	cursor: pointer;
-	display: block;
-	font-size: 14px;
-	padding: 8px 8px 6px;
-	width: 100%;
-	height: auto;
-	text-align: center;
-}
-
-.maplibregl-export-list button.active {
-	font-weight: bold;
-}
-
-.maplibregl-export-list button:hover {
-	background-color: rgba(0, 0, 0, 0.05);
-}
-
-.maplibregl-export-list button + button {
-	border-top: 1px solid #ddd;
-}
-
-.maplibregl-export-control {
+.gl-export-control {
 	background: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' id='Capa_1' height='512' width='512'  fill='%23333' viewBox='0 0 512 512'%3E%3Cpath d='m422.5 99v-24c0-41.355-33.645-75-75-75h-184c-41.355 0-75 33.645-75 75v24z'/><path d='m118.5 319v122 26 15c0 16.568 13.431 30 30 30h214c16.569 0 30-13.432 30-30v-15-26-122zm177 128h-80c-8.284 0-15-6.716-15-15s6.716-15 15-15h80c8.284 0 15 6.716 15 15s-6.716 15-15 15zm0-64h-80c-8.284 0-15-6.716-15-15s6.716-15 15-15h80c8.284 0 15 6.716 15 15s-6.716 15-15 15z'/><path d='m436.5 129h-361c-41.355 0-75 33.645-75 75v120c0 41.355 33.645 75 75 75h13v-80h-9c-8.284 0-15-6.716-15-15s6.716-15 15-15h24 304 24c8.284 0 15 6.716 15 15s-6.716 15-15 15h-9v80h14c41.355 0 75-33.645 75-75v-120c0-41.355-33.645-75-75-75zm-309 94h-48c-8.284 0-15-6.716-15-15s6.716-15 15-15h48c8.284 0 15 6.716 15 15s-6.716 15-15 15z'/%3E%3C/svg%3E");
 	background-position: center;
 	background-repeat: no-repeat;
 	background-size: 70%;
 }
 
-.maplibregl-export-custom-size {
-	display: flex;
-	align-items: center;
-	gap: 4px;
-
-	input {
-		// wide enough for ~4 digits so the panel keeps the preset layout width
-		width: 4em;
-		flex: none;
-		min-width: 0;
-	}
-
-	.maplibregl-export-unit {
-		flex: none;
-		font-size: 12px;
-	}
-}
+/* ---------------------------------------------------------------------------
+ * Export rendering
+ * ------------------------------------------------------------------------- */
 
 /*
  * Hide high-res map rendering
@@ -74,32 +56,4 @@
 	height: 0;
 	width: 0;
 	position: fixed;
-}
-
-.map-export-loader {
-	&.is-active {
-		position: absolute;
-		z-index: 100;
-		top: 50%;
-		left: 50%;
-		transform: translate(-50%, -50%);
-
-		width: 48px;
-		height: 48px;
-		border: 5px solid #ffffff;
-		border-bottom-color: transparent;
-		border-radius: 50%;
-		display: inline-block;
-		box-sizing: border-box;
-		animation: rotation 1s linear infinite;
-	}
-
-	@keyframes rotation {
-		0% {
-			transform: rotate(0deg);
-		}
-		100% {
-			transform: rotate(360deg);
-		}
-	}
 }

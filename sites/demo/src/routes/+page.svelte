@@ -122,18 +122,6 @@
 			description: 'You can select it from `72`, `96`, `200`, `300` and `400`.'
 		},
 		{
-			name: 'Crosshair',
-			default: 'false',
-			description:
-				'Display crosshair on the map. it helps to adjust the map center before printing. It accepts `true` and `false` value'
-		},
-		{
-			name: 'PritableArea',
-			default: 'false',
-			description:
-				'Display printable area on the map it helps to adjust pritable area before printing. . It accepts `true` and `false`'
-		},
-		{
 			name: 'Local',
 			default: 'en',
 			description: `Available from ${Languages.length} languages: ${AvailableLanguages.join(', ')}`
@@ -237,8 +225,8 @@
 
 		<div class="flex justify-center space-x-2">
 			<img
-				class=" h-auto max-w-sm md:max-w-lg rounded-lg"
-				src="/assets/plugin-overview.webp"
+				class="h-auto w-full max-w-[720px] rounded-lg"
+				src="/assets/plugin-demo.gif"
 				alt="Overview of Plugin"
 			/>
 		</div>
@@ -440,8 +428,6 @@ const exportControl = new ${tabSet === 'maplibre' ? 'Maplibre' : 'Mapbox'}Export
 	PageOrientation: PageOrientation.Portrait,
 	Format: Format.PNG,
 	DPI: DPI[96],
-	Crosshair: true,
-	PrintableArea: true,
 	Local: '${selectedLanguage}',
 	geoPdf: true,
 	${tabSet === 'mapbox' ? `accessToken: '${mapboxToken}',` : ''}
