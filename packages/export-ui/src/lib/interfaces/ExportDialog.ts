@@ -1,3 +1,4 @@
+import type { ExportMap } from './ExportMap';
 import type { FormatType } from './Format';
 import type { MapView } from './MapView';
 import type { PageOrientationType } from './PageOrientation';
@@ -43,12 +44,7 @@ export interface ExportSettings {
 
 export interface ExportDialogOptions {
 	/** map the user is looking at. Its view is the initial view of the preview */
-	map: {
-		getCenter(): { lng: number; lat: number };
-		getZoom(): number;
-		getBearing(): number;
-		getPitch(): number;
-	};
+	map: Pick<ExportMap, 'getCenter' | 'getZoom' | 'getBearing' | 'getPitch'>;
 	translation: Translation;
 	/** page sizes offered in the dropdown, `label -> [long, short]` in mm */
 	sizes: Record<string, SizeType>;

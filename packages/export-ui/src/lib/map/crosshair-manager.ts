@@ -1,8 +1,7 @@
-import { type Map as MaplibreMap } from 'maplibre-gl';
-import { type Map as MapboxMap } from 'mapbox-gl';
+import type { ExportMap } from '../interfaces';
 
 export default class CrosshairManager {
-	private map: MaplibreMap | MapboxMap | undefined;
+	private map: ExportMap | undefined;
 
 	private width: number | undefined;
 
@@ -16,7 +15,7 @@ export default class CrosshairManager {
 
 	private color = '#535353';
 
-	constructor(map: MaplibreMap | MapboxMap | undefined) {
+	constructor(map: ExportMap | undefined) {
 		this.map = map;
 		this.mapResize = this.mapResize.bind(this);
 	}
@@ -24,7 +23,7 @@ export default class CrosshairManager {
 	public create() {
 		this.updateValues();
 		if (this.map !== undefined) {
-			(this.map as MaplibreMap).on('resize', this.mapResize);
+			this.map.on('resize', this.mapResize);
 			this.createCanvas(this.map.getCanvasContainer());
 		} else {
 			console.error('map object is null');
@@ -115,7 +114,7 @@ export default class CrosshairManager {
 		}
 
 		if (this.map !== undefined) {
-			(this.map as MaplibreMap).off('resize', this.mapResize);
+			this.map.off('resize', this.mapResize);
 			this.map = undefined;
 		}
 	}

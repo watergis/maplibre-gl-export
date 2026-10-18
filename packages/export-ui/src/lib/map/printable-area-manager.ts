@@ -1,5 +1,4 @@
-import { type Map as MaplibreMap } from 'maplibre-gl';
-import { type Map as MapboxMap } from 'mapbox-gl';
+import type { ExportMap } from '../interfaces';
 
 /** Space kept free around the printable area, leaving room for the toolbar below it */
 const PADDING = 72;
@@ -26,7 +25,7 @@ export const fitPageInViewport = (
 };
 
 export default class PrintableAreaManager {
-	private map: MaplibreMap | MapboxMap | undefined;
+	private map: ExportMap | undefined;
 
 	private width!: number;
 
@@ -39,13 +38,13 @@ export default class PrintableAreaManager {
 	/** width in CSS pixels of the area shown on the map */
 	private cutoutWidth = 0;
 
-	constructor(map: MaplibreMap | MapboxMap | undefined) {
+	constructor(map: ExportMap | undefined) {
 		this.map = map;
 		if (this.map === undefined) {
 			return;
 		}
 		this.mapResize = this.mapResize.bind(this);
-		(this.map as MaplibreMap).on('resize', this.mapResize);
+		this.map.on('resize', this.mapResize);
 		const clientWidth = this.map?.getCanvas().clientWidth;
 		const clientHeight = this.map?.getCanvas().clientHeight;
 		const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
@@ -113,7 +112,7 @@ export default class PrintableAreaManager {
 		}
 
 		if (this.map !== undefined) {
-			(this.map as MaplibreMap).off('resize', this.mapResize);
+			this.map.off('resize', this.mapResize);
 			this.map = undefined;
 		}
 	}

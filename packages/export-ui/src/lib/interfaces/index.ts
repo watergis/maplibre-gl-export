@@ -1,5 +1,6 @@
 export * from './DPI';
 export * from './ExportDialog';
+export * from './ExportMap';
 export * from './Format';
 export * from './Language';
 export * from './MapView';

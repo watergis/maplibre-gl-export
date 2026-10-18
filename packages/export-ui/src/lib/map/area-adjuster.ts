@@ -1,9 +1,7 @@
-import type { Map as MaplibreMap } from 'maplibre-gl';
-import type { Map as MapboxMap } from 'mapbox-gl';
 import { mount, unmount } from 'svelte';
 import AdjustBar from './AdjustBar.svelte';
 import CrosshairManager from './crosshair-manager';
-import type { MapView, Translation } from '../interfaces';
+import type { ExportMap, MapView, Translation } from '../interfaces';
 import PrintableAreaManager from './printable-area-manager';
 
 /** Number of CSS pixels in a millimeter at 96 DPI, which is the layout resolution of the page */
@@ -32,7 +30,7 @@ export const toMapZoom = (exportZoom: number, pageWidth: number, frameWidth: num
 
 export interface AreaAdjusterOptions {
 	/** map the user adjusts the area on */
-	map: MaplibreMap | MapboxMap;
+	map: ExportMap;
 	translation: Translation;
 }
 
