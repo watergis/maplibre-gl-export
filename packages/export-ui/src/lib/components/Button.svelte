@@ -79,7 +79,7 @@
 
 	.gl-export-btn:focus-visible {
 		outline: none;
-		box-shadow: 0 0 0 3px var(--gl-export-focus);
+		box-shadow: 0 0 0 3px color-mix(in oklch, var(--gl-export-ring) 50%, transparent);
 	}
 
 	.gl-export-btn:disabled {
@@ -89,21 +89,21 @@
 
 	.gl-export-btn--primary {
 		min-width: 120px;
-		background: var(--gl-export-accent);
-		color: var(--gl-export-accent-fg);
+		background: var(--gl-export-primary);
+		color: var(--gl-export-primary-foreground);
 	}
 
 	.gl-export-btn--primary:hover:not(:disabled) {
-		background: var(--gl-export-accent-hover);
+		background: color-mix(in oklch, var(--gl-export-primary) 90%, transparent);
 	}
 
 	.gl-export-btn--secondary {
-		border-color: var(--gl-export-border);
-		background: var(--gl-export-input-bg);
-		color: var(--gl-export-fg);
+		border-color: var(--gl-export-input);
+		background: var(--gl-export-secondary);
+		color: var(--gl-export-secondary-foreground);
 	}
 
 	.gl-export-btn--secondary:hover:not(:disabled) {
-		background: var(--gl-export-surface);
+		background: color-mix(in oklch, var(--gl-export-secondary) 80%, transparent);
 	}
 </style>

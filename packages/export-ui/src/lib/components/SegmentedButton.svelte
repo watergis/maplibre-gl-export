@@ -54,9 +54,9 @@
 		width: 100%;
 		padding: 3px;
 		gap: 3px;
-		border: 1px solid var(--gl-export-border);
+		border: 1px solid var(--gl-export-input);
 		border-radius: var(--gl-export-radius-sm);
-		background: var(--gl-export-surface);
+		background: var(--gl-export-muted);
 	}
 
 	.gl-export-segmented__option {
@@ -69,7 +69,7 @@
 		gap: 6px;
 		height: 30px;
 		border-radius: calc(var(--gl-export-radius-sm) - 2px);
-		color: var(--gl-export-muted);
+		color: var(--gl-export-muted-foreground);
 		cursor: pointer;
 		transition:
 			background-color 0.15s,
@@ -77,17 +77,17 @@
 	}
 
 	.gl-export-segmented__option:hover {
-		color: var(--gl-export-fg);
+		color: var(--gl-export-foreground);
 	}
 
 	.gl-export-segmented__option:has(.gl-export-segmented__input:checked) {
-		background: var(--gl-export-input-bg);
-		color: var(--gl-export-accent);
-		box-shadow: 0 1px 3px rgba(15, 23, 42, 0.15);
+		background: var(--gl-export-primary);
+		color: var(--gl-export-primary-foreground);
+		box-shadow: 0 1px 3px color-mix(in oklch, var(--gl-export-shadow-color) 15%, transparent);
 	}
 
 	.gl-export-segmented__option:has(.gl-export-segmented__input:focus-visible) {
-		box-shadow: 0 0 0 3px var(--gl-export-focus);
+		box-shadow: 0 0 0 3px color-mix(in oklch, var(--gl-export-ring) 50%, transparent);
 	}
 
 	.gl-export-segmented__input {

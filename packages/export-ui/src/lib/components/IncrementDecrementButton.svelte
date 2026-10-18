@@ -66,9 +66,9 @@
 		align-items: center;
 		height: 36px;
 		overflow: hidden;
-		border: 1px solid var(--gl-export-border);
+		border: 1px solid var(--gl-export-input);
 		border-radius: var(--gl-export-radius-sm);
-		background: var(--gl-export-input-bg);
+		background: var(--gl-export-input-background);
 	}
 
 	.gl-export-zoom__button {
@@ -81,7 +81,7 @@
 		padding: 0;
 		border: none;
 		background: transparent;
-		color: var(--gl-export-fg);
+		color: var(--gl-export-foreground);
 		font: inherit;
 		cursor: pointer;
 		transition:
@@ -90,12 +90,12 @@
 	}
 
 	.gl-export-zoom__button:hover:not(:disabled) {
-		background: var(--gl-export-surface);
+		background: var(--gl-export-accent);
 	}
 
 	.gl-export-zoom__button:focus-visible {
 		outline: none;
-		box-shadow: inset 0 0 0 2px var(--gl-export-focus);
+		box-shadow: inset 0 0 0 2px color-mix(in oklch, var(--gl-export-ring) 50%, transparent);
 	}
 
 	.gl-export-zoom__button:disabled {
@@ -106,7 +106,7 @@
 	/* zoom level, click to reset to 100% */
 	.gl-export-zoom__reset {
 		min-width: 56px;
-		color: var(--gl-export-muted);
+		color: var(--gl-export-muted-foreground);
 		font-size: 13px;
 		font-variant-numeric: tabular-nums;
 	}

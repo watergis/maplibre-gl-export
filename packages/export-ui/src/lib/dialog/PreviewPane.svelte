@@ -338,14 +338,14 @@
 		gap: 10px;
 		min-width: 0;
 		padding: var(--gl-export-gap);
-		background: var(--gl-export-preview-bg);
+		background: var(--gl-export-preview-background);
 	}
 
 	/* zoom buttons above the preview and adjust area button below it, both centered */
 	.gl-export-dialog__preview :global(.gl-export-zoom),
 	.gl-export-dialog__preview :global(.gl-export-adjust-area) {
 		flex: none;
-		box-shadow: 0 1px 3px rgba(15, 23, 42, 0.12);
+		box-shadow: 0 1px 3px color-mix(in oklch, var(--gl-export-shadow-color) 12%, transparent);
 	}
 
 	/*
@@ -384,10 +384,10 @@
 		overflow: hidden;
 		/* zoom and offset of the preview image */
 		transform-origin: center;
-		background: var(--gl-export-bg);
+		background: var(--gl-export-background);
 		box-shadow:
 			0 0 0 1px var(--gl-export-border),
-			0 6px 20px rgba(15, 23, 42, 0.18);
+			0 6px 20px color-mix(in oklch, var(--gl-export-shadow-color) 18%, transparent);
 	}
 
 	/* the rendered export image, inserted by the script */
@@ -406,8 +406,8 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		background: rgba(255, 255, 255, 0.35);
-		color: var(--gl-export-accent);
+		background: color-mix(in oklch, var(--gl-export-background) 35%, transparent);
+		color: var(--gl-export-primary);
 		pointer-events: none;
 	}
 
@@ -426,8 +426,8 @@
 		margin: 0;
 		padding: 8px 10px;
 		border-radius: var(--gl-export-radius-sm);
-		background: var(--gl-export-bg);
-		color: var(--gl-export-danger);
+		background: var(--gl-export-background);
+		color: var(--gl-export-destructive);
 		font-size: 13px;
 		text-align: center;
 	}

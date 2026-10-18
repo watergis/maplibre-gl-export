@@ -41,8 +41,8 @@
 		max-width: calc(100% - 32px);
 		padding: 10px 10px 10px 16px;
 		border-radius: 999px;
-		background: var(--gl-export-bg);
-		color: var(--gl-export-fg);
+		background: var(--gl-export-background);
+		color: var(--gl-export-foreground);
 		box-shadow: var(--gl-export-shadow);
 		font-family: var(--gl-export-font);
 		font-size: var(--gl-export-font-size);

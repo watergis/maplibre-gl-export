@@ -31,7 +31,7 @@
 		height: 22px;
 		margin: 0;
 		border-radius: 11px;
-		background: var(--gl-export-border);
+		background: var(--gl-export-input);
 		appearance: none;
 		cursor: pointer;
 		transition: background-color 0.15s;
@@ -44,14 +44,14 @@
 		width: 16px;
 		height: 16px;
 		border-radius: 50%;
-		background: #ffffff;
-		box-shadow: 0 1px 2px rgba(15, 23, 42, 0.3);
+		background: var(--gl-export-primary-foreground);
+		box-shadow: 0 1px 2px color-mix(in oklch, var(--gl-export-shadow-color) 30%, transparent);
 		content: '';
 		transition: transform 0.15s;
 	}
 
 	.gl-export-switch:checked {
-		background: var(--gl-export-accent);
+		background: var(--gl-export-primary);
 	}
 
 	.gl-export-switch:checked::before {
@@ -60,6 +60,6 @@
 
 	.gl-export-switch:focus-visible {
 		outline: none;
-		box-shadow: 0 0 0 3px var(--gl-export-focus);
+		box-shadow: 0 0 0 3px color-mix(in oklch, var(--gl-export-ring) 50%, transparent);
 	}
 </style>

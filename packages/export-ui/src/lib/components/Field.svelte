@@ -58,12 +58,12 @@
 		display: flex;
 		align-items: center;
 		gap: 8px;
-		color: var(--gl-export-fg);
+		color: var(--gl-export-foreground);
 		font-weight: 500;
 	}
 
 	.gl-export-field__label :global(.gl-export-icon) {
-		color: var(--gl-export-muted);
+		color: var(--gl-export-muted-foreground);
 	}
 
 	.gl-export-field__control {
@@ -88,7 +88,7 @@
 	/* value shown at the end of a field label, e.g. the DPI */
 	.gl-export-field__value {
 		margin-left: auto;
-		color: var(--gl-export-accent);
+		color: var(--gl-export-primary);
 		font-weight: 600;
 		font-variant-numeric: tabular-nums;
 	}

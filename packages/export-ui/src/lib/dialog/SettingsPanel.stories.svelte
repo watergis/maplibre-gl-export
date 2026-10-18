@@ -62,8 +62,8 @@
 		overflow: hidden;
 		border: 1px solid var(--gl-export-border);
 		border-radius: var(--gl-export-radius);
-		background: var(--gl-export-bg);
-		color: var(--gl-export-fg);
+		background: var(--gl-export-background);
+		color: var(--gl-export-foreground);
 		font-family: var(--gl-export-font);
 		font-size: var(--gl-export-font-size);
 		line-height: 1.4;

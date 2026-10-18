@@ -78,10 +78,10 @@
 		min-width: 0;
 		height: 36px;
 		padding: 0 10px;
-		border: 1px solid var(--gl-export-border);
+		border: 1px solid var(--gl-export-input);
 		border-radius: var(--gl-export-radius-sm) 0 0 var(--gl-export-radius-sm);
-		background-color: var(--gl-export-input-bg);
-		color: var(--gl-export-fg);
+		background-color: var(--gl-export-input-background);
+		color: var(--gl-export-foreground);
 		font: inherit;
 		transition:
 			border-color 0.15s,
@@ -89,17 +89,17 @@
 	}
 
 	.gl-export-input:hover {
-		border-color: var(--gl-export-muted);
+		border-color: var(--gl-export-muted-foreground);
 	}
 
 	.gl-export-input:focus {
-		border-color: var(--gl-export-accent);
+		border-color: var(--gl-export-primary);
 		outline: none;
-		box-shadow: 0 0 0 3px var(--gl-export-focus);
+		box-shadow: 0 0 0 3px color-mix(in oklch, var(--gl-export-ring) 50%, transparent);
 	}
 
 	.gl-export-input:invalid {
-		border-color: var(--gl-export-danger);
+		border-color: var(--gl-export-destructive);
 	}
 
 	.gl-export-input-addon {
@@ -107,11 +107,11 @@
 		flex: none;
 		align-items: center;
 		padding: 0 10px;
-		border: 1px solid var(--gl-export-border);
+		border: 1px solid var(--gl-export-input);
 		border-left: none;
 		border-radius: 0 var(--gl-export-radius-sm) var(--gl-export-radius-sm) 0;
-		background: var(--gl-export-surface);
-		color: var(--gl-export-muted);
+		background: var(--gl-export-muted);
+		color: var(--gl-export-muted-foreground);
 		font-size: 13px;
 	}
 </style>

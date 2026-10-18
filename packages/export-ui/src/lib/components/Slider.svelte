@@ -71,7 +71,7 @@
 	.gl-export-range__input {
 		--gl-export-range-track: linear-gradient(
 			to right,
-			var(--gl-export-accent) var(--gl-export-range-progress, 0%),
+			var(--gl-export-primary) var(--gl-export-range-progress, 0%),
 			var(--gl-export-border) var(--gl-export-range-progress, 0%)
 		);
 		width: 100%;
@@ -98,10 +98,10 @@
 		width: var(--gl-export-range-thumb);
 		height: var(--gl-export-range-thumb);
 		margin-top: calc((4px - var(--gl-export-range-thumb)) / 2);
-		border: 2px solid #ffffff;
+		border: 2px solid var(--gl-export-primary-foreground);
 		border-radius: 50%;
-		background: var(--gl-export-accent);
-		box-shadow: 0 1px 3px rgba(15, 23, 42, 0.35);
+		background: var(--gl-export-primary);
+		box-shadow: 0 1px 3px color-mix(in oklch, var(--gl-export-shadow-color) 35%, transparent);
 		appearance: none;
 	}
 
@@ -109,10 +109,10 @@
 		box-sizing: border-box;
 		width: var(--gl-export-range-thumb);
 		height: var(--gl-export-range-thumb);
-		border: 2px solid #ffffff;
+		border: 2px solid var(--gl-export-primary-foreground);
 		border-radius: 50%;
-		background: var(--gl-export-accent);
-		box-shadow: 0 1px 3px rgba(15, 23, 42, 0.35);
+		background: var(--gl-export-primary);
+		box-shadow: 0 1px 3px color-mix(in oklch, var(--gl-export-shadow-color) 35%, transparent);
 	}
 
 	.gl-export-range__input:focus {
@@ -120,11 +120,11 @@
 	}
 
 	.gl-export-range__input:focus-visible::-webkit-slider-thumb {
-		box-shadow: 0 0 0 4px var(--gl-export-focus);
+		box-shadow: 0 0 0 4px color-mix(in oklch, var(--gl-export-ring) 50%, transparent);
 	}
 
 	.gl-export-range__input:focus-visible::-moz-range-thumb {
-		box-shadow: 0 0 0 4px var(--gl-export-focus);
+		box-shadow: 0 0 0 4px color-mix(in oklch, var(--gl-export-ring) 50%, transparent);
 	}
 
 	/* every tick sits under the center of the thumb at that position */
@@ -141,7 +141,7 @@
 		padding: 0;
 		border: none;
 		background: none;
-		color: var(--gl-export-muted);
+		color: var(--gl-export-muted-foreground);
 		font: inherit;
 		font-size: 12px;
 		font-variant-numeric: tabular-nums;
@@ -150,11 +150,11 @@
 	}
 
 	.gl-export-range__tick:hover {
-		color: var(--gl-export-fg);
+		color: var(--gl-export-foreground);
 	}
 
 	.gl-export-range__tick--active {
-		color: var(--gl-export-accent);
+		color: var(--gl-export-primary);
 		font-weight: 600;
 	}
 </style>

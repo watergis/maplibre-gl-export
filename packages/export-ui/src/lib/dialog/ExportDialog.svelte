@@ -280,8 +280,8 @@
 		overflow: hidden;
 		border: none;
 		border-radius: var(--gl-export-radius);
-		background: var(--gl-export-bg);
-		color: var(--gl-export-fg);
+		background: var(--gl-export-background);
+		color: var(--gl-export-foreground);
 		box-shadow: var(--gl-export-shadow);
 		font-family: var(--gl-export-font);
 		font-size: var(--gl-export-font-size);
@@ -338,7 +338,7 @@
 	}
 
 	.gl-export-dialog__title :global(.gl-export-icon) {
-		color: var(--gl-export-accent);
+		color: var(--gl-export-primary);
 	}
 
 	.gl-export-dialog__close {
@@ -351,7 +351,7 @@
 		border: none;
 		border-radius: 50%;
 		background: transparent;
-		color: var(--gl-export-muted);
+		color: var(--gl-export-muted-foreground);
 		cursor: pointer;
 		transition:
 			background-color 0.15s,
@@ -359,13 +359,13 @@
 	}
 
 	.gl-export-dialog__close:hover {
-		background: var(--gl-export-surface);
-		color: var(--gl-export-fg);
+		background: var(--gl-export-accent);
+		color: var(--gl-export-foreground);
 	}
 
 	.gl-export-dialog__close:focus-visible {
 		outline: none;
-		box-shadow: 0 0 0 3px var(--gl-export-focus);
+		box-shadow: 0 0 0 3px color-mix(in oklch, var(--gl-export-ring) 50%, transparent);
 	}
 
 	/* the dialog cannot be closed while the map is being exported */
@@ -396,7 +396,7 @@
 	.gl-export-dialog__error {
 		flex: 1;
 		margin: 0;
-		color: var(--gl-export-danger);
+		color: var(--gl-export-destructive);
 		font-size: 13px;
 	}
 
