@@ -26,6 +26,19 @@ pnpm add @watergis/maplibre-gl-export maplibre-gl
 CDN examples: [stable default](./index_cdn.html), [v5](./index_cdn_v5.html), and
 [v6](./index_cdn_v6.html).
 
+## North icon
+
+The symbol, the colour and the size of the north icon are chosen under the **North icon** switch
+of the export dialog. The symbol is one of the compass icons of [Font-GIS](https://viglino.github.io/font-gis/) (Apache-2.0, by
+Jean-Marc Viglino), or an SVG file. The colour is written into the SVG, where it replaces
+`currentColor`. The size is set from 0% to 300% of the default size (5% of the page width). The icon shown first
+is set with `northIconOptions.image`, and its size (a fraction of the page width) with
+`northIconOptions.imageSizeFraction`:
+
+```ts
+map.addControl(new MaplibreExportControl({ northIconOptions: { image: '<svg ...>...</svg>', imageSizeFraction: 0.08 } }));
+```
+
 ## Vector export (experimental)
 
 By default `svg` and `pdf` wrap an image of the map. Turn on **Export as vector** in the export dialog,

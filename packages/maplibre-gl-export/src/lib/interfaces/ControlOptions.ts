@@ -12,8 +12,13 @@ import { ExportResult } from './ExportResult';
 import { ScalebarOptions } from './ScalebarOptions';
 
 export interface NorthIconOptions {
+	/**
+	 * SVG source of the north icon. default is `north-arrow` of Font-GIS in black. The user can
+	 * choose another icon and its colour in the export dialog.
+	 */
 	image?: string;
 	imageName?: string;
+	/** width of the north icon as a fraction of the page width, default is 0.05. It is changed in the export dialog */
 	imageSizeFraction?: number;
 	visibility?: 'visible' | 'none';
 	position?: ControlPosition;

@@ -1,4 +1,13 @@
-import { DPI, Format, PageOrientation, Size, type ExportDialogState } from '../lib';
+import {
+	DEFAULT_NORTH_ICON,
+	DEFAULT_NORTH_ICON_COLOR,
+	DEFAULT_NORTH_ICON_SIZE_FRACTION,
+	DPI,
+	Format,
+	PageOrientation,
+	Size,
+	type ExportDialogState
+} from '../lib';
 import { AvailableLanguages } from '../lib/local';
 
 /** Initial state of the dialog, as the control derives it from its default options */
@@ -11,6 +20,9 @@ export const defaultDialogState = (): ExportDialogState => ({
 	dpi: DPI[300],
 	scalebar: true,
 	northIcon: true,
+	northIconImage: DEFAULT_NORTH_ICON,
+	northIconColor: DEFAULT_NORTH_ICON_COLOR,
+	northIconSizeFraction: DEFAULT_NORTH_ICON_SIZE_FRACTION,
 	vector: false,
 	vectorLabels: false,
 	fileName: 'map'

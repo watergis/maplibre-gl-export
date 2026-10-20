@@ -7,16 +7,22 @@
 		FilePenLine,
 		MoveHorizontal,
 		MoveVertical,
+		Palette,
 		Proportions,
 		RectangleHorizontal,
 		RectangleVertical,
 		RulerDimensionLine,
+		Scaling,
+		Shapes,
 		Type,
 		VectorPolygon
 	} from '@lucide/svelte';
 	import { untrack } from 'svelte';
+	import ColorInput from '../components/ColorInput.svelte';
 	import Field from '../components/Field.svelte';
+	import FieldGroup from '../components/FieldGroup.svelte';
 	import InputGroup from '../components/InputGroup.svelte';
+	import NorthIconPicker from '../components/NorthIconPicker.svelte';
 	import SegmentedButton from '../components/SegmentedButton.svelte';
 	import Select from '../components/Select.svelte';
 	import Slider from '../components/Slider.svelte';
@@ -29,6 +35,7 @@
 		type SizeType,
 		type Translation
 	} from '../interfaces';
+	import { DEFAULT_NORTH_ICON_SIZE_FRACTION, NORTH_ICON_SIZES } from '../north-icons/north-icons';
 	import { isVectorFormat, sanitizeFileName } from '../utils/format';
 	import { CUSTOM_SIZE_VALUE, readPageSize } from '../utils/page-size';
 
@@ -86,6 +93,19 @@
 		customWidthInput?.reportValidity();
 		customHeightInput?.reportValidity();
 	};
+
+	/** size of the north icon in % of the default size, as the slider shows it */
+	const northIconSize = $derived(
+		Number(((formState.northIconSizeFraction / DEFAULT_NORTH_ICON_SIZE_FRACTION) * 100).toFixed(2))
+	);
+	// a size of the options is offered even when it is not one of the presets
+	const northIconSizes = $derived(
+		NORTH_ICON_SIZES.includes(northIconSize)
+			? NORTH_ICON_SIZES
+			: [...NORTH_ICON_SIZES, northIconSize].sort((a, b) => a - b)
+	);
+	/** only the parts of the north icon filled with `currentColor` take the colour */
+	const northIconColorable = $derived(formState.northIconImage.includes('currentColor'));
 
 	const onPageLayoutChange = () => {
 		const size = readPageSize(formState);
@@ -252,6 +272,48 @@
 			onchange={() => onrenderchange?.()}
 		/>
 	</Field>
+	<!-- settings of the north icon, while it is shown -->
+	<FieldGroup name="northIcon" hidden={!formState.northIcon}>
+		<Field name="northIconSymbol" icon={Shapes} label={t.IconSymbol} modifiers={['inline']}>
+			<NorthIconPicker
+				id={id('north-icon-symbol')}
+				translation={t}
+				label={t.IconSymbol}
+				bind:image={formState.northIconImage}
+				onchange={() => onrenderchange?.()}
+			/>
+		</Field>
+		<Field name="northIconColor" icon={Palette} label={t.IconColor} modifiers={['inline']}>
+			<ColorInput
+				id={id('north-icon-color')}
+				name="north-icon-color"
+				label={t.IconColor}
+				bind:value={formState.northIconColor}
+				disabled={!northIconColorable}
+				onchange={() => onrenderchange?.()}
+			/>
+		</Field>
+		<Field
+			name="northIconSize"
+			icon={Scaling}
+			label={t.IconSize}
+			id={id('north-icon-size')}
+			value="{northIconSize}%"
+		>
+			<Slider
+				id={id('north-icon-size')}
+				name="north-icon-size"
+				values={northIconSizes}
+				value={northIconSize}
+				valueText={(value) => `${value}%`}
+				ticks={false}
+				onchange={(value) => {
+					formState.northIconSizeFraction = (DEFAULT_NORTH_ICON_SIZE_FRACTION * value) / 100;
+					onrenderchange?.();
+				}}
+			/>
+		</Field>
+	</FieldGroup>
 
 	<Field name="fileName" icon={FilePenLine} label={t.FileName} id={id('file-name')}>
 		<InputGroup

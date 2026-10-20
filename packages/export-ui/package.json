@@ -78,6 +78,7 @@
 		"#lib/*": "./src/lib/*"
 	},
 	"dependencies": {
-		"@lucide/svelte": "^1.55.0"
+		"@lucide/svelte": "^1.55.0",
+		"font-gis": "^1.0.6"
 	}
 }
