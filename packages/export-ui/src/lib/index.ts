@@ -9,14 +9,18 @@ export { default as CrosshairManager } from './map/crosshair-manager';
 export { default as PrintableAreaManager } from './map/printable-area-manager';
 export * from './interfaces';
 export * from './local';
+export * from './north-icons/north-icons';
 export * from './utils/format';
 export * from './utils/page-size';
 export * from './utils/preview';
 
 export { default as Button } from './components/Button.svelte';
+export { default as ColorInput } from './components/ColorInput.svelte';
 export { default as Field } from './components/Field.svelte';
+export { default as FieldGroup } from './components/FieldGroup.svelte';
 export { default as Icon } from './components/Icon.svelte';
 export { default as IncrementDecrementButton } from './components/IncrementDecrementButton.svelte';
+export { default as NorthIconPicker } from './components/NorthIconPicker.svelte';
 export { default as InputGroup } from './components/InputGroup.svelte';
 export { default as SegmentedButton } from './components/SegmentedButton.svelte';
 export { default as Select } from './components/Select.svelte';

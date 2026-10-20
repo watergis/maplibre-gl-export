@@ -21,6 +21,12 @@ export type Translation = {
 	Cancel: string;
 	Scalebar: string;
 	NorthIcon: string;
+	ChooseNorthIcon: string;
+	ChooseSvgFile: string;
+	IconSymbol: string;
+	IconColor: string;
+	IconSize: string;
+	InvalidSvg: string;
 	ExportAsVector: string;
 	ExportLabelsAsVector: string;
 	Custom: string;

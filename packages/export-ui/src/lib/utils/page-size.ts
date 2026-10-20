@@ -9,6 +9,7 @@ import {
 	type PageOrientationType,
 	type SizeType
 } from '../interfaces';
+import { applyNorthIconColor } from '../north-icons/north-icons';
 import { isVectorFormat, sanitizeFileName } from './format';
 
 /**
@@ -115,6 +116,8 @@ export const toExportSettings = (
 	fileName: sanitizeFileName(state.fileName, state.format),
 	scalebar: state.scalebar,
 	northIcon: state.northIcon,
+	northIconImage: applyNorthIconColor(state.northIconImage, state.northIconColor),
+	northIconSizeFraction: state.northIconSizeFraction,
 	vector: isVectorFormat(state.format) && state.vector,
 	vectorLabels: state.vectorLabels,
 	view,

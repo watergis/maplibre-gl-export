@@ -18,6 +18,12 @@ export interface ExportDialogState {
 	dpi: number;
 	scalebar: boolean;
 	northIcon: boolean;
+	/** SVG source of the north icon, filled with `currentColor` where it follows `northIconColor` */
+	northIconImage: string;
+	/** CSS colour of the north icon */
+	northIconColor: string;
+	/** width of the north icon as a fraction of the page width */
+	northIconSizeFraction: number;
 	vector: boolean;
 	vectorLabels: boolean;
 	/** file name without extension */
@@ -34,6 +40,10 @@ export interface ExportSettings {
 	fileName: string;
 	scalebar: boolean;
 	northIcon: boolean;
+	/** SVG source of the north icon, in the colour chosen in the dialog */
+	northIconImage: string;
+	/** width of the north icon as a fraction of the page width */
+	northIconSizeFraction: number;
 	vector: boolean;
 	vectorLabels: boolean;
 	/** camera of the exported map, as chosen in the preview */

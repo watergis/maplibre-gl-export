@@ -11,7 +11,10 @@
 		label: string;
 		/** id of the control the label is for */
 		id?: string;
-		/** added as `gl-export-field--{modifier}`; `switch` puts the control on the line of the label */
+		/**
+		 * added as `gl-export-field--{modifier}`; `switch` puts the control on the line of the label,
+		 * which toggles it when clicked, and `inline` puts it there without that
+		 */
 		modifiers?: string[];
 		hidden?: boolean;
 		/** shown at the end of the label, such as the value of a slider */
@@ -72,7 +75,8 @@
 	}
 
 	/* a switch sits on the same line as its label */
-	.gl-export-field--switch {
+	.gl-export-field--switch,
+	.gl-export-field--inline {
 		flex-direction: row;
 		align-items: center;
 		justify-content: space-between;
@@ -83,6 +87,11 @@
 		flex: 1;
 		align-self: stretch;
 		cursor: pointer;
+	}
+
+	/* the control opens a popup, so only the control itself opens it, not its label */
+	.gl-export-field--inline .gl-export-field__label {
+		flex: 1;
 	}
 
 	/* value shown at the end of a field label, e.g. the DPI */

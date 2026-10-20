@@ -5,7 +5,7 @@ const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 /**
  * Stand-in for the generator of maplibre-gl-export, which renders the real export: it draws the
- * canvas of the map on a page of the size and DPI of the preview, with placeholders of the scale
+ * canvas of the map on a page of the size and DPI of the preview, with a placeholder of the scale
  * bar and the north icon.
  */
 export const mockRenderPreview =
@@ -45,8 +45,11 @@ export const mockRenderPreview =
 			context.fillText('100 km', unit, height - unit * 2.5);
 		}
 		if (settings.northIcon) {
-			context.textAlign = 'center';
-			context.fillText('▲ N', width - unit * 2, unit * 2);
+			const image = new Image();
+			image.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(settings.northIconImage)}`;
+			await image.decode().catch(() => undefined);
+			const size = width * settings.northIconSizeFraction;
+			context.drawImage(image, width - size - unit, unit, size, size);
 		}
 		return canvas;
 	};

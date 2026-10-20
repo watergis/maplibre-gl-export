@@ -1,5 +1,5 @@
 <!--
-	Slider snapping to a list of values, with a button for every value below it.
+	Slider snapping to a list of values, with a button for every value below it (unless `ticks` is false).
 	The slider holds the index of the value, so the values are evenly spaced.
 	The readout of the value is placed by the caller (usually in the label of the field).
 -->
@@ -13,10 +13,20 @@
 		value: number;
 		/** accessible text of a value, e.g. `300 DPI` */
 		valueText?: (value: number) => string;
+		/** whether the values are shown below the slider. default is true */
+		ticks?: boolean;
 		onchange?: (value: number) => void;
 	}
 
-	let { id, name, values, value = $bindable(), valueText, onchange }: Props = $props();
+	let {
+		id,
+		name,
+		values,
+		value = $bindable(),
+		valueText,
+		ticks = true,
+		onchange
+	}: Props = $props();
 
 	let input: HTMLInputElement;
 	const index = $derived(values.indexOf(value));
@@ -43,20 +53,22 @@
 		style:--gl-export-range-progress="{progress}%"
 		oninput={(event) => select(Number(event.currentTarget.value))}
 	/>
-	<div class="gl-export-range__ticks">
-		{#each values as tick, i (tick)}
-			<!-- the slider itself is reachable with the keyboard -->
-			<button
-				type="button"
-				tabindex="-1"
-				class={['gl-export-range__tick', i === index && 'gl-export-range__tick--active']}
-				onclick={() => {
-					select(i);
-					input.focus();
-				}}>{tick}</button
-			>
-		{/each}
-	</div>
+	{#if ticks}
+		<div class="gl-export-range__ticks">
+			{#each values as tick, i (tick)}
+				<!-- the slider itself is reachable with the keyboard -->
+				<button
+					type="button"
+					tabindex="-1"
+					class={['gl-export-range__tick', i === index && 'gl-export-range__tick--active']}
+					onclick={() => {
+						select(i);
+						input.focus();
+					}}>{tick}</button
+				>
+			{/each}
+		</div>
+	{/if}
 </div>
 
 <style>

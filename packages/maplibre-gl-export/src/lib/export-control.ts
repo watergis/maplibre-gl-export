@@ -3,10 +3,12 @@ import { Map as MapboxMap } from 'mapbox-gl';
 import {
 	AreaAdjuster,
 	CUSTOM_SIZE_VALUE,
+	DEFAULT_NORTH_ICON_SIZE_FRACTION,
 	ExportDialog,
 	getTranslation,
 	isSameSize,
 	orientSize,
+	readNorthIcon,
 	resolveAllowedSizes,
 	type ExportDialogState,
 	type ExportSettings
@@ -160,6 +162,10 @@ export default class MaplibreExportControl implements IControl {
 		const pageSize = (this.options.PageSize ?? Size.A4) as SizeType;
 		const orientation = this.options.PageOrientation ?? PageOrientation.Landscape;
 		const preset = Object.values(sizes).find((size) => isSameSize(size, pageSize));
+		// the colour is written into the SVG; the picker colours the icon again from these
+		const northIcon = readNorthIcon(
+			this.options.northIconOptions?.image ?? (defaultNorthIconOptions.image as string)
+		);
 		const customSize = orientSize(pageSize, orientation);
 		return {
 			// a `PageSize` which is not offered in the dropdown is shown as a custom size
@@ -171,6 +177,10 @@ export default class MaplibreExportControl implements IControl {
 			dpi: this.options.DPI ?? DPI[300],
 			scalebar: this.options.scalebarOptions?.visibility !== 'none',
 			northIcon: this.options.northIconOptions?.visibility !== 'none',
+			northIconImage: northIcon.image,
+			northIconColor: northIcon.color,
+			northIconSizeFraction:
+				this.options.northIconOptions?.imageSizeFraction ?? DEFAULT_NORTH_ICON_SIZE_FRACTION,
 			vector: this.options.svgVectorOptions?.enabled === true,
 			vectorLabels: this.options.svgVectorOptions?.labels === 'vector',
 			fileName: this.options.Filename ?? 'map'
@@ -204,6 +214,8 @@ export default class MaplibreExportControl implements IControl {
 			northIconOptions: {
 				...defaultNorthIconOptions,
 				...this.options.northIconOptions,
+				image: settings.northIconImage,
+				imageSizeFraction: settings.northIconSizeFraction,
 				visibility: settings.northIcon ? 'visible' : 'none'
 			},
 			svgVectorOptions: {
