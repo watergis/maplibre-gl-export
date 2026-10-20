@@ -1,7 +1,7 @@
 {
 	"name": "@watergis/export-ui",
 	"description": "Internal Svelte UI of the export dialog, bundled into maplibre-gl-export and mapbox-gl-export.",
-	"version": "0.0.1",
+	"version": "0.1.0",
 	"private": true,
 	"scripts": {
 		"dev": "vite dev",
