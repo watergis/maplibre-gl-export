@@ -501,7 +501,7 @@ importers:
         version: 1.66.0(svelte@5.57.3(@typescript-eslint/types@8.72.1))
       '@skeletonlabs/skeleton':
         specifier: ^5.0.0
-        version: 5.0.1(tailwindcss@4.3.3)
+        version: 5.0.1(tailwindcss@4.3.4)
       '@skeletonlabs/skeleton-svelte':
         specifier: ^5.0.0
         version: 5.0.1(svelte@5.57.3(@typescript-eslint/types@8.72.1))
@@ -581,8 +581,8 @@ importers:
         specifier: ^4.7.5
         version: 4.7.7(picomatch@4.0.7)(svelte@5.57.3(@typescript-eslint/types@8.72.1))(typescript@6.0.3)
       tailwindcss:
-        specifier: 4.3.3
-        version: 4.3.3
+        specifier: 4.3.4
+        version: 4.3.4
       tslib:
         specifier: ^2.8.1
         version: 2.9.1
@@ -597,7 +597,7 @@ importers:
         version: 8.3.5(@types/node@25.9.9)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.107.1)(yaml@2.9.1)
       vite-plugin-tailwind-purgecss:
         specifier: 0.3.5
-        version: 0.3.5(tailwindcss@4.3.3)(vite@8.3.5(@types/node@25.9.9)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.107.1)(yaml@2.9.1))
+        version: 0.3.5(tailwindcss@4.3.4)(vite@8.3.5(@types/node@25.9.9)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.107.1)(yaml@2.9.1))
 
 packages:
 
@@ -4286,6 +4286,9 @@ packages:
   tailwindcss@4.3.3:
     resolution: {integrity: sha512-gOhV3P7ufE62QDGg1zVaTgCR+EtPv92k2nIhVcVKcLmxT1sUBsQGhnZj175j+MqRt4zLF7ic+sCYjfhxMxj7YQ==}
 
+  tailwindcss@4.3.4:
+    resolution: {integrity: sha512-PCJZTFFdG+sL3gvnP1Do9o6GbkvH2q0p04xSs3f7cSvmAeK+sttG+/7ncK1fdRwKFfC7n+wDDJaOMBSefkI9ow==}
+
   tapable@2.3.3:
     resolution: {integrity: sha512-uxc/zpqFg6x7C8vOE7lh6Lbda8eEL9zmVm/PLeTPBRhh1xCgdWaQ+J1CUieGpIfm2HdtsUpRv+HshiasBMcc6A==}
     engines: {node: '>=6'}
@@ -5582,9 +5585,9 @@ snapshots:
       '@zag-js/tree-view': 1.43.0
       svelte: 5.57.3(@typescript-eslint/types@8.72.1)
 
-  '@skeletonlabs/skeleton@5.0.1(tailwindcss@4.3.3)':
+  '@skeletonlabs/skeleton@5.0.1(tailwindcss@4.3.4)':
     dependencies:
-      tailwindcss: 4.3.3
+      tailwindcss: 4.3.4
 
   '@standard-schema/spec@1.1.0': {}
 
@@ -8782,6 +8785,8 @@ snapshots:
 
   tailwindcss@4.3.3: {}
 
+  tailwindcss@4.3.4: {}
+
   tapable@2.3.3: {}
 
   text-segmentation@1.0.3:
@@ -9012,14 +9017,14 @@ snapshots:
       - typescript
       - webpack
 
-  vite-plugin-tailwind-purgecss@0.3.5(tailwindcss@4.3.3)(vite@8.3.5(@types/node@25.9.9)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.107.1)(yaml@2.9.1)):
+  vite-plugin-tailwind-purgecss@0.3.5(tailwindcss@4.3.4)(vite@8.3.5(@types/node@25.9.9)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.107.1)(yaml@2.9.1)):
     dependencies:
       chalk: 5.6.2
       css-tree: 2.3.1
       fast-glob: 3.3.3
       purgecss: 6.0.0
       purgecss-from-html: 6.0.0
-      tailwindcss: 4.3.3
+      tailwindcss: 4.3.4
       vite: 8.3.5(@types/node@25.9.9)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.107.1)(yaml@2.9.1)
 
   vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.107.1)(yaml@2.9.1):
