@@ -573,8 +573,8 @@ importers:
         specifier: ^3.26.0
         version: 3.35.0
       maplibre-contour:
-        specifier: ^0.1.1
-        version: 0.1.1
+        specifier: ^0.2.0
+        version: 0.2.0
       maplibre-gl:
         specifier: ^6.0.0
         version: 6.18.0
@@ -3582,8 +3582,8 @@ packages:
   mapbox-gl@3.35.0:
     resolution: {integrity: sha512-kMe3klYmwU8Lw9kPU2tB/AKDcYUfPrhkQU/M67FiYgFDn7rCBllLU4XbUhnUoRjPyIaB7HVT63EO8jbzhoKGMA==}
 
-  maplibre-contour@0.1.1:
-    resolution: {integrity: sha512-0m267124bx+LJ5zM1mpB23uvO4sCrgOb4dWgwbUbGWGsDsWNA4g93XTXPoRQga6GAD6TDI7tzyowBzdADSPusg==}
+  maplibre-contour@0.2.0:
+    resolution: {integrity: sha512-C5MV4+wLkDkCh851/HkQYCTCtEMfkVaLymkYtsc4Bp7ziBLPfKrNhlXrw2IAblo1/Y3xjzgg0dO2bxRSjcAuZQ==}
 
   maplibre-gl@6.18.0:
     resolution: {integrity: sha512-8ucT+RhJtEZGFvWGPioVQwvOPMAIuUehEgxl2dELw9aJmX4SpUi+OCHHAD33B9EuohNC7kC/gccJacUgTMQfQQ==}
@@ -8064,7 +8064,7 @@ snapshots:
 
   mapbox-gl@3.35.0: {}
 
-  maplibre-contour@0.1.1: {}
+  maplibre-contour@0.2.0: {}
 
   maplibre-gl@6.18.0:
     dependencies:
